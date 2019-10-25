@@ -21,9 +21,9 @@ The HiveMQ MQTT Message Log Extension is a very useful HiveMQ Extension for debu
 
 * A client connects to HiveMQ
 * A client sends a publish message
-* A client subscribes to a topic
+* A client sends a subscribe message
 * A client disconnects from HiveMQ
-* HiveMQ send a message to a client
+* HiveMQ sends a publish message to a client
 
 
 === Installation
