@@ -57,16 +57,16 @@ public class MqttMessageLogConfigReader {
 
     @NotNull
     public Properties readProperties() {
-        final File pluginFile = new File(extensionHomeFolder, PROPERTIES_FILE_NAME);
+        final File propertiesFile = new File(extensionHomeFolder, PROPERTIES_FILE_NAME);
 
         log.debug("HiveMQ MQTT Message Log Extension: Will try to read config properties from {}", PROPERTIES_FILE_NAME);
 
-        if (!pluginFile.canRead()) {
-            log.info("HiveMQ MQTT Message Log Extension: No properties file {} available", pluginFile.getAbsolutePath());
+        if (!propertiesFile.canRead()) {
+            log.info("HiveMQ MQTT Message Log Extension: No properties file {} available", propertiesFile.getAbsolutePath());
             return properties;
         }
 
-        try (final InputStream is = new FileInputStream(pluginFile)) {
+        try (final InputStream is = new FileInputStream(propertiesFile)) {
             properties.load(is);
         } catch (final Exception e) {
             log.warn("HiveMQ MQTT Message Log Extension: Could not load properties file, reason {}", e.getMessage());
