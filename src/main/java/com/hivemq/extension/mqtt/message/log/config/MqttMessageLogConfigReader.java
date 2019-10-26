@@ -27,6 +27,10 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.*;
+import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.FALSE;
+import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.TRUE;
+
 public class MqttMessageLogConfigReader {
 
     @NotNull
@@ -48,11 +52,12 @@ public class MqttMessageLogConfigReader {
     }
 
     private void setDefaults() {
-        properties.setProperty(MqttMessageLogConfig.CLIENT_CONNECT, MqttMessageLogConfig.TRUE);
-        properties.setProperty(MqttMessageLogConfig.CLIENT_DISCONNECT, MqttMessageLogConfig.TRUE);
-        properties.setProperty(MqttMessageLogConfig.PUBLISH_RECEIVED, MqttMessageLogConfig.TRUE);
-        properties.setProperty(MqttMessageLogConfig.PUBLISH_SEND, MqttMessageLogConfig.TRUE);
-        properties.setProperty(MqttMessageLogConfig.SUBSCRIBE_RECEIVED, MqttMessageLogConfig.TRUE);
+        properties.setProperty(CLIENT_CONNECT, TRUE);
+        properties.setProperty(CLIENT_DISCONNECT, TRUE);
+        properties.setProperty(PUBLISH_RECEIVED, TRUE);
+        properties.setProperty(PUBLISH_SEND, TRUE);
+        properties.setProperty(SUBSCRIBE_RECEIVED, TRUE);
+        properties.setProperty(VERBOSE, FALSE);
     }
 
     @NotNull
@@ -62,14 +67,13 @@ public class MqttMessageLogConfigReader {
         log.debug("HiveMQ MQTT Message Log Extension: Will try to read config properties from {}", PROPERTIES_FILE_NAME);
 
         if (!propertiesFile.canRead()) {
-            log.info("HiveMQ MQTT Message Log Extension: No properties file {} available", propertiesFile.getAbsolutePath());
-            return properties;
-        }
-
-        try (final InputStream is = new FileInputStream(propertiesFile)) {
-            properties.load(is);
-        } catch (final Exception e) {
-            log.warn("HiveMQ MQTT Message Log Extension: Could not load properties file, reason {}", e.getMessage());
+            log.info("HiveMQ MQTT Message Log Extension: Cannot read properties file {}", propertiesFile.getAbsolutePath());
+        } else {
+            try (final InputStream is = new FileInputStream(propertiesFile)) {
+                properties.load(is);
+            } catch (final Exception e) {
+                log.warn("HiveMQ MQTT Message Log Extension: Could not load properties file, reason {}", e.getMessage());
+            }
         }
         log.info("HiveMQ MQTT Message Log Extension: Properties initialized  to: {}", properties);
         return properties;

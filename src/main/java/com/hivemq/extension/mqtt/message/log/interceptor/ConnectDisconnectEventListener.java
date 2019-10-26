@@ -35,9 +35,11 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
     private static final Logger log = LoggerFactory.getLogger(ConnectDisconnectEventListener.class);
 
     private final boolean logConnect;
+    private final boolean verbose;
 
-    public ConnectDisconnectEventListener(final boolean logConnect) {
+    public ConnectDisconnectEventListener(final boolean logConnect, final boolean verbose) {
         this.logConnect = logConnect;
+        this.verbose = verbose;
     }
 
     @Override
@@ -47,10 +49,7 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
         }
         try {
             final ConnectPacket connectPacket = connectionStartInput.getConnectPacket();
-            MessageLogUtil.logConnect(connectPacket);
-
-            connectPacket.getWillPublish()
-                    .ifPresent(willPublishPacket -> MessageLogUtil.logWill(willPublishPacket, connectPacket.getClientId()));
+            MessageLogUtil.logConnect(connectPacket, verbose);
         } catch (final Exception e){
             log.debug("Exception thrown at inbound connect logging: ", e);
         }
@@ -64,26 +63,26 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
 
     @Override
     public void onDisconnect(final @NotNull DisconnectEventInput disconnectEventInput) {
-        MessageLogUtil.logDisconnect(String.format("Client '%s' disconnected. ReasonCode: '%s', Reason String: '%s'", disconnectEventInput.getClientInformation().getClientId(), disconnectEventInput.getReasonCode().orElse(null), disconnectEventInput.getReasonString().orElse(null)));
+        //NOOP
     }
 
     @Override
     public void onAuthenticationFailedDisconnect(@NotNull final AuthenticationFailedInput authenticationFailedInput) {
-        MessageLogUtil.logDisconnect(String.format("Client '%s' was disconnected because authentication failed. Reason Code: '%s', Reason String: '%s'", authenticationFailedInput.getClientInformation().getClientId(), authenticationFailedInput.getReasonCode().orElse(null), authenticationFailedInput.getReasonString().orElse(null)));
+        MessageLogUtil.logDisconnect(String.format("Sent DISCONNECT to client '%s' because authentication failed.", authenticationFailedInput.getClientInformation().getClientId()), authenticationFailedInput, verbose);
     }
 
     @Override
     public void onConnectionLost(@NotNull final ConnectionLostInput connectionLostInput) {
-        MessageLogUtil.logDisconnect(String.format("Client '%s' disconnected ungracefully.", connectionLostInput.getClientInformation().getClientId()));
+        //NOOP since no mqtt message is sent.
     }
 
     @Override
     public void onClientInitiatedDisconnect(@NotNull final ClientInitiatedDisconnectInput clientInitiatedDisconnectInput) {
-        MessageLogUtil.logDisconnect(String.format("Client '%s' disconnected gracefully. Reason Code: '%s', Reason String: '%s'", clientInitiatedDisconnectInput.getClientInformation().getClientId(), clientInitiatedDisconnectInput.getReasonCode().orElse(null), clientInitiatedDisconnectInput.getReasonString().orElse(null)));
+        MessageLogUtil.logDisconnect(String.format("Received DISCONNECT from client '%s'.", clientInitiatedDisconnectInput.getClientInformation().getClientId()), clientInitiatedDisconnectInput, verbose);
     }
 
     @Override
     public void onServerInitiatedDisconnect(@NotNull final ServerInitiatedDisconnectInput serverInitiatedDisconnectInput) {
-        MessageLogUtil.logDisconnect(String.format("Client '%s' was disconnected by the server. Reason Code: '%s', Reason String: '%s'", serverInitiatedDisconnectInput.getClientInformation().getClientId(), serverInitiatedDisconnectInput.getReasonCode().orElse(null), serverInitiatedDisconnectInput.getReasonString().orElse(null)));
+        MessageLogUtil.logDisconnect(String.format("Sent DISCONNECT to client '%s'.", serverInitiatedDisconnectInput.getClientInformation().getClientId()), serverInitiatedDisconnectInput, verbose);
     }
 }
