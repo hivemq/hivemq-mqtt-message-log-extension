@@ -60,8 +60,7 @@ This properties file could have the following entries:
 
 CAUTION: use verbose=true very carefully as it will flood your log immediately.
 
-Missing entries default to true.
-verbose defaults to false.
+Missing entries default to true. *verbose* defaults to false.
 
 === First Steps
 
