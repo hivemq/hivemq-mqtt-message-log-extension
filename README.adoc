@@ -9,7 +9,7 @@
 
 *Type*: Logging Extension
 
-*Version*: 1.0.0
+*Version*: 1.0.1
 
 *License*: Apache License Version 2.0
 
@@ -25,12 +25,18 @@ The HiveMQ MQTT Message Log Extension is a very useful HiveMQ Extension for debu
 * A client disconnects from HiveMQ
 * HiveMQ sends a publish message to a client
 
+=== Prerequisites
+
+* HiveMQ Enterprise 4.2.0 or later
+* Or the current master branch of the https://github.com/hivemq/hivemq-community-edition[HiveMQ Community Edition]
 
 === Installation
 
-. Clone this repository into a Java 11 maven project.
-. Run `mvn package` goal from Maven to build the extension.
-. Move the file: "target/hivemq-mqtt-message-log-extension-1.0.0-distribution.zip" to the directory: "HIVEMQ_HOME/extensions"
+. Download https://www.hivemq.com/releases/extensions/hivemq-mqtt-message-log-extension-1.0.1.zip[HiveMQ Mqtt Message Log Extension]
+.. Move the file: "hivemq-mqtt-message-log-extension-1.0.1.zip" to the directory: "HIVEMQ_HOME/extensions"
+. Or clone this repository into a Java 11 maven project
+.. run `mvn package` goal from Maven to build the extension.
+.. Move the file: "hivemq-mqtt-message-log-extension-1.0.1-distribution.zip" to the directory: "HIVEMQ_HOME/extensions"
 . Unzip the file.
 . Start HiveMQ.
 
@@ -40,6 +46,9 @@ It is possible to opt out of specific log event types by adding a
 *mqttMessageLog.properties* files to your +<HIVEMQ_HOME>/hivemq-mqtt-message-log-extension+  folder.
 There is an example file available which removes the logging of publish messages. Just rename it to *mqttMessageLog.properties*
 
+If you set verbose to true, all MQTT messages are logged with all the information available.
+Otherwise only basic information like client id, topic, qos and payload will be logged. See <<example, examples>>.
+
 This properties file could have the following entries:
 
 * client-connect=false|true
@@ -47,12 +56,40 @@ This properties file could have the following entries:
 * publish-received=false|true
 * publish-send=false|true
 * subscribe-received=false|true
+* verbose=false|true
 
-Missing entries default to true.
+CAUTION: use verbose=true very carefully as it will flood your log immediately.
+
+Missing entries default to true. *verbose* defaults to false.
 
 === First Steps
 
-Connect with an {hivemq-blog-tools}[MQTT client] of your choice. You should see a log message with its identifier, MQTT version, and all other connect options.
+Connect with an {hivemq-blog-tools}[MQTT client] of your choice. You should see a log message with its client identifier, MQTT version, clean start flag and session expiry interval.
+
+[[example]]
+=== Examples
+
+==== Verbose CONNECT message
+[source,bash]
+----
+"17:26:23.602 INFO - Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false',
+Session Expiry Interval: '10000', Keep Alive: '20000', Maximum Packet Size: '40000',
+Receive Maximum: '30000', Topic Alias Maximum: '50000', Request Problem Information: 'true',
+Request Response Information: 'false',  Username: 'the username', Password: 'the password',
+Auth Method: 'auth method', Auth Data (Base64): 'YXV0aCBkYXRh',
+User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'],
+Will: { Topic: 'willtopic', Payload: 'payload', QoS: '1', Retained: 'false', Message Expiry Interval: '1234',
+Duplicate Delivery: 'false', Correlation Data: 'data', Response Topic: 'response topic',
+Content Type: 'content type', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1, 2, 3, 4]',
+User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'],
+[Name: 'name2', Value: 'value2'], Will Delay: '100' }"
+----
+
+==== Basic CONNECT message
+[source,bash]
+----
+"17:26:23.602 INFO - Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', Session Expiry Interval: '10000'"
+----
 
 == Contributing
 

@@ -46,43 +46,11 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
         try {
             final MqttMessageLogConfigReader configReader = new MqttMessageLogConfigReader(extensionStartInput.getExtensionInformation().getExtensionHomeFolder());
             final MqttMessageLogConfig config = new MqttMessageLogConfig(configReader.readProperties());
-
-            if (config.isClientConnect() && config.isClientDisconnect()) {
-                final ConnectDisconnectEventListener connectDisconnectEventListener = new ConnectDisconnectEventListener(true);
-                Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
-            } else if (config.isClientDisconnect()) {
-                final ConnectDisconnectEventListener connectDisconnectEventListener = new ConnectDisconnectEventListener(false);
-                Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
-            } else if (config.isClientConnect()) {
-                final ConnectInboundInterceptorImpl connectInboundInterceptor = new ConnectInboundInterceptorImpl();
-                Services.interceptorRegistry().setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor);
-            } else {
-                //neither connect nor disconnect enabled
-            }
-            final PublishInboundInterceptor publishInboundInterceptor = createPublishInboundInterceptor(config);
-            final PublishOutboundInterceptor publishOutboundInterceptor = createPublishOutboundInterceptor(config);
-            final SubscribeInboundInterceptor subscribeInboundInterceptor = createSubscribeInboundInterceptor(config);
-
-            if (subscribeInboundInterceptor == null && publishInboundInterceptor == null && publishOutboundInterceptor == null) {
-                if(!config.isClientConnect() && !config.isClientDisconnect()){
-                    extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() + " start prevented because all properties set to false.");
-                }
+            if(config.allDisabled()){
+                extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() + " start prevented because all properties set to false.");
                 return;
             }
-
-            final ClientInitializer initializer = (initializerInput, clientContext) -> {
-                if (publishInboundInterceptor != null) {
-                    clientContext.addPublishInboundInterceptor(publishInboundInterceptor);
-                }
-                if (publishOutboundInterceptor != null) {
-                    clientContext.addPublishOutboundInterceptor(publishOutboundInterceptor);
-                }
-                if (subscribeInboundInterceptor != null) {
-                    clientContext.addSubscribeInboundInterceptor(subscribeInboundInterceptor);
-                }
-            };
-
-            Services.initializerRegistry().setClientInitializer(initializer);
+            registerMessageLogger(config);
 
         } catch (final Exception e) {
             extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() + " cannot be started.");
@@ -97,11 +65,47 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
         log.info("Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
     }
 
+    private void registerMessageLogger(final @NotNull MqttMessageLogConfig config) {
+        if (config.isClientConnect() && config.isClientDisconnect()) {
+            final ConnectDisconnectEventListener connectDisconnectEventListener = new ConnectDisconnectEventListener(true, config.isVerbose());
+            Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
+        } else if (config.isClientDisconnect()) {
+            final ConnectDisconnectEventListener connectDisconnectEventListener = new ConnectDisconnectEventListener(false, config.isVerbose());
+            Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
+        } else if (config.isClientConnect()) {
+            final ConnectInboundInterceptorImpl connectInboundInterceptor = new ConnectInboundInterceptorImpl(config.isVerbose());
+            Services.interceptorRegistry().setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor);
+        } else {
+            //neither connect nor disconnect enabled
+        }
+        final PublishInboundInterceptor publishInboundInterceptor = createPublishInboundInterceptor(config);
+        final PublishOutboundInterceptor publishOutboundInterceptor = createPublishOutboundInterceptor(config);
+        final SubscribeInboundInterceptor subscribeInboundInterceptor = createSubscribeInboundInterceptor(config);
+
+        if (subscribeInboundInterceptor == null && publishInboundInterceptor == null && publishOutboundInterceptor == null) {
+            return;
+        }
+
+        final ClientInitializer initializer = (initializerInput, clientContext) -> {
+            if (publishInboundInterceptor != null) {
+                clientContext.addPublishInboundInterceptor(publishInboundInterceptor);
+            }
+            if (publishOutboundInterceptor != null) {
+                clientContext.addPublishOutboundInterceptor(publishOutboundInterceptor);
+            }
+            if (subscribeInboundInterceptor != null) {
+                clientContext.addSubscribeInboundInterceptor(subscribeInboundInterceptor);
+            }
+        };
+
+        Services.initializerRegistry().setClientInitializer(initializer);
+    }
+
     @Nullable
     private SubscribeInboundInterceptor createSubscribeInboundInterceptor(final @NotNull MqttMessageLogConfig config) {
         final SubscribeInboundInterceptor subscribeInboundInterceptor;
         if (config.isSubscribeReceived()) {
-            subscribeInboundInterceptor = new SubscribeInboundInterceptorImpl();
+            subscribeInboundInterceptor = new SubscribeInboundInterceptorImpl(config.isVerbose());
         } else {
             subscribeInboundInterceptor = null;
         }
@@ -112,7 +116,7 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
     private PublishOutboundInterceptor createPublishOutboundInterceptor(final @NotNull MqttMessageLogConfig config) {
         final PublishOutboundInterceptor publishOutboundInterceptor;
         if (config.isPublishSend()) {
-            publishOutboundInterceptor = new PublishOutboundInterceptorImpl();
+            publishOutboundInterceptor = new PublishOutboundInterceptorImpl(config.isVerbose());
         } else {
             publishOutboundInterceptor = null;
         }
@@ -123,7 +127,7 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
     private PublishInboundInterceptor createPublishInboundInterceptor(final @NotNull MqttMessageLogConfig config) {
         final PublishInboundInterceptor publishInboundInterceptor;
         if (config.isPublishReceived()) {
-            publishInboundInterceptor = new PublishInboundInterceptorImpl();
+            publishInboundInterceptor = new PublishInboundInterceptorImpl(config.isVerbose());
         } else {
             publishInboundInterceptor = null;
         }

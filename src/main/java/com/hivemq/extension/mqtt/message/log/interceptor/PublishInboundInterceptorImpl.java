@@ -33,12 +33,17 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
 
     @NotNull
     private static final Logger log = LoggerFactory.getLogger(PublishInboundInterceptorImpl.class);
+    private final boolean verbose;
+
+    public PublishInboundInterceptorImpl(final boolean verbose) {
+        this.verbose = verbose;
+    }
 
     @Override
     public void onInboundPublish(final @NotNull PublishInboundInput publishInboundInput, final @NotNull PublishInboundOutput publishInboundOutput) {
         try {
             final String clientID = publishInboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPublish(String.format("Client '%s' sent a message to topic", clientID), publishInboundInput.getPublishPacket());
+            MessageLogUtil.logPublish(String.format("Received PUBLISH from client '%s' for topic", clientID), publishInboundInput.getPublishPacket(), verbose);
         } catch (final Exception e){
             log.debug("Exception thrown at inbound publish logging: " , e);
         }

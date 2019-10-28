@@ -34,14 +34,17 @@ public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor 
 
     @NotNull
     private static final Logger log = LoggerFactory.getLogger(ConnectInboundInterceptorImpl.class);
+    private final boolean verbose;
+
+    public ConnectInboundInterceptorImpl(final boolean verbose) {
+        this.verbose = verbose;
+    }
 
     @Override
     public void onConnect(final @NotNull ConnectInboundInput connectInboundInput, final @NotNull ConnectInboundOutput connectInboundOutput) {
         try {
             final ConnectPacket connectPacket = connectInboundInput.getConnectPacket();
-            MessageLogUtil.logConnect(connectPacket);
-            connectPacket.getWillPublish()
-                    .ifPresent(willPublishPacket -> MessageLogUtil.logWill(willPublishPacket, connectPacket.getClientId()));
+            MessageLogUtil.logConnect(connectPacket, verbose);
         } catch (final Exception e) {
             log.debug("Exception thrown at inbound connect logging: ", e);
         }

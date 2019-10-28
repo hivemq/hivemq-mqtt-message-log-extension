@@ -31,6 +31,10 @@ public class MqttMessageLogConfig {
     @NotNull
     static final String TRUE = "true";
     @NotNull
+    static final String FALSE = "false";
+    @NotNull
+    static final String VERBOSE = "verbose";
+    @NotNull
     static final String CLIENT_CONNECT = "client-connect";
     @NotNull
     static final String CLIENT_DISCONNECT = "client-disconnect";
@@ -68,9 +72,19 @@ public class MqttMessageLogConfig {
         return getForKey(SUBSCRIBE_RECEIVED);
     }
 
+    public boolean isVerbose() {
+        return getForKey(VERBOSE);
+    }
+
+    public boolean allDisabled(){
+        return !isClientConnect() &&
+                !isClientDisconnect() &&
+                !isPublishSend() &&
+                !isPublishReceived() &&
+                !isSubscribeReceived();
+    }
+
     private boolean getForKey(final @NotNull String key) {
-        final boolean keyEnabled = properties.getProperty(key, TRUE).equalsIgnoreCase(TRUE);
-        log.debug("HiveMQ MQTT Message Log Extension: Setting {} to '{}'", key, keyEnabled);
-        return keyEnabled;
+        return properties.getProperty(key, TRUE).equalsIgnoreCase(TRUE);
     }
 }

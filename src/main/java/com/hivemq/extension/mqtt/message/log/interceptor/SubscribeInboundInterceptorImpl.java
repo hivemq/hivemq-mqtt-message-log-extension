@@ -33,11 +33,16 @@ public class SubscribeInboundInterceptorImpl implements SubscribeInboundIntercep
 
     @NotNull
     private static final Logger log = LoggerFactory.getLogger(SubscribeInboundInterceptorImpl.class);
+    private final boolean verbose;
+
+    public SubscribeInboundInterceptorImpl(final boolean verbose) {
+        this.verbose = verbose;
+    }
 
     @Override
     public void onInboundSubscribe(final @NotNull SubscribeInboundInput subscribeInboundInput, final @NotNull SubscribeInboundOutput subscribeInboundOutput) {
         try {
-            MessageLogUtil.logSubscribe(subscribeInboundInput);
+            MessageLogUtil.logSubscribe(subscribeInboundInput, verbose);
         } catch (final Exception e) {
             log.debug("Exception thrown at inbound subscribe logging: ", e);
         }
