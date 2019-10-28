@@ -49,8 +49,6 @@ There is an example file available which removes the logging of publish messages
 If you set verbose to true, all MQTT messages are logged with all the information available.
 Otherwise only basic information like client id, topic, qos and payload will be logged. See <<example, examples>>.
 
-CAUTION: use verbose=true very carefully as it will flood your log immediately.
-
 This properties file could have the following entries:
 
 * client-connect=false|true
@@ -59,6 +57,8 @@ This properties file could have the following entries:
 * publish-send=false|true
 * subscribe-received=false|true
 * verbose=false|true
+
+CAUTION: use verbose=true very carefully as it will flood your log immediately.
 
 Missing entries default to true.
 verbose defaults to false.
@@ -70,7 +70,7 @@ Connect with an {hivemq-blog-tools}[MQTT client] of your choice. You should see 
 [[example]]
 === Examples
 
-.verbose connect
+==== Verbose CONNECT message
 [source,bash]
 ----
 "17:26:23.602 INFO - Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false',
@@ -86,7 +86,7 @@ User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value
 [Name: 'name2', Value: 'value2'], Will Delay: '100' }"
 ----
 
-.basic connect
+==== Basic CONNECT message
 [source,bash]
 ----
 "17:26:23.602 INFO - Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', Session Expiry Interval: '10000'"
