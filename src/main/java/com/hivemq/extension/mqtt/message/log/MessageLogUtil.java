@@ -22,6 +22,7 @@ import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
 import com.hivemq.extension.sdk.api.interceptor.suback.parameter.SubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
+import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsubscribe.parameter.UnsubscribeInboundInput;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
@@ -33,6 +34,8 @@ import com.hivemq.extension.sdk.api.packets.suback.SubackPacket;
 import com.hivemq.extension.sdk.api.packets.subscribe.SubackReasonCode;
 import com.hivemq.extension.sdk.api.packets.subscribe.SubscribePacket;
 import com.hivemq.extension.sdk.api.packets.subscribe.Subscription;
+import com.hivemq.extension.sdk.api.packets.unsuback.UnsubackPacket;
+import com.hivemq.extension.sdk.api.packets.unsuback.UnsubackReasonCode;
 import com.hivemq.extension.sdk.api.packets.unsubscribe.UnsubscribePacket;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -237,6 +240,30 @@ public class MessageLogUtil {
         final String userPropertiesAsString = getUserPropertiesAsString(unsubscribePacket.getUserProperties());
 
         log.info("Received UNSUBSCRIBE from client '{}': {}, {}", clientId, topics.toString(), userPropertiesAsString);
+    }
+
+    public static void logUnsuback(final @NotNull UnsubackOutboundInput unsubackOutboundInput, final boolean verbose) {
+        final StringBuilder unsuback = new StringBuilder();
+        final String clientId = unsubackOutboundInput.getClientInformation().getClientId();
+        @NotNull final UnsubackPacket unsubackPacket = unsubackOutboundInput.getUnsubackPacket();
+
+        unsuback.append("Unsuback Reason Codes: {");
+        for (final UnsubackReasonCode unsubackReasonCode : unsubackPacket.getReasonCodes()) {
+            unsuback.append(" [Reason Code: '")
+                    .append(unsubackReasonCode.toString())
+                    .append("'],");
+        }
+
+        if (!verbose) {
+            unsuback.deleteCharAt(unsuback.length() - 1); //delete last comma
+            unsuback.append(" }");
+            log.info("Send UNSUBACK to client '{}': {}", clientId, unsuback.toString());
+            return;
+        }
+
+        final String userPropertiesAsString = getUserPropertiesAsString(unsubackPacket.getUserProperties());
+
+        log.info("Send UNSUBACK to client '{}': {}, {}", clientId, unsuback.toString(), userPropertiesAsString);
     }
 
     @NotNull
