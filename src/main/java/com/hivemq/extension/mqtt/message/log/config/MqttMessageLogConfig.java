@@ -114,7 +114,7 @@ public class MqttMessageLogConfig {
         return getForKey(PING_REQ_RECEIVED);
     }
 
-    public boolean isPingresqSend() {
+    public boolean isPingrespSend() {
         return getForKey(PING_RESP_SEND);
     }
 
@@ -164,7 +164,7 @@ public class MqttMessageLogConfig {
                 !isUnsubscribeReceived() &&
                 !isUnsubackSend() &&
                 !isPingreqReceived() &&
-                !isPingresqSend() &&
+                !isPingrespSend() &&
                 !isPubackReceived() &&
                 !isPubackSend() &&
                 !isPubrecReceived() &&
