@@ -22,6 +22,7 @@ import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
 import com.hivemq.extension.sdk.api.interceptor.suback.parameter.SubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
+import com.hivemq.extension.sdk.api.interceptor.unsubscribe.parameter.UnsubscribeInboundInput;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
 import com.hivemq.extension.sdk.api.packets.general.UserProperties;
@@ -32,6 +33,7 @@ import com.hivemq.extension.sdk.api.packets.suback.SubackPacket;
 import com.hivemq.extension.sdk.api.packets.subscribe.SubackReasonCode;
 import com.hivemq.extension.sdk.api.packets.subscribe.SubscribePacket;
 import com.hivemq.extension.sdk.api.packets.subscribe.Subscription;
+import com.hivemq.extension.sdk.api.packets.unsubscribe.UnsubscribePacket;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -209,6 +211,32 @@ public class MessageLogUtil {
         final String userPropertiesAsString = getUserPropertiesAsString(subackPacket.getUserProperties());
 
         log.info("Send SUBACK to client '{}': {}, {}", clientId, suback.toString(), userPropertiesAsString);
+    }
+
+    @NotNull
+    public static void logUnsubscribe(final @NotNull UnsubscribeInboundInput unsubscribeInboundInput, final boolean verbose) {
+        final StringBuilder topics = new StringBuilder();
+        @NotNull final String clientId = unsubscribeInboundInput.getClientInformation().getClientId();
+        @NotNull final UnsubscribePacket unsubscribePacket = unsubscribeInboundInput.getUnsubscribePacket();
+
+        topics.append("Topics: {");
+        for (final String unsub : unsubscribePacket.getTopicFilters()) {
+            topics.append(" [Topic: '")
+                    .append(unsub)
+                    .append("'],");
+        }
+
+        if (!verbose) {
+            topics.deleteCharAt(topics.length() - 1); //delete last comma
+            topics.append(" }");
+
+            log.info("Received UNSUBSCRIBE from client '{}': {}", clientId, topics.toString());
+            return;
+        }
+
+        final String userPropertiesAsString = getUserPropertiesAsString(unsubscribePacket.getUserProperties());
+
+        log.info("Received UNSUBSCRIBE from client '{}': {}, {}", clientId, topics.toString(), userPropertiesAsString);
     }
 
     @NotNull
