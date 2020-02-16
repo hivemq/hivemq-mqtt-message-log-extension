@@ -20,6 +20,7 @@ package com.hivemq.extension.mqtt.message.log;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
+import com.hivemq.extension.sdk.api.interceptor.suback.parameter.SubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
@@ -27,6 +28,9 @@ import com.hivemq.extension.sdk.api.packets.general.UserProperties;
 import com.hivemq.extension.sdk.api.packets.general.UserProperty;
 import com.hivemq.extension.sdk.api.packets.publish.PayloadFormatIndicator;
 import com.hivemq.extension.sdk.api.packets.publish.PublishPacket;
+import com.hivemq.extension.sdk.api.packets.suback.SubackPacket;
+import com.hivemq.extension.sdk.api.packets.subscribe.SubackReasonCode;
+import com.hivemq.extension.sdk.api.packets.subscribe.SubscribePacket;
 import com.hivemq.extension.sdk.api.packets.subscribe.Subscription;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -52,7 +56,7 @@ public class MessageLogUtil {
     private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     public static void logDisconnect(final @NotNull String message, final @NotNull DisconnectEventInput disconnectEventInput, final boolean verbose) {
-        if(!verbose) {
+        if (!verbose) {
             log.info(message);
             return;
         }
@@ -64,7 +68,7 @@ public class MessageLogUtil {
     }
 
     public static void logConnect(final @NotNull ConnectPacket connectPacket, final boolean verbose) {
-        if(!verbose){
+        if (!verbose) {
             log.info("Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'",
                     connectPacket.getClientId(),
                     connectPacket.getMqttVersion().name(),
@@ -76,7 +80,7 @@ public class MessageLogUtil {
         final String userPropertiesAsString = getUserPropertiesAsString(connectPacket.getUserProperties());
         final String passwordAsString = getStringFromByteBuffer(connectPacket.getPassword().orElse(null));
         final String passwordProperty;
-        if(StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null){
+        if (StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null) {
             passwordProperty = "Password: '" + passwordAsString + "'";
         } else {
             passwordProperty = "Password (Hex): '" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
@@ -84,14 +88,14 @@ public class MessageLogUtil {
 
 
         final String authDataAsString;
-        if(connectPacket.getAuthenticationData().isPresent()){
+        if (connectPacket.getAuthenticationData().isPresent()) {
             authDataAsString = getStringFromByteBuffer(Base64.getEncoder().encode(connectPacket.getAuthenticationData().get()));
         } else {
             authDataAsString = null;
         }
 
         final String willString;
-        if(connectPacket.getWillPublish().isPresent()){
+        if (connectPacket.getWillPublish().isPresent()) {
             willString = getWillAsString(connectPacket.getWillPublish().get());
         } else {
             willString = "";
@@ -126,7 +130,7 @@ public class MessageLogUtil {
         final String publishAsString = getPublishAsString(willPublishPacket, true);
         final String willPublishAsString = publishAsString + ", Will Delay: '" + willPublishPacket.getWillDelay() + "'";
 
-        return String.format(", Will: { Topic: '%s', %s }", topic , willPublishAsString);
+        return String.format(", Will: { Topic: '%s', %s }", topic, willPublishAsString);
     }
 
     public static void logPublish(final @NotNull String prefix, final @NotNull PublishPacket publishPacket, final boolean verbose) {
@@ -140,9 +144,12 @@ public class MessageLogUtil {
 
     public static void logSubscribe(final @NotNull SubscribeInboundInput subscribeInboundInput, final boolean verbose) {
         final StringBuilder topics = new StringBuilder();
-        if(!verbose){
+        final String clientId = subscribeInboundInput.getClientInformation().getClientId();
+        @NotNull final SubscribePacket subscribePacket = subscribeInboundInput.getSubscribePacket();
+
+        if (!verbose) {
             topics.append("Topics: {");
-            for (final Subscription sub : subscribeInboundInput.getSubscribePacket().getSubscriptions()) {
+            for (final Subscription sub : subscribePacket.getSubscriptions()) {
                 topics.append(" [Topic: '")
                         .append(sub.getTopicFilter())
                         .append("', QoS: '")
@@ -151,12 +158,12 @@ public class MessageLogUtil {
             }
             topics.deleteCharAt(topics.length() - 1); //delete last comma
             topics.append(" }");
-            log.info("Received SUBSCRIBE from client '{}': {}", subscribeInboundInput.getClientInformation().getClientId(), topics.toString());
+            log.info("Received SUBSCRIBE from client '{}': {}", clientId, topics.toString());
             return;
         }
 
         topics.append("Topics: {");
-        for (final Subscription sub : subscribeInboundInput.getSubscribePacket().getSubscriptions()) {
+        for (final Subscription sub : subscribePacket.getSubscriptions()) {
             topics.append(" [Topic: '")
                     .append(sub.getTopicFilter())
                     .append("', QoS: '")
@@ -174,10 +181,34 @@ public class MessageLogUtil {
 
         topics.append(" }");
 
-        final Integer subscriptionIdentifier = subscribeInboundInput.getSubscribePacket().getSubscriptionIdentifier().orElse(null);
-        final String userPropertiesAsString = getUserPropertiesAsString(subscribeInboundInput.getSubscribePacket().getUserProperties());
+        final Integer subscriptionIdentifier = subscribePacket.getSubscriptionIdentifier().orElse(null);
+        final String userPropertiesAsString = getUserPropertiesAsString(subscribePacket.getUserProperties());
 
-        log.info("Received SUBSCRIBE from client '{}': {}, Subscription Identifier: '{}', {}", subscribeInboundInput.getClientInformation().getClientId(), topics.toString(), subscriptionIdentifier, userPropertiesAsString);
+        log.info("Received SUBSCRIBE from client '{}': {}, Subscription Identifier: '{}', {}", clientId, topics.toString(), subscriptionIdentifier, userPropertiesAsString);
+    }
+
+    public static void logSuback(final @NotNull SubackOutboundInput subackOutboundInput, final boolean verbose) {
+        final StringBuilder suback = new StringBuilder();
+        final String clientId = subackOutboundInput.getClientInformation().getClientId();
+        @NotNull final SubackPacket subackPacket = subackOutboundInput.getSubackPacket();
+
+        suback.append("Suback Reason Codes: {");
+        for (final SubackReasonCode sub : subackPacket.getReasonCodes()) {
+            suback.append(" [Reason Code: '")
+                    .append(sub.toString())
+                    .append("'],");
+        }
+
+        if (!verbose) {
+            suback.deleteCharAt(suback.length() - 1); //delete last comma
+            suback.append(" }");
+            log.info("Send SUBACK to client '{}': {}", clientId, suback.toString());
+            return;
+        }
+
+        final String userPropertiesAsString = getUserPropertiesAsString(subackPacket.getUserProperties());
+
+        log.info("Send SUBACK to client '{}': {}, {}", clientId, suback.toString(), userPropertiesAsString);
     }
 
     @NotNull
@@ -187,10 +218,10 @@ public class MessageLogUtil {
         final Optional<ByteBuffer> payload = publishPacket.getPayload();
         final String payloadAsString = getStringFromByteBuffer(payload.orElse(null));
 
-        if(!verbose){
+        if (!verbose) {
             return String.format("Payload: '%s'," +
-                    " QoS: '%s'," +
-                    " Retained: '%s'",
+                            " QoS: '%s'," +
+                            " Retained: '%s'",
                     payloadAsString, qos, retained);
         }
         final Optional<String> contentType = publishPacket.getContentType();
@@ -221,7 +252,7 @@ public class MessageLogUtil {
 
     @Nullable
     private static String getStringFromByteBuffer(final @Nullable ByteBuffer buffer) {
-        if(buffer == null){
+        if (buffer == null) {
             return null;
         }
         final byte[] bytes = new byte[buffer.remaining()];
@@ -233,7 +264,7 @@ public class MessageLogUtil {
 
     @Nullable
     private static String getHexStringFromByteBuffer(final @Nullable ByteBuffer buffer) {
-        if(buffer == null){
+        if (buffer == null) {
             return null;
         }
         final byte[] bytes = new byte[buffer.remaining()];
@@ -257,11 +288,11 @@ public class MessageLogUtil {
 
     @NotNull
     private static String getUserPropertiesAsString(final @Nullable UserProperties userProperties) {
-        if(userProperties == null){
+        if (userProperties == null) {
             return "User Properties: 'null'";
         }
         final List<UserProperty> userPropertyList = userProperties.asList();
-        if(userPropertyList.size() == 0){
+        if (userPropertyList.size() == 0) {
             return "User Properties: 'null'";
         }
         final StringBuilder stringBuilder = new StringBuilder();
