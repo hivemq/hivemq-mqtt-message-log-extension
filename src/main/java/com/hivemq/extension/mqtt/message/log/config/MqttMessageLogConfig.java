@@ -44,6 +44,32 @@ public class MqttMessageLogConfig {
     static final String PUBLISH_SEND = "publish-send";
     @NotNull
     static final String SUBSCRIBE_RECEIVED = "subscribe-received";
+    @NotNull
+    static final String SUBACK_SEND = "suback-send";
+    @NotNull
+    static final String UNSUBSCRIBE_RECEIVED = "unsubscribe-received";
+    @NotNull
+    static final String UNSUBACK_SEND = "unsuback-send";
+    @NotNull
+    static final String PING_REQ_RECEIVED = "ping-request-received";
+    @NotNull
+    static final String PING_RESP_SEND = "ping-response-send";
+    @NotNull
+    static final String PUBACK_RECEIVED = "puback-received";
+    @NotNull
+    static final String PUBACK_SEND = "puback-send";
+    @NotNull
+    static final String PUBREC_RECEIVED = "pubrec-received";
+    @NotNull
+    static final String PUBREC_SEND = "pubrec-send";
+    @NotNull
+    static final String PUBREL_RECEIVED = "pubrel-received";
+    @NotNull
+    static final String PUBREL_SEND = "pubrel-send";
+    @NotNull
+    static final String PUBCOMP_RECEIVED = "pubcomp-received";
+    @NotNull
+    static final String PUBCOMP_SEND = "pubcomp-send";
 
     @NotNull
     private final Properties properties;
@@ -72,16 +98,81 @@ public class MqttMessageLogConfig {
         return getForKey(SUBSCRIBE_RECEIVED);
     }
 
+    public boolean isSubackSend() {
+        return getForKey(SUBACK_SEND);
+    }
+
+    public boolean isUnsubscribeReceived() {
+        return getForKey(UNSUBSCRIBE_RECEIVED);
+    }
+
+    public boolean isUnsubackSend() {
+        return getForKey(UNSUBACK_SEND);
+    }
+
+    public boolean isPingreqReceived() {
+        return getForKey(PING_REQ_RECEIVED);
+    }
+
+    public boolean isPingresqSend() {
+        return getForKey(PING_RESP_SEND);
+    }
+
+    public boolean isPubackReceived() {
+        return getForKey(PUBACK_RECEIVED);
+    }
+
+    public boolean isPubackSend() {
+        return getForKey(PUBACK_SEND);
+    }
+
+    public boolean isPubrelReceived() {
+        return getForKey(PUBREL_RECEIVED);
+    }
+
+    public boolean isPubrelSend() {
+        return getForKey(PUBREL_SEND);
+    }
+
+    public boolean isPubrecReceived() {
+        return getForKey(PUBREC_RECEIVED);
+    }
+
+    public boolean isPubrecSend() {
+        return getForKey(PUBREC_SEND);
+    }
+
+    public boolean isPubcompReceived() {
+        return getForKey(PUBCOMP_RECEIVED);
+    }
+
+    public boolean isPubcompSend() {
+        return getForKey(PUBCOMP_SEND);
+    }
+
     public boolean isVerbose() {
         return getForKey(VERBOSE);
     }
 
-    public boolean allDisabled(){
+    public boolean allDisabled() {
         return !isClientConnect() &&
                 !isClientDisconnect() &&
                 !isPublishSend() &&
                 !isPublishReceived() &&
-                !isSubscribeReceived();
+                !isSubscribeReceived() &&
+                !isSubackSend() &&
+                !isUnsubscribeReceived() &&
+                !isUnsubackSend() &&
+                !isPingreqReceived() &&
+                !isPingresqSend() &&
+                !isPubackReceived() &&
+                !isPubackSend() &&
+                !isPubrecReceived() &&
+                !isPubrecSend() &&
+                !isPubrelReceived() &&
+                !isPubrelSend() &&
+                !isPubcompReceived() &&
+                !isPubcompSend();
     }
 
     private boolean getForKey(final @NotNull String key) {

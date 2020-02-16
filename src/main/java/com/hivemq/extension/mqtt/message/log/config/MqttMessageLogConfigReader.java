@@ -18,7 +18,6 @@
 package com.hivemq.extension.mqtt.message.log.config;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.hivemq.extension.sdk.api.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +27,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.*;
-import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.FALSE;
-import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.TRUE;
 
 public class MqttMessageLogConfigReader {
 
@@ -54,9 +51,31 @@ public class MqttMessageLogConfigReader {
     private void setDefaults() {
         properties.setProperty(CLIENT_CONNECT, TRUE);
         properties.setProperty(CLIENT_DISCONNECT, TRUE);
+
         properties.setProperty(PUBLISH_RECEIVED, TRUE);
         properties.setProperty(PUBLISH_SEND, TRUE);
+
         properties.setProperty(SUBSCRIBE_RECEIVED, TRUE);
+        properties.setProperty(SUBACK_SEND, TRUE);
+
+        properties.setProperty(UNSUBSCRIBE_RECEIVED, TRUE);
+        properties.setProperty(UNSUBACK_SEND, TRUE);
+
+        properties.setProperty(PING_REQ_RECEIVED, FALSE);
+        properties.setProperty(PING_RESP_SEND, FALSE);
+
+        properties.setProperty(PUBACK_RECEIVED, FALSE);
+        properties.setProperty(PUBACK_SEND, FALSE);
+
+        properties.setProperty(PUBREC_RECEIVED, FALSE);
+        properties.setProperty(PUBREC_SEND, FALSE);
+
+        properties.setProperty(PUBREL_RECEIVED, FALSE);
+        properties.setProperty(PUBREL_SEND, FALSE);
+
+        properties.setProperty(PUBCOMP_RECEIVED, FALSE);
+        properties.setProperty(PUBCOMP_SEND, FALSE);
+
         properties.setProperty(VERBOSE, FALSE);
     }
 
