@@ -247,4 +247,18 @@ public class MessageLogUtilTest {
                         "[Topic: 'topic1'], [Topic: 'topic2'] }",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
+
+    @Test
+    public void test_log_pingreq() {
+        MessageLogUtil.logPingreq(createPingreq());
+        assertEquals("Received PING REQUEST from client 'clientid'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pingresp() {
+        MessageLogUtil.logPingresp(createPingresp());
+        assertEquals("Send PING RESPONSE to client 'clientid'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
 }

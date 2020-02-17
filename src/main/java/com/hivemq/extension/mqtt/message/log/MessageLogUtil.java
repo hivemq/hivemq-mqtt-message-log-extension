@@ -20,6 +20,8 @@ package com.hivemq.extension.mqtt.message.log;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
+import com.hivemq.extension.sdk.api.interceptor.pingreq.parameter.PingReqInboundInput;
+import com.hivemq.extension.sdk.api.interceptor.pingresp.parameter.PingRespOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.suback.parameter.SubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundInput;
@@ -269,6 +271,17 @@ public class MessageLogUtil {
         log.info("Send UNSUBACK to client '{}': {}, Reason String: {}, {}", clientId, unsuback.toString(), reasonString, userPropertiesAsString);
     }
 
+    public static void logPingreq(final @NotNull PingReqInboundInput pingReqInboundInput) {
+        final String clientId = pingReqInboundInput.getClientInformation().getClientId();
+
+        log.info("Received PING REQUEST from client '{}'", clientId);
+    }
+
+    public static void logPingresp(final @NotNull PingRespOutboundInput pingRespOutboundInput) {
+        final String clientId = pingRespOutboundInput.getClientInformation().getClientId();
+
+        log.info("Send PING RESPONSE to client '{}'", clientId);
+    }
     @NotNull
     private static String getPublishAsString(final @NotNull PublishPacket publishPacket, final boolean verbose) {
         final int qos = publishPacket.getQos().getQosNumber();

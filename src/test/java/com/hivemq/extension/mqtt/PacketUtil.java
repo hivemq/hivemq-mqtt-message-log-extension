@@ -4,6 +4,8 @@ import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.parameter.ClientInformation;
 import com.hivemq.extension.sdk.api.client.parameter.ConnectionInformation;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
+import com.hivemq.extension.sdk.api.interceptor.pingreq.parameter.PingReqInboundInput;
+import com.hivemq.extension.sdk.api.interceptor.pingresp.parameter.PingRespOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.suback.parameter.SubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundInput;
@@ -784,6 +786,35 @@ public class PacketUtil {
             }
         };
     }
+
+    public static PingReqInboundInput createPingreq() {
+        return new PingReqInboundInput() {
+            @Override
+            public @NotNull ConnectionInformation getConnectionInformation() {
+                return null;
+            }
+
+            @Override
+            public @NotNull ClientInformation getClientInformation() {
+                return () -> "clientid";
+            }
+        };
+    }
+
+    public static PingRespOutboundInput createPingresp() {
+        return new PingRespOutboundInput() {
+            @Override
+            public @NotNull ConnectionInformation getConnectionInformation() {
+                return null;
+            }
+
+            @Override
+            public @NotNull ClientInformation getClientInformation() {
+                return () -> "clientid";
+            }
+        };
+    }
+
 
     @SuppressWarnings("NullabilityAnnotations")
     public static class TestDisconnect implements DisconnectEventInput {
