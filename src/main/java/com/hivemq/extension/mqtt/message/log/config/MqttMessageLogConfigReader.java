@@ -61,20 +61,20 @@ public class MqttMessageLogConfigReader {
         properties.setProperty(UNSUBSCRIBE_RECEIVED, TRUE);
         properties.setProperty(UNSUBACK_SEND, TRUE);
 
-        properties.setProperty(PING_REQ_RECEIVED, FALSE);
-        properties.setProperty(PING_RESP_SEND, FALSE);
+        properties.setProperty(PING_REQ_RECEIVED, TRUE);
+        properties.setProperty(PING_RESP_SEND, TRUE);
 
-        properties.setProperty(PUBACK_RECEIVED, FALSE);
-        properties.setProperty(PUBACK_SEND, FALSE);
+        properties.setProperty(PUBACK_RECEIVED, TRUE);
+        properties.setProperty(PUBACK_SEND, TRUE);
 
-        properties.setProperty(PUBREC_RECEIVED, FALSE);
-        properties.setProperty(PUBREC_SEND, FALSE);
+        properties.setProperty(PUBREC_RECEIVED, TRUE);
+        properties.setProperty(PUBREC_SEND, TRUE);
 
-        properties.setProperty(PUBREL_RECEIVED, FALSE);
-        properties.setProperty(PUBREL_SEND, FALSE);
+        properties.setProperty(PUBREL_RECEIVED, TRUE);
+        properties.setProperty(PUBREL_SEND, TRUE);
 
-        properties.setProperty(PUBCOMP_RECEIVED, FALSE);
-        properties.setProperty(PUBCOMP_SEND, FALSE);
+        properties.setProperty(PUBCOMP_RECEIVED, TRUE);
+        properties.setProperty(PUBCOMP_SEND, TRUE);
 
         properties.setProperty(VERBOSE, FALSE);
     }
