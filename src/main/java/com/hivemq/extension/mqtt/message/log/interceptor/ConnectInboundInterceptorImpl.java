@@ -41,7 +41,8 @@ public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor 
     }
 
     @Override
-    public void onConnect(final @NotNull ConnectInboundInput connectInboundInput, final @NotNull ConnectInboundOutput connectInboundOutput) {
+    public void onConnect(final @NotNull ConnectInboundInput connectInboundInput,
+                          final @NotNull ConnectInboundOutput connectInboundOutput) {
         try {
             final ConnectPacket connectPacket = connectInboundInput.getConnectPacket();
             MessageLogUtil.logConnect(connectPacket, verbose);

@@ -1,14 +1,16 @@
 package com.hivemq.extension.mqtt.message.log.config;
 
+import com.hivemq.extension.sdk.api.annotations.NotNull;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.Properties;
 
-import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.VERBOSE;
+import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Florian Limpöck
@@ -16,20 +18,31 @@ import static org.junit.Assert.*;
  */
 public class MqttMessageLogConfigReaderTest {
 
+    final Matcher<Iterable<? extends @NotNull String>> matcher = containsInAnyOrder(CLIENT_CONNECT, CLIENT_DISCONNECT,
+            PUBLISH_RECEIVED, PUBLISH_SEND,
+            SUBSCRIBE_RECEIVED, SUBACK_SEND,
+            UNSUBSCRIBE_RECEIVED, UNSUBACK_SEND,
+            PING_REQ_RECEIVED, PING_RESP_SEND,
+            PUBACK_RECEIVED, PUBACK_SEND,
+            PUBREC_RECEIVED, PUBREC_SEND,
+            PUBREL_RECEIVED, PUBREL_SEND,
+            PUBCOMP_RECEIVED, PUBCOMP_SEND,
+            VERBOSE);
+
     @Test
-    public void defaultPropertiesWhenNopropertyFileInConfigFolder() {
+    public void defaultPropertiesWhenNoPropertyFileInConfigFolder() {
         final Properties properties = getProperties("src/test/resources/empty-conf");
 
-        assertThat(properties.size(), is(6));
-        assertThat(properties.stringPropertyNames(), containsInAnyOrder(MqttMessageLogConfig.CLIENT_CONNECT, MqttMessageLogConfig.CLIENT_DISCONNECT, MqttMessageLogConfig.PUBLISH_RECEIVED, MqttMessageLogConfig.PUBLISH_SEND, MqttMessageLogConfig.SUBSCRIBE_RECEIVED, VERBOSE));
+        assertThat(properties.size(), is(19));
+        assertThat(properties.stringPropertyNames(), matcher);
     }
 
     @Test
-    public void nonEmptyPropertiesWhenpropertyFileInConfigFolder() {
+    public void nonEmptyPropertiesWhenPropertyFileInConfigFolder() {
         final Properties properties = getProperties("src/test/resources/test-conf");
 
-        assertThat(properties.size(), is(6));
-        assertThat(properties.stringPropertyNames(), containsInAnyOrder(MqttMessageLogConfig.CLIENT_CONNECT, MqttMessageLogConfig.CLIENT_DISCONNECT, MqttMessageLogConfig.PUBLISH_RECEIVED, MqttMessageLogConfig.PUBLISH_SEND, MqttMessageLogConfig.SUBSCRIBE_RECEIVED, VERBOSE));
+        assertThat(properties.size(), is(19));
+        assertThat(properties.stringPropertyNames(), matcher);
     }
 
     private Properties getProperties(final String confPath) {

@@ -40,7 +40,8 @@ public class SubscribeInboundInterceptorImpl implements SubscribeInboundIntercep
     }
 
     @Override
-    public void onInboundSubscribe(final @NotNull SubscribeInboundInput subscribeInboundInput, final @NotNull SubscribeInboundOutput subscribeInboundOutput) {
+    public void onInboundSubscribe(final @NotNull SubscribeInboundInput subscribeInboundInput,
+                                   final @NotNull SubscribeInboundOutput subscribeInboundOutput) {
         try {
             MessageLogUtil.logSubscribe(subscribeInboundInput, verbose);
         } catch (final Exception e) {

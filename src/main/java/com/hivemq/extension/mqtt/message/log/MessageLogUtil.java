@@ -204,19 +204,20 @@ public class MessageLogUtil {
                     .append("'],");
         }
 
+        suback.deleteCharAt(suback.length() - 1); //delete last comma
+        suback.append(" }");
+
         if (!verbose) {
-            suback.deleteCharAt(suback.length() - 1); //delete last comma
-            suback.append(" }");
             log.info("Send SUBACK to client '{}': {}", clientId, suback.toString());
             return;
         }
 
         final String userPropertiesAsString = getUserPropertiesAsString(subackPacket.getUserProperties());
+        final String reasonString = subackPacket.getReasonString().orElse(null);
 
-        log.info("Send SUBACK to client '{}': {}, {}", clientId, suback.toString(), userPropertiesAsString);
+        log.info("Send SUBACK to client '{}': {}, Reason String: {}, {}", clientId, suback.toString(), reasonString, userPropertiesAsString);
     }
 
-    @NotNull
     public static void logUnsubscribe(final @NotNull UnsubscribeInboundInput unsubscribeInboundInput, final boolean verbose) {
         final StringBuilder topics = new StringBuilder();
         @NotNull final String clientId = unsubscribeInboundInput.getClientInformation().getClientId();
@@ -229,10 +230,10 @@ public class MessageLogUtil {
                     .append("'],");
         }
 
-        if (!verbose) {
-            topics.deleteCharAt(topics.length() - 1); //delete last comma
-            topics.append(" }");
+        topics.deleteCharAt(topics.length() - 1); //delete last comma
+        topics.append(" }");
 
+        if (!verbose) {
             log.info("Received UNSUBSCRIBE from client '{}': {}", clientId, topics.toString());
             return;
         }
@@ -254,16 +255,18 @@ public class MessageLogUtil {
                     .append("'],");
         }
 
+        unsuback.deleteCharAt(unsuback.length() - 1); //delete last comma
+        unsuback.append(" }");
+
         if (!verbose) {
-            unsuback.deleteCharAt(unsuback.length() - 1); //delete last comma
-            unsuback.append(" }");
             log.info("Send UNSUBACK to client '{}': {}", clientId, unsuback.toString());
             return;
         }
 
         final String userPropertiesAsString = getUserPropertiesAsString(unsubackPacket.getUserProperties());
+        final String reasonString = unsubackPacket.getReasonString().orElse(null);
 
-        log.info("Send UNSUBACK to client '{}': {}, {}", clientId, unsuback.toString(), userPropertiesAsString);
+        log.info("Send UNSUBACK to client '{}': {}, Reason String: {}, {}", clientId, unsuback.toString(), reasonString, userPropertiesAsString);
     }
 
     @NotNull
