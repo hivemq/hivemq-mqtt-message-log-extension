@@ -13,8 +13,15 @@ import com.hivemq.extension.sdk.api.interceptor.unsubscribe.parameter.Unsubscrib
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
 import com.hivemq.extension.sdk.api.packets.general.*;
+import com.hivemq.extension.sdk.api.packets.puback.PubackPacket;
+import com.hivemq.extension.sdk.api.packets.pubcomp.PubcompPacket;
+import com.hivemq.extension.sdk.api.packets.pubcomp.PubcompReasonCode;
+import com.hivemq.extension.sdk.api.packets.publish.AckReasonCode;
 import com.hivemq.extension.sdk.api.packets.publish.PayloadFormatIndicator;
 import com.hivemq.extension.sdk.api.packets.publish.PublishPacket;
+import com.hivemq.extension.sdk.api.packets.pubrec.PubrecPacket;
+import com.hivemq.extension.sdk.api.packets.pubrel.PubrelPacket;
+import com.hivemq.extension.sdk.api.packets.pubrel.PubrelReasonCode;
 import com.hivemq.extension.sdk.api.packets.suback.SubackPacket;
 import com.hivemq.extension.sdk.api.packets.subscribe.RetainHandling;
 import com.hivemq.extension.sdk.api.packets.subscribe.SubackReasonCode;
@@ -815,6 +822,197 @@ public class PacketUtil {
         };
     }
 
+    public static PubackPacket createEmptyPuback() {
+        return new PubackPacket() {
+            @Override
+            public int getPacketIdentifier() {
+                return 10;
+            }
+
+            @Override
+            public @NotNull AckReasonCode getReasonCode() {
+                return AckReasonCode.NO_MATCHING_SUBSCRIBERS;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return null;
+            }
+        };
+    }
+
+    public static PubackPacket createFullPuback() {
+        return new PubackPacket() {
+            @Override
+            public int getPacketIdentifier() {
+                return 10;
+            }
+
+            @Override
+            public @NotNull AckReasonCode getReasonCode() {
+                return AckReasonCode.NO_MATCHING_SUBSCRIBERS;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.of("Okay");
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return new PacketUtil.TestUserProperties(2);
+            }
+        };
+    }
+
+    public static PubrecPacket createEmptyPubrec() {
+        return new PubrecPacket() {
+            @Override
+            public int getPacketIdentifier() {
+                return 10;
+            }
+
+            @Override
+            public @NotNull AckReasonCode getReasonCode() {
+                return AckReasonCode.NO_MATCHING_SUBSCRIBERS;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return null;
+            }
+        };
+    }
+
+    public static PubrecPacket createFullPubrec() {
+        return new PubrecPacket() {
+            @Override
+            public int getPacketIdentifier() {
+                return 10;
+            }
+
+            @Override
+            public @NotNull AckReasonCode getReasonCode() {
+                return AckReasonCode.SUCCESS;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.of("Okay");
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return new PacketUtil.TestUserProperties(1);
+            }
+        };
+    }
+
+    public static PubrelPacket createEmptyPubrel() {
+        return new PubrelPacket() {
+            @Override
+            public int getPacketIdentifier() {
+                return 10;
+            }
+
+            @Override
+            public @NotNull PubrelReasonCode getReasonCode() {
+                return PubrelReasonCode.SUCCESS;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return null;
+            }
+        };
+    }
+
+    public static PubrelPacket createFullPubrel() {
+        return new PubrelPacket() {
+            @Override
+            public int getPacketIdentifier() {
+                return 10;
+            }
+
+            @Override
+            public @NotNull PubrelReasonCode getReasonCode() {
+                return PubrelReasonCode.PACKET_IDENTIFIER_NOT_FOUND;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.of("Okay");
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return new PacketUtil.TestUserProperties(1);
+            }
+        };
+    }
+
+    public static PubcompPacket createEmptyPubcomp() {
+        return new PubcompPacket() {
+            @Override
+            public int getPacketIdentifier() {
+                return 10;
+            }
+
+            @Override
+            public @NotNull PubcompReasonCode getReasonCode() {
+                return PubcompReasonCode.SUCCESS;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return null;
+            }
+        };
+    }
+
+    public static PubcompPacket createFullPubcomp() {
+        return new PubcompPacket() {
+            @Override
+            public int getPacketIdentifier() {
+                return 10;
+            }
+
+            @Override
+            public @NotNull PubcompReasonCode getReasonCode() {
+                return PubcompReasonCode.PACKET_IDENTIFIER_NOT_FOUND;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.of("Okay");
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return new PacketUtil.TestUserProperties(1);
+            }
+        };
+    }
 
     @SuppressWarnings("NullabilityAnnotations")
     public static class TestDisconnect implements DisconnectEventInput {

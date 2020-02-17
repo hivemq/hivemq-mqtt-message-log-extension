@@ -30,8 +30,15 @@ import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
 import com.hivemq.extension.sdk.api.packets.general.UserProperties;
 import com.hivemq.extension.sdk.api.packets.general.UserProperty;
+import com.hivemq.extension.sdk.api.packets.puback.PubackPacket;
+import com.hivemq.extension.sdk.api.packets.pubcomp.PubcompPacket;
+import com.hivemq.extension.sdk.api.packets.pubcomp.PubcompReasonCode;
+import com.hivemq.extension.sdk.api.packets.publish.AckReasonCode;
 import com.hivemq.extension.sdk.api.packets.publish.PayloadFormatIndicator;
 import com.hivemq.extension.sdk.api.packets.publish.PublishPacket;
+import com.hivemq.extension.sdk.api.packets.pubrec.PubrecPacket;
+import com.hivemq.extension.sdk.api.packets.pubrel.PubrelPacket;
+import com.hivemq.extension.sdk.api.packets.pubrel.PubrelReasonCode;
 import com.hivemq.extension.sdk.api.packets.suback.SubackPacket;
 import com.hivemq.extension.sdk.api.packets.subscribe.SubackReasonCode;
 import com.hivemq.extension.sdk.api.packets.subscribe.SubscribePacket;
@@ -217,7 +224,7 @@ public class MessageLogUtil {
         final String userPropertiesAsString = getUserPropertiesAsString(subackPacket.getUserProperties());
         final String reasonString = subackPacket.getReasonString().orElse(null);
 
-        log.info("Send SUBACK to client '{}': {}, Reason String: {}, {}", clientId, suback.toString(), reasonString, userPropertiesAsString);
+        log.info("Send SUBACK to client '{}': {}, Reason String: '{}', {}", clientId, suback.toString(), reasonString, userPropertiesAsString);
     }
 
     public static void logUnsubscribe(final @NotNull UnsubscribeInboundInput unsubscribeInboundInput, final boolean verbose) {
@@ -268,7 +275,7 @@ public class MessageLogUtil {
         final String userPropertiesAsString = getUserPropertiesAsString(unsubackPacket.getUserProperties());
         final String reasonString = unsubackPacket.getReasonString().orElse(null);
 
-        log.info("Send UNSUBACK to client '{}': {}, Reason String: {}, {}", clientId, unsuback.toString(), reasonString, userPropertiesAsString);
+        log.info("Send UNSUBACK to client '{}': {}, Reason String: '{}', {}", clientId, unsuback.toString(), reasonString, userPropertiesAsString);
     }
 
     public static void logPingreq(final @NotNull PingReqInboundInput pingReqInboundInput) {
@@ -282,6 +289,107 @@ public class MessageLogUtil {
 
         log.info("Send PING RESPONSE to client '{}'", clientId);
     }
+
+    public static void logPuback(final @NotNull PubackPacket pubackPacket,
+                                 final @NotNull String clientId,
+                                 final boolean inbound,
+                                 final boolean verbose) {
+        final AckReasonCode reasonCode = pubackPacket.getReasonCode();
+
+        if (!verbose) {
+            if (inbound) {
+                log.info("Received PUBACK from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            } else {
+                log.info("Send PUBACK to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            }
+            return;
+        }
+
+        final String userPropertiesAsString = getUserPropertiesAsString(pubackPacket.getUserProperties());
+        final String reasonString = pubackPacket.getReasonString().orElse(null);
+
+        if (inbound) {
+            log.info("Received PUBACK from client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+        } else {
+            log.info("Send PUBACK to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+        }
+    }
+
+    public static void logPubrec(final @NotNull PubrecPacket pubrecPacket,
+                                 final @NotNull String clientId,
+                                 final boolean inbound,
+                                 final boolean verbose) {
+        final AckReasonCode reasonCode = pubrecPacket.getReasonCode();
+
+        if (!verbose) {
+            if (inbound) {
+                log.info("Received PUBREC from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            } else {
+                log.info("Send PUBREC to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            }
+            return;
+        }
+
+        final String userPropertiesAsString = getUserPropertiesAsString(pubrecPacket.getUserProperties());
+        final String reasonString = pubrecPacket.getReasonString().orElse(null);
+
+        if (inbound) {
+            log.info("Received PUBREC from client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+        } else {
+            log.info("Send PUBREC to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+        }
+    }
+
+    public static void logPubrel(final @NotNull PubrelPacket pubrelPacket,
+                                 final @NotNull String clientId,
+                                 final boolean inbound,
+                                 final boolean verbose) {
+        final PubrelReasonCode reasonCode = pubrelPacket.getReasonCode();
+
+        if (!verbose) {
+            if (inbound) {
+                log.info("Received PUBREL from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            } else {
+                log.info("Send PUBREL to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            }
+            return;
+        }
+
+        final String userPropertiesAsString = getUserPropertiesAsString(pubrelPacket.getUserProperties());
+        final String reasonString = pubrelPacket.getReasonString().orElse(null);
+
+        if (inbound) {
+            log.info("Received PUBREL from client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+        } else {
+            log.info("Send PUBREL to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+        }
+    }
+
+    public static void logPubcomp(final @NotNull PubcompPacket pubcompPacket,
+                                  final @NotNull String clientId,
+                                  final boolean inbound,
+                                  final boolean verbose) {
+        final PubcompReasonCode reasonCode = pubcompPacket.getReasonCode();
+
+        if (!verbose) {
+            if (inbound) {
+                log.info("Received PUBCOMP from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            } else {
+                log.info("Send PUBCOMP to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            }
+            return;
+        }
+
+        final String userPropertiesAsString = getUserPropertiesAsString(pubcompPacket.getUserProperties());
+        final String reasonString = pubcompPacket.getReasonString().orElse(null);
+
+        if (inbound) {
+            log.info("Received PUBCOMP from client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+        } else {
+            log.info("Send PUBCOMP to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+        }
+    }
+
     @NotNull
     private static String getPublishAsString(final @NotNull PublishPacket publishPacket, final boolean verbose) {
         final int qos = publishPacket.getQos().getQosNumber();
