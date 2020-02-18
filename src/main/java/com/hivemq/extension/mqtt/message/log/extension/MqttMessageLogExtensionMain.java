@@ -19,15 +19,13 @@ package com.hivemq.extension.mqtt.message.log.extension;
 
 import com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig;
 import com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfigReader;
-import com.hivemq.extension.mqtt.message.log.interceptor.*;
+import com.hivemq.extension.mqtt.message.log.initializer.CommunityInitializer;
+import com.hivemq.extension.mqtt.message.log.initializer.EnterpriseInitializer;
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.hivemq.extension.sdk.api.annotations.Nullable;
-import com.hivemq.extension.sdk.api.interceptor.publish.PublishInboundInterceptor;
-import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundInterceptor;
-import com.hivemq.extension.sdk.api.interceptor.subscribe.SubscribeInboundInterceptor;
 import com.hivemq.extension.sdk.api.parameter.*;
 import com.hivemq.extension.sdk.api.services.Services;
+import com.hivemq.extension.sdk.api.services.admin.LicenseEdition;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,16 +42,41 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
     public void extensionStart(final @NotNull ExtensionStartInput extensionStartInput, final @NotNull ExtensionStartOutput extensionStartOutput) {
 
         try {
+            extensionStartInput.getServerInformation();
+        } catch (final NoSuchMethodError e) {
+            // only a version that is not supported will throw this exception
+            extensionStartOutput.preventExtensionStartup("The HiveMQ version is not supported");
+            return;
+        }
+
+        try {
             final MqttMessageLogConfigReader configReader = new MqttMessageLogConfigReader(extensionStartInput.getExtensionInformation().getExtensionHomeFolder());
             final MqttMessageLogConfig config = new MqttMessageLogConfig(configReader.readProperties());
-            if(config.allDisabled()){
-                extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() + " start prevented because all properties set to false.");
+
+            if (config.allDisabled()) {
+                extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() + " start prevented because all properties set to false");
                 return;
             }
-            registerMessageLogger(config);
+
+            @NotNull final LicenseEdition edition = Services.adminService().getLicenseInformation().getEdition();
+            @NotNull final String version = extensionStartInput.getServerInformation().getVersion();
+
+            final ClientInitializer initializer = (initializerInput, clientContext) -> {
+
+                if (LicenseEdition.COMMUNITY.equals(edition)) {
+                    final CommunityInitializer communityInitializer = new CommunityInitializer(clientContext, config);
+                    communityInitializer.init();
+
+                } else {
+                    final EnterpriseInitializer enterpriseInitializer = new EnterpriseInitializer(clientContext, version, config);
+                    enterpriseInitializer.init();
+                }
+            };
+
+            Services.initializerRegistry().setClientInitializer(initializer);
 
         } catch (final Exception e) {
-            extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() + " cannot be started.");
+            extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() + " cannot be started");
             log.error(extensionStartInput.getExtensionInformation().getName() + " could not be started. An exception was thrown!", e);
         }
 
@@ -65,72 +88,4 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
         log.info("Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
     }
 
-    private void registerMessageLogger(final @NotNull MqttMessageLogConfig config) {
-        if (config.isClientConnect() && config.isClientDisconnect()) {
-            final ConnectDisconnectEventListener connectDisconnectEventListener = new ConnectDisconnectEventListener(true, config.isVerbose());
-            Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
-        } else if (config.isClientDisconnect()) {
-            final ConnectDisconnectEventListener connectDisconnectEventListener = new ConnectDisconnectEventListener(false, config.isVerbose());
-            Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
-        } else if (config.isClientConnect()) {
-            final ConnectInboundInterceptorImpl connectInboundInterceptor = new ConnectInboundInterceptorImpl(config.isVerbose());
-            Services.interceptorRegistry().setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor);
-        } else {
-            //neither connect nor disconnect enabled
-        }
-        final PublishInboundInterceptor publishInboundInterceptor = createPublishInboundInterceptor(config);
-        final PublishOutboundInterceptor publishOutboundInterceptor = createPublishOutboundInterceptor(config);
-        final SubscribeInboundInterceptor subscribeInboundInterceptor = createSubscribeInboundInterceptor(config);
-
-        if (subscribeInboundInterceptor == null && publishInboundInterceptor == null && publishOutboundInterceptor == null) {
-            return;
-        }
-
-        final ClientInitializer initializer = (initializerInput, clientContext) -> {
-            if (publishInboundInterceptor != null) {
-                clientContext.addPublishInboundInterceptor(publishInboundInterceptor);
-            }
-            if (publishOutboundInterceptor != null) {
-                clientContext.addPublishOutboundInterceptor(publishOutboundInterceptor);
-            }
-            if (subscribeInboundInterceptor != null) {
-                clientContext.addSubscribeInboundInterceptor(subscribeInboundInterceptor);
-            }
-        };
-
-        Services.initializerRegistry().setClientInitializer(initializer);
-    }
-
-    @Nullable
-    private SubscribeInboundInterceptor createSubscribeInboundInterceptor(final @NotNull MqttMessageLogConfig config) {
-        final SubscribeInboundInterceptor subscribeInboundInterceptor;
-        if (config.isSubscribeReceived()) {
-            subscribeInboundInterceptor = new SubscribeInboundInterceptorImpl(config.isVerbose());
-        } else {
-            subscribeInboundInterceptor = null;
-        }
-        return subscribeInboundInterceptor;
-    }
-
-    @Nullable
-    private PublishOutboundInterceptor createPublishOutboundInterceptor(final @NotNull MqttMessageLogConfig config) {
-        final PublishOutboundInterceptor publishOutboundInterceptor;
-        if (config.isPublishSend()) {
-            publishOutboundInterceptor = new PublishOutboundInterceptorImpl(config.isVerbose());
-        } else {
-            publishOutboundInterceptor = null;
-        }
-        return publishOutboundInterceptor;
-    }
-
-    @Nullable
-    private PublishInboundInterceptor createPublishInboundInterceptor(final @NotNull MqttMessageLogConfig config) {
-        final PublishInboundInterceptor publishInboundInterceptor;
-        if (config.isPublishReceived()) {
-            publishInboundInterceptor = new PublishInboundInterceptorImpl(config.isVerbose());
-        } else {
-            publishInboundInterceptor = null;
-        }
-        return publishInboundInterceptor;
-    }
 }
