@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * @author Florian Limpöck
- * @since 4.2.0
+ * @since 1.0.0
  */
 @SuppressWarnings("NullabilityAnnotations")
 public class MessageLogUtilTest {
@@ -83,6 +83,47 @@ public class MessageLogUtilTest {
         MessageLogUtil.logConnect(createFullConnect(), false);
         assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
                         "Session Expiry Interval: '10000'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_connack_verbose_all_set() {
+        MessageLogUtil.logConnack(createFullConnack(), true);
+
+        assertEquals("Send CONNACK to client 'clientid': Reason Code: 'SUCCESS', Session Present: 'false'," +
+                        " Session Expiry Interval: '100', Assigned ClientId 'overwriteClientId', Maximum QoS: 'AT_MOST_ONCE'," +
+                        " Maximum Packet Size: '5', Receive Maximum: '10', Topic Alias Maximum: '5', Reason String: 'Okay'," +
+                        " Response Information: 'Everything fine', Server Keep Alive: '100'," +
+                        " Server Reference: 'Server2', Shared Subscription Available: 'false'," +
+                        " Wildcards Available: 'false', Retain Available: 'false', Subscription Identifiers Available: 'false'," +
+                        " Auth Method: 'JSON', Auth Data (Base64): 'YXV0aCBkYXRh', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_connack_not_verbose_all_set() {
+        MessageLogUtil.logConnack(createFullConnack(), false);
+        assertEquals("Send CONNACK to client 'clientid': Reason Code: 'SUCCESS', Session Present: 'false'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_connack_verbose_none_set() {
+        MessageLogUtil.logConnack(createEmptyConnack(), true);
+        assertEquals("Send CONNACK to client 'clientid': Reason Code: 'SUCCESS', Session Present: 'false'," +
+                        " Session Expiry Interval: 'null', Assigned ClientId 'null', Maximum QoS: 'null'," +
+                        " Maximum Packet Size: '2', Receive Maximum: '1', Topic Alias Maximum: '3', Reason String: 'null'," +
+                        " Response Information: 'null', Server Keep Alive: 'null'," +
+                        " Server Reference: 'null', Shared Subscription Available: 'false'," +
+                        " Wildcards Available: 'false', Retain Available: 'false', Subscription Identifiers Available: 'false'," +
+                        " Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_connack_not_verbose_none_set() {
+        MessageLogUtil.logConnack(createEmptyConnack(), false);
+        assertEquals("Send CONNACK to client 'clientid': Reason Code: 'SUCCESS', Session Present: 'false'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
@@ -264,7 +305,7 @@ public class MessageLogUtilTest {
 
     @Test
     public void test_log_puback_inbound_verbose_all_set() {
-        MessageLogUtil.logPuback(createFullPuback(),"clientid", true, true);
+        MessageLogUtil.logPuback(createFullPuback(), "clientid", true, true);
         assertEquals("Received PUBACK from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'Okay', User Properties: " +
                         "[Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
@@ -272,28 +313,28 @@ public class MessageLogUtilTest {
 
     @Test
     public void test_log_puback_inbound_not_verbose_all_set() {
-        MessageLogUtil.logPuback(createFullPuback(),"clientid", true, false);
+        MessageLogUtil.logPuback(createFullPuback(), "clientid", true, false);
         assertEquals("Received PUBACK from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_puback_inbound_verbose_none_set() {
-        MessageLogUtil.logPuback(createEmptyPuback(),"clientid", true,  true);
+        MessageLogUtil.logPuback(createEmptyPuback(), "clientid", true, true);
         assertEquals("Received PUBACK from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_puback_inbound_not_verbose_none_set() {
-        MessageLogUtil.logPuback(createEmptyPuback(),"clientid", true, false);
+        MessageLogUtil.logPuback(createEmptyPuback(), "clientid", true, false);
         assertEquals("Received PUBACK from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_puback_outbound_verbose_all_set() {
-        MessageLogUtil.logPuback(createFullPuback(),"clientid", false, true);
+        MessageLogUtil.logPuback(createFullPuback(), "clientid", false, true);
         assertEquals("Send PUBACK to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'Okay', User Properties: " +
                         "[Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
@@ -301,28 +342,28 @@ public class MessageLogUtilTest {
 
     @Test
     public void test_log_puback_outbound_not_verbose_all_set() {
-        MessageLogUtil.logPuback(createFullPuback(),"clientid", false, false);
+        MessageLogUtil.logPuback(createFullPuback(), "clientid", false, false);
         assertEquals("Send PUBACK to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_puback_outbound_verbose_none_set() {
-        MessageLogUtil.logPuback(createEmptyPuback(),"clientid", false,  true);
+        MessageLogUtil.logPuback(createEmptyPuback(), "clientid", false, true);
         assertEquals("Send PUBACK to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_puback_outbound_not_verbose_none_set() {
-        MessageLogUtil.logPuback(createEmptyPuback(),"clientid", false, false);
+        MessageLogUtil.logPuback(createEmptyPuback(), "clientid", false, false);
         assertEquals("Send PUBACK to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrec_inbound_verbose_all_set() {
-        MessageLogUtil.logPubrec(createFullPubrec(),"clientid", true, true);
+        MessageLogUtil.logPubrec(createFullPubrec(), "clientid", true, true);
         assertEquals("Received PUBREC from client 'clientid': Reason Code: 'SUCCESS', Reason String: 'Okay', User Properties: " +
                         "[Name: 'name0', Value: 'value0']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
@@ -330,28 +371,28 @@ public class MessageLogUtilTest {
 
     @Test
     public void test_log_pubrec_inbound_not_verbose_all_set() {
-        MessageLogUtil.logPubrec(createFullPubrec(),"clientid", true, false);
+        MessageLogUtil.logPubrec(createFullPubrec(), "clientid", true, false);
         assertEquals("Received PUBREC from client 'clientid': Reason Code: 'SUCCESS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrec_inbound_verbose_none_set() {
-        MessageLogUtil.logPubrec(createEmptyPubrec(),"clientid", true,  true);
+        MessageLogUtil.logPubrec(createEmptyPubrec(), "clientid", true, true);
         assertEquals("Received PUBREC from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrec_inbound_not_verbose_none_set() {
-        MessageLogUtil.logPubrec(createEmptyPubrec(),"clientid", true, false);
+        MessageLogUtil.logPubrec(createEmptyPubrec(), "clientid", true, false);
         assertEquals("Received PUBREC from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrec_outbound_verbose_all_set() {
-        MessageLogUtil.logPubrec(createFullPubrec(),"clientid", false, true);
+        MessageLogUtil.logPubrec(createFullPubrec(), "clientid", false, true);
         assertEquals("Send PUBREC to client 'clientid': Reason Code: 'SUCCESS', Reason String: 'Okay', User Properties: " +
                         "[Name: 'name0', Value: 'value0']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
@@ -359,28 +400,28 @@ public class MessageLogUtilTest {
 
     @Test
     public void test_log_pubrec_outbound_not_verbose_all_set() {
-        MessageLogUtil.logPubrec(createFullPubrec(),"clientid", false, false);
+        MessageLogUtil.logPubrec(createFullPubrec(), "clientid", false, false);
         assertEquals("Send PUBREC to client 'clientid': Reason Code: 'SUCCESS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrec_outbound_verbose_none_set() {
-        MessageLogUtil.logPubrec(createEmptyPubrec(),"clientid", false,  true);
+        MessageLogUtil.logPubrec(createEmptyPubrec(), "clientid", false, true);
         assertEquals("Send PUBREC to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrec_outbound_not_verbose_none_set() {
-        MessageLogUtil.logPubrec(createEmptyPubrec(),"clientid", false, false);
+        MessageLogUtil.logPubrec(createEmptyPubrec(), "clientid", false, false);
         assertEquals("Send PUBREC to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrel_inbound_verbose_all_set() {
-        MessageLogUtil.logPubrel(createFullPubrel(),"clientid", true, true);
+        MessageLogUtil.logPubrel(createFullPubrel(), "clientid", true, true);
         assertEquals("Received PUBREL from client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', User Properties: " +
                         "[Name: 'name0', Value: 'value0']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
@@ -388,28 +429,28 @@ public class MessageLogUtilTest {
 
     @Test
     public void test_log_pubrel_inbound_not_verbose_all_set() {
-        MessageLogUtil.logPubrel(createFullPubrel(),"clientid", true, false);
+        MessageLogUtil.logPubrel(createFullPubrel(), "clientid", true, false);
         assertEquals("Received PUBREL from client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrel_inbound_verbose_none_set() {
-        MessageLogUtil.logPubrel(createEmptyPubrel(),"clientid", true,  true);
+        MessageLogUtil.logPubrel(createEmptyPubrel(), "clientid", true, true);
         assertEquals("Received PUBREL from client 'clientid': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrel_inbound_not_verbose_none_set() {
-        MessageLogUtil.logPubrel(createEmptyPubrel(),"clientid", true, false);
+        MessageLogUtil.logPubrel(createEmptyPubrel(), "clientid", true, false);
         assertEquals("Received PUBREL from client 'clientid': Reason Code: 'SUCCESS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrel_outbound_verbose_all_set() {
-        MessageLogUtil.logPubrel(createFullPubrel(),"clientid", false, true);
+        MessageLogUtil.logPubrel(createFullPubrel(), "clientid", false, true);
         assertEquals("Send PUBREL to client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', User Properties: " +
                         "[Name: 'name0', Value: 'value0']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
@@ -417,28 +458,28 @@ public class MessageLogUtilTest {
 
     @Test
     public void test_log_pubrel_outbound_not_verbose_all_set() {
-        MessageLogUtil.logPubrel(createFullPubrel(),"clientid", false, false);
+        MessageLogUtil.logPubrel(createFullPubrel(), "clientid", false, false);
         assertEquals("Send PUBREL to client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrel_outbound_verbose_none_set() {
-        MessageLogUtil.logPubrel(createEmptyPubrel(),"clientid", false,  true);
+        MessageLogUtil.logPubrel(createEmptyPubrel(), "clientid", false, true);
         assertEquals("Send PUBREL to client 'clientid': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubrel_outbound_not_verbose_none_set() {
-        MessageLogUtil.logPubrel(createEmptyPubrel(),"clientid", false, false);
+        MessageLogUtil.logPubrel(createEmptyPubrel(), "clientid", false, false);
         assertEquals("Send PUBREL to client 'clientid': Reason Code: 'SUCCESS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubcomp_inbound_verbose_all_set() {
-        MessageLogUtil.logPubcomp(createFullPubcomp(),"clientid", true, true);
+        MessageLogUtil.logPubcomp(createFullPubcomp(), "clientid", true, true);
         assertEquals("Received PUBCOMP from client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', User Properties: " +
                         "[Name: 'name0', Value: 'value0']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
@@ -446,28 +487,28 @@ public class MessageLogUtilTest {
 
     @Test
     public void test_log_pubcomp_inbound_not_verbose_all_set() {
-        MessageLogUtil.logPubcomp(createFullPubcomp(),"clientid", true, false);
+        MessageLogUtil.logPubcomp(createFullPubcomp(), "clientid", true, false);
         assertEquals("Received PUBCOMP from client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubcomp_inbound_verbose_none_set() {
-        MessageLogUtil.logPubcomp(createEmptyPubcomp(),"clientid", true,  true);
+        MessageLogUtil.logPubcomp(createEmptyPubcomp(), "clientid", true, true);
         assertEquals("Received PUBCOMP from client 'clientid': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubcomp_inbound_not_verbose_none_set() {
-        MessageLogUtil.logPubcomp(createEmptyPubcomp(),"clientid", true, false);
+        MessageLogUtil.logPubcomp(createEmptyPubcomp(), "clientid", true, false);
         assertEquals("Received PUBCOMP from client 'clientid': Reason Code: 'SUCCESS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubcomp_outbound_verbose_all_set() {
-        MessageLogUtil.logPubcomp(createFullPubcomp(),"clientid", false, true);
+        MessageLogUtil.logPubcomp(createFullPubcomp(), "clientid", false, true);
         assertEquals("Send PUBCOMP to client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', User Properties: " +
                         "[Name: 'name0', Value: 'value0']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
@@ -475,21 +516,21 @@ public class MessageLogUtilTest {
 
     @Test
     public void test_log_pubcomp_outbound_not_verbose_all_set() {
-        MessageLogUtil.logPubcomp(createFullPubcomp(),"clientid", false, false);
+        MessageLogUtil.logPubcomp(createFullPubcomp(), "clientid", false, false);
         assertEquals("Send PUBCOMP to client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubcomp_outbound_verbose_none_set() {
-        MessageLogUtil.logPubcomp(createEmptyPubcomp(),"clientid", false,  true);
+        MessageLogUtil.logPubcomp(createEmptyPubcomp(), "clientid", false, true);
         assertEquals("Send PUBCOMP to client 'clientid': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_pubcomp_outbound_not_verbose_none_set() {
-        MessageLogUtil.logPubcomp(createEmptyPubcomp(),"clientid", false, false);
+        MessageLogUtil.logPubcomp(createEmptyPubcomp(), "clientid", false, false);
         assertEquals("Send PUBCOMP to client 'clientid': Reason Code: 'SUCCESS'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }

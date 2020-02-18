@@ -50,6 +50,8 @@ public class MqttMessageLogConfigReader {
 
     private void setDefaults() {
         properties.setProperty(CLIENT_CONNECT, TRUE);
+        properties.setProperty(CONNACK_SEND, TRUE);
+
         properties.setProperty(CLIENT_DISCONNECT, TRUE);
 
         properties.setProperty(PUBLISH_RECEIVED, TRUE);

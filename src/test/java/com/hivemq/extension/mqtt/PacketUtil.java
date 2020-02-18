@@ -4,12 +4,15 @@ import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.parameter.ClientInformation;
 import com.hivemq.extension.sdk.api.client.parameter.ConnectionInformation;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
+import com.hivemq.extension.sdk.api.interceptor.connack.parameter.ConnackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pingreq.parameter.PingReqInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pingresp.parameter.PingRespOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.suback.parameter.SubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsubscribe.parameter.UnsubscribeInboundInput;
+import com.hivemq.extension.sdk.api.packets.connack.ConnackPacket;
+import com.hivemq.extension.sdk.api.packets.connect.ConnackReasonCode;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
 import com.hivemq.extension.sdk.api.packets.general.*;
@@ -37,7 +40,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * @author Florian Limpöck
  * @author Michael Walter
+ * @version 1.1.0
  */
 public class PacketUtil {
 
@@ -790,6 +795,234 @@ public class PacketUtil {
             @Override
             public @NotNull Optional<ByteBuffer> getPassword() {
                 return Optional.of(ByteBuffer.wrap("the password".getBytes()));
+            }
+        };
+    }
+
+    public static ConnackOutboundInput createEmptyConnack() {
+        return new ConnackOutboundInput() {
+            @Override
+            public @NotNull ConnackPacket getConnackPacket() {
+                return new ConnackPacket() {
+                    @Override
+                    public @NotNull Optional<Long> getSessionExpiryInterval() {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    public @NotNull Optional<Integer> getServerKeepAlive() {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    public int getReceiveMaximum() {
+                        return 1;
+                    }
+
+                    @Override
+                    public int getMaximumPacketSize() {
+                        return 2;
+                    }
+
+                    @Override
+                    public int getTopicAliasMaximum() {
+                        return 3;
+                    }
+
+                    @Override
+                    public @NotNull Optional<Qos> getMaximumQoS() {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    public @NotNull UserProperties getUserProperties() {
+                        return null;
+                    }
+
+                    @Override
+                    public @NotNull ConnackReasonCode getReasonCode() {
+                        return ConnackReasonCode.SUCCESS;
+                    }
+
+                    @Override
+                    public boolean getSessionPresent() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean getRetainAvailable() {
+                        return false;
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getAssignedClientIdentifier() {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getReasonString() {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    public boolean getWildCardSubscriptionAvailable() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean getSubscriptionIdentifiersAvailable() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean getSharedSubscriptionsAvailable() {
+                        return false;
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getResponseInformation() {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getServerReference() {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getAuthenticationMethod() {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    public @NotNull Optional<ByteBuffer> getAuthenticationData() {
+                        return Optional.empty();
+                    }
+                };
+            }
+
+            @Override
+            public @NotNull ConnectionInformation getConnectionInformation() {
+                return null;
+            }
+
+            @Override
+            public @NotNull ClientInformation getClientInformation() {
+                return () -> "clientid";
+            }
+        };
+    }
+
+    public static ConnackOutboundInput createFullConnack() {
+        return new ConnackOutboundInput() {
+            @Override
+            public @NotNull ConnackPacket getConnackPacket() {
+                return new ConnackPacket() {
+                    @Override
+                    public @NotNull Optional<Long> getSessionExpiryInterval() {
+                        return Optional.of(100L);
+                    }
+
+                    @Override
+                    public @NotNull Optional<Integer> getServerKeepAlive() {
+                        return Optional.of(100);
+                    }
+
+                    @Override
+                    public int getReceiveMaximum() {
+                        return 10;
+                    }
+
+                    @Override
+                    public int getMaximumPacketSize() {
+                        return 5;
+                    }
+
+                    @Override
+                    public int getTopicAliasMaximum() {
+                        return 5;
+                    }
+
+                    @Override
+                    public @NotNull Optional<Qos> getMaximumQoS() {
+                        return Optional.of(Qos.AT_MOST_ONCE);
+                    }
+
+                    @Override
+                    public @NotNull UserProperties getUserProperties() {
+                        return new PacketUtil.TestUserProperties(2);
+                    }
+
+                    @Override
+                    public @NotNull ConnackReasonCode getReasonCode() {
+                        return ConnackReasonCode.SUCCESS;
+                    }
+
+                    @Override
+                    public boolean getSessionPresent() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean getRetainAvailable() {
+                        return false;
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getAssignedClientIdentifier() {
+                        return Optional.of("overwriteClientId");
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getReasonString() {
+                        return Optional.of("Okay");
+                    }
+
+                    @Override
+                    public boolean getWildCardSubscriptionAvailable() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean getSubscriptionIdentifiersAvailable() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean getSharedSubscriptionsAvailable() {
+                        return false;
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getResponseInformation() {
+                        return Optional.of("Everything fine");
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getServerReference() {
+                        return Optional.of("Server2");
+                    }
+
+                    @Override
+                    public @NotNull Optional<String> getAuthenticationMethod() {
+                        return Optional.of("JSON");
+                    }
+
+                    @Override
+                    public @NotNull Optional<ByteBuffer> getAuthenticationData() {
+                        return Optional.of(ByteBuffer.wrap("auth data".getBytes()));
+                    }
+                };
+            }
+
+            @Override
+            public @NotNull ConnectionInformation getConnectionInformation() {
+                return null;
+            }
+
+            @Override
+            public @NotNull ClientInformation getClientInformation() {
+                return () -> "clientid";
             }
         };
     }

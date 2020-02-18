@@ -18,15 +18,10 @@
 package com.hivemq.extension.mqtt.message.log.config;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
 public class MqttMessageLogConfig {
-
-    @NotNull
-    private static final Logger log = LoggerFactory.getLogger(MqttMessageLogConfig.class);
 
     @NotNull
     static final String TRUE = "true";
@@ -38,6 +33,8 @@ public class MqttMessageLogConfig {
     static final String CLIENT_CONNECT = "client-connect";
     @NotNull
     static final String CLIENT_DISCONNECT = "client-disconnect";
+    @NotNull
+    static final String CONNACK_SEND = "connack-send";
     @NotNull
     static final String PUBLISH_RECEIVED = "publish-received";
     @NotNull
@@ -84,6 +81,10 @@ public class MqttMessageLogConfig {
 
     public boolean isClientDisconnect() {
         return getForKey(CLIENT_DISCONNECT);
+    }
+
+    public boolean isConnackSend() {
+        return getForKey(CONNACK_SEND);
     }
 
     public boolean isPublishReceived() {
@@ -157,6 +158,7 @@ public class MqttMessageLogConfig {
     public boolean allDisabled() {
         return !isClientConnect() &&
                 !isClientDisconnect() &&
+                !isConnackSend() &&
                 !isPublishSend() &&
                 !isPublishReceived() &&
                 !isSubscribeReceived() &&

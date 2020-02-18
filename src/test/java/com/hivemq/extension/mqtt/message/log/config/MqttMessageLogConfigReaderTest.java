@@ -18,7 +18,10 @@ import static org.junit.Assert.assertThat;
  */
 public class MqttMessageLogConfigReaderTest {
 
-    final Matcher<Iterable<? extends @NotNull String>> matcher = containsInAnyOrder(CLIENT_CONNECT, CLIENT_DISCONNECT,
+    private final int totalAvailableFlags = 20;
+
+    private final Matcher<Iterable<? extends @NotNull String>> matcher = containsInAnyOrder(CLIENT_CONNECT, CONNACK_SEND,
+            CLIENT_DISCONNECT,
             PUBLISH_RECEIVED, PUBLISH_SEND,
             SUBSCRIBE_RECEIVED, SUBACK_SEND,
             UNSUBSCRIBE_RECEIVED, UNSUBACK_SEND,
@@ -33,7 +36,7 @@ public class MqttMessageLogConfigReaderTest {
     public void defaultPropertiesWhenNoPropertyFileInConfigFolder() {
         final Properties properties = getProperties("src/test/resources/empty-conf");
 
-        assertThat(properties.size(), is(19));
+        assertThat(properties.size(), is(totalAvailableFlags));
         assertThat(properties.stringPropertyNames(), matcher);
     }
 
@@ -41,7 +44,7 @@ public class MqttMessageLogConfigReaderTest {
     public void nonEmptyPropertiesWhenPropertyFileInConfigFolder() {
         final Properties properties = getProperties("src/test/resources/test-conf");
 
-        assertThat(properties.size(), is(19));
+        assertThat(properties.size(), is(totalAvailableFlags));
         assertThat(properties.stringPropertyNames(), matcher);
     }
 

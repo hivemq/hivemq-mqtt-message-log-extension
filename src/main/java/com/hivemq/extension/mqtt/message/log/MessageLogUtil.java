@@ -20,12 +20,14 @@ package com.hivemq.extension.mqtt.message.log;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
+import com.hivemq.extension.sdk.api.interceptor.connack.parameter.ConnackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pingreq.parameter.PingReqInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pingresp.parameter.PingRespOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.suback.parameter.SubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsubscribe.parameter.UnsubscribeInboundInput;
+import com.hivemq.extension.sdk.api.packets.connack.ConnackPacket;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
 import com.hivemq.extension.sdk.api.packets.general.UserProperties;
@@ -135,6 +137,56 @@ public class MessageLogUtil {
                 authDataAsString,
                 userPropertiesAsString,
                 willString);
+    }
+
+    public static void logConnack(final @NotNull ConnackOutboundInput connackOutboundInput, final boolean verbose) {
+
+        final @NotNull String clientId = connackOutboundInput.getClientInformation().getClientId();
+        final @NotNull ConnackPacket connackPacket = connackOutboundInput.getConnackPacket();
+
+        if (!verbose) {
+            log.info("Send CONNACK to client '{}': Reason Code: '{}', Session Present: '{}'",
+                    clientId,
+                    connackPacket.getReasonCode().toString(),
+                    connackPacket.getSessionPresent());
+            return;
+        }
+
+        final String userPropertiesAsString = getUserPropertiesAsString(connackPacket.getUserProperties());
+
+        final String authDataAsString;
+        if (connackPacket.getAuthenticationData().isPresent()) {
+            authDataAsString = getStringFromByteBuffer(Base64.getEncoder().encode(connackPacket.getAuthenticationData().get()));
+        } else {
+            authDataAsString = null;
+        }
+
+        log.info("Send CONNACK to client '{}': Reason Code: '{}', Session Present: '{}', Session Expiry Interval: '{}'," +
+                        " Assigned ClientId '{}', Maximum QoS: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}'," +
+                        " Topic Alias Maximum: '{}', Reason String: '{}', Response Information: '{}', Server Keep Alive: '{}'," +
+                        " Server Reference: '{}', Shared Subscription Available: '{}', Wildcards Available: '{}'," +
+                        " Retain Available: '{}', Subscription Identifiers Available: '{}'," +
+                        " Auth Method: '{}', Auth Data (Base64): '{}', {}",
+                clientId,
+                connackPacket.getReasonCode().toString(),
+                connackPacket.getSessionPresent(),
+                connackPacket.getSessionExpiryInterval().orElse(null),
+                connackPacket.getAssignedClientIdentifier().orElse(null),
+                connackPacket.getMaximumQoS().orElse(null),
+                connackPacket.getMaximumPacketSize(),
+                connackPacket.getReceiveMaximum(),
+                connackPacket.getTopicAliasMaximum(),
+                connackPacket.getReasonString().orElse(null),
+                connackPacket.getResponseInformation().orElse(null),
+                connackPacket.getServerKeepAlive().orElse(null),
+                connackPacket.getServerReference().orElse(null),
+                connackPacket.getSharedSubscriptionsAvailable(),
+                connackPacket.getWildCardSubscriptionAvailable(),
+                connackPacket.getRetainAvailable(),
+                connackPacket.getSubscriptionIdentifiersAvailable(),
+                connackPacket.getAuthenticationMethod().orElse(null),
+                authDataAsString,
+                userPropertiesAsString);
     }
 
     @NotNull
