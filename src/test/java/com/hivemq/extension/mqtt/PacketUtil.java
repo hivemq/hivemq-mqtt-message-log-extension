@@ -15,6 +15,8 @@ import com.hivemq.extension.sdk.api.packets.connack.ConnackPacket;
 import com.hivemq.extension.sdk.api.packets.connect.ConnackReasonCode;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
+import com.hivemq.extension.sdk.api.packets.disconnect.DisconnectPacket;
+import com.hivemq.extension.sdk.api.packets.disconnect.DisconnectReasonCode;
 import com.hivemq.extension.sdk.api.packets.general.*;
 import com.hivemq.extension.sdk.api.packets.puback.PubackPacket;
 import com.hivemq.extension.sdk.api.packets.pubcomp.PubcompPacket;
@@ -795,6 +797,64 @@ public class PacketUtil {
             @Override
             public @NotNull Optional<ByteBuffer> getPassword() {
                 return Optional.of(ByteBuffer.wrap("the password".getBytes()));
+            }
+        };
+    }
+
+    public static DisconnectPacket createEmptyDisconnect() {
+        return new DisconnectPacket() {
+            @Override
+            public @NotNull DisconnectReasonCode getReasonCode() {
+                return DisconnectReasonCode.NOT_AUTHORIZED;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull Optional<Long> getSessionExpiryInterval() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull Optional<String> getServerReference() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return null;
+            }
+        };
+    }
+
+    public static DisconnectPacket createFullDisconnect() {
+        return new DisconnectPacket() {
+            @Override
+            public @NotNull DisconnectReasonCode getReasonCode() {
+                return DisconnectReasonCode.NOT_AUTHORIZED;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.of("Okay");
+            }
+
+            @Override
+            public @NotNull Optional<Long> getSessionExpiryInterval() {
+                return Optional.of(123L);
+            }
+
+            @Override
+            public @NotNull Optional<String> getServerReference() {
+                return Optional.of("Server2");
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return new PacketUtil.TestUserProperties(2);
             }
         };
     }

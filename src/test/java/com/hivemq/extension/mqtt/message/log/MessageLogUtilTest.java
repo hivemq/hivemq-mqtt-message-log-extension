@@ -23,30 +23,86 @@ public class MessageLogUtilTest {
     }
 
     @Test
-    public void test_log_disconnect_verbose_all_set() {
+    public void test_log_lifecycle_disconnect_verbose_all_set() {
         MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(DisconnectedReasonCode.BAD_AUTHENTICATION_METHOD, "ReasonString", new TestUserProperties(5)), true);
         assertEquals("Received DISCONNECT from client 'clientid'. Reason Code: 'BAD_AUTHENTICATION_METHOD', Reason String: 'ReasonString', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2'], [Name: 'name3', Value: 'value3'], [Name: 'name4', Value: 'value4']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
-    public void test_log_disconnect_verbose_none_set() {
+    public void test_log_lifecycle_disconnect_verbose_none_set() {
         MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(null, null, null), true);
         assertEquals("Received DISCONNECT from client 'clientid'. Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
-    public void test_log_disconnect_verbose_user_properties_empty() {
+    public void test_log_lifecycle_disconnect_verbose_user_properties_empty() {
         MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(null, null, new TestUserProperties(0)), true);
         assertEquals("Received DISCONNECT from client 'clientid'. Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
-    public void test_log_disconnect_not_verbose() {
+    public void test_log_lifecycle_disconnect_not_verbose() {
         MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(null, null, null), false);
         assertEquals("Received DISCONNECT from client 'clientid'.",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_inbound_disconnect_verbose_all_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",true, true);
+        assertEquals("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED', Reason String: 'Okay', Server Reference: 'Server2', Session Expiry: '123', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_inbound_disconnect_verbose_none_set() {
+        MessageLogUtil.logDisconnect(createEmptyDisconnect(), "clientId", true,true);
+        assertEquals("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED', Reason String: 'null', Server Reference: 'null', Session Expiry: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_inbound_disconnect_not_verbose_all_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",true, false);
+        assertEquals("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_inbound_disconnect_not_verbose_none_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",true, false);
+        assertEquals("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_outound_disconnect_verbose_all_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",false, true);
+        assertEquals("Send DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED', Reason String: 'Okay', Server Reference: 'Server2', Session Expiry: '123', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_outound_disconnect_verbose_none_set() {
+        MessageLogUtil.logDisconnect(createEmptyDisconnect(), "clientId", false,true);
+        assertEquals("Send DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED', Reason String: 'null', Server Reference: 'null', Session Expiry: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_outound_disconnect_not_verbose_all_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",false, false);
+        assertEquals("Send DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_outound_disconnect_not_verbose_none_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",false, false);
+        assertEquals("Send DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 

@@ -30,6 +30,8 @@ import com.hivemq.extension.sdk.api.interceptor.unsubscribe.parameter.Unsubscrib
 import com.hivemq.extension.sdk.api.packets.connack.ConnackPacket;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
+import com.hivemq.extension.sdk.api.packets.disconnect.DisconnectPacket;
+import com.hivemq.extension.sdk.api.packets.disconnect.DisconnectReasonCode;
 import com.hivemq.extension.sdk.api.packets.general.UserProperties;
 import com.hivemq.extension.sdk.api.packets.general.UserProperty;
 import com.hivemq.extension.sdk.api.packets.puback.PubackPacket;
@@ -81,6 +83,35 @@ public class MessageLogUtil {
                 disconnectEventInput.getReasonCode().orElse(null),
                 disconnectEventInput.getReasonString().orElse(null),
                 userPropertiesAsString);
+    }
+
+    public static void logDisconnect(final @NotNull DisconnectPacket disconnectPacket,
+                                     final @NotNull String clientId,
+                                     final boolean inbound,
+                                     final boolean verbose) {
+        final DisconnectReasonCode reasonCode = disconnectPacket.getReasonCode();
+
+        if (!verbose) {
+            if (inbound) {
+                log.info("Received DISCONNECT from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            } else {
+                log.info("Send DISCONNECT to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+            }
+            return;
+        }
+
+        final String userPropertiesAsString = getUserPropertiesAsString(disconnectPacket.getUserProperties());
+        final String reasonString = disconnectPacket.getReasonString().orElse(null);
+        final String serverReference = disconnectPacket.getServerReference().orElse(null);
+        final Long sessionExpiry = disconnectPacket.getSessionExpiryInterval().orElse(null);
+
+        if (inbound) {
+            log.info("Received DISCONNECT from client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
+                    clientId, reasonCode.toString(), reasonString, serverReference, sessionExpiry, userPropertiesAsString);
+        } else {
+            log.info("Send DISCONNECT to client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
+                    clientId, reasonCode.toString(), reasonString, serverReference, sessionExpiry, userPropertiesAsString);
+        }
     }
 
     public static void logConnect(final @NotNull ConnectPacket connectPacket, final boolean verbose) {
