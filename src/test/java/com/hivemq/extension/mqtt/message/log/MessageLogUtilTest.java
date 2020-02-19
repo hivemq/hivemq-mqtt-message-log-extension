@@ -23,30 +23,43 @@ public class MessageLogUtilTest {
     }
 
     @Test
+    public void test_lifecycle_and_interceptor_disconnect_logs_have_same_format(){
+        final String expectedLog = "Received DISCONNECT from client 'clientId': Reason Code: 'BAD_AUTHENTICATION_METHOD'";
+
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientId':", new TestDisconnect(DisconnectedReasonCode.BAD_AUTHENTICATION_METHOD, "Okay", new TestUserProperties(3)), false);
+
+        assertEquals(expectedLog, logCapture.getLastCapturedLog().getFormattedMessage());
+
+        MessageLogUtil.logDisconnect(createLifeCycleCompareDisconnect(),"clientId",true, false);
+
+        assertEquals(expectedLog, logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
     public void test_log_lifecycle_disconnect_verbose_all_set() {
-        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(DisconnectedReasonCode.BAD_AUTHENTICATION_METHOD, "ReasonString", new TestUserProperties(5)), true);
-        assertEquals("Received DISCONNECT from client 'clientid'. Reason Code: 'BAD_AUTHENTICATION_METHOD', Reason String: 'ReasonString', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2'], [Name: 'name3', Value: 'value3'], [Name: 'name4', Value: 'value4']",
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid':", new TestDisconnect(DisconnectedReasonCode.BAD_AUTHENTICATION_METHOD, "ReasonString", new TestUserProperties(5)), true);
+        assertEquals("Received DISCONNECT from client 'clientid': Reason Code: 'BAD_AUTHENTICATION_METHOD', Reason String: 'ReasonString', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2'], [Name: 'name3', Value: 'value3'], [Name: 'name4', Value: 'value4']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_lifecycle_disconnect_verbose_none_set() {
-        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(null, null, null), true);
-        assertEquals("Received DISCONNECT from client 'clientid'. Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid':", new TestDisconnect(null, null, null), true);
+        assertEquals("Received DISCONNECT from client 'clientid': Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_lifecycle_disconnect_verbose_user_properties_empty() {
-        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(null, null, new TestUserProperties(0)), true);
-        assertEquals("Received DISCONNECT from client 'clientid'. Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid':", new TestDisconnect(null, null, new TestUserProperties(0)), true);
+        assertEquals("Received DISCONNECT from client 'clientid': Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
     public void test_log_lifecycle_disconnect_not_verbose() {
-        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(null, null, null), false);
-        assertEquals("Received DISCONNECT from client 'clientid'.",
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid':", new TestDisconnect(null, null, null), false);
+        assertEquals("Received DISCONNECT from client 'clientid': Reason Code: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 

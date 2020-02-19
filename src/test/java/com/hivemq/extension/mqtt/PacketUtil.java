@@ -859,6 +859,35 @@ public class PacketUtil {
         };
     }
 
+    public static DisconnectPacket createLifeCycleCompareDisconnect() {
+        return new DisconnectPacket() {
+            @Override
+            public @NotNull DisconnectReasonCode getReasonCode() {
+                return DisconnectReasonCode.BAD_AUTHENTICATION_METHOD;
+            }
+
+            @Override
+            public @NotNull Optional<String> getReasonString() {
+                return Optional.of("Okay");
+            }
+
+            @Override
+            public @NotNull Optional<Long> getSessionExpiryInterval() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull Optional<String> getServerReference() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return new PacketUtil.TestUserProperties(3);
+            }
+        };
+    }
+
     public static ConnackOutboundInput createEmptyConnack() {
         return new ConnackOutboundInput() {
             @Override

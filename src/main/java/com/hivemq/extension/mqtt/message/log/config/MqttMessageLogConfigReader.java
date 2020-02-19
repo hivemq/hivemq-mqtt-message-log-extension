@@ -96,7 +96,7 @@ public class MqttMessageLogConfigReader {
                 log.warn("HiveMQ MQTT Message Log Extension: Could not load properties file, reason {}", e.getMessage());
             }
         }
-        log.info("HiveMQ MQTT Message Log Extension: Properties initialized  to: {}", properties);
+        log.info("HiveMQ MQTT Message Log Extension: Properties initialized to: {}", properties);
         return properties;
     }
 }

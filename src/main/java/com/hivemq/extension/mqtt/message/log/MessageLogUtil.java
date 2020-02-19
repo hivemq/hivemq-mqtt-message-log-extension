@@ -75,7 +75,7 @@ public class MessageLogUtil {
 
     public static void logDisconnect(final @NotNull String message, final @NotNull DisconnectEventInput disconnectEventInput, final boolean verbose) {
         if (!verbose) {
-            log.info(message);
+            log.info(message + " Reason Code: '{}'", disconnectEventInput.getReasonCode().orElse(null));
             return;
         }
         final String userPropertiesAsString = getUserPropertiesAsString(disconnectEventInput.getUserProperties().orElse(null));
