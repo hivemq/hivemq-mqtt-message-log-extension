@@ -20,9 +20,11 @@ package com.hivemq.extension.mqtt.message.log.extension;
 import com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig;
 import com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfigReader;
 import com.hivemq.extension.mqtt.message.log.initializer.CommunityInitializer;
-import com.hivemq.extension.mqtt.message.log.initializer.EnterpriseInitializer;
+import com.hivemq.extension.mqtt.message.log.initializer.Enterprise42Initializer;
+import com.hivemq.extension.mqtt.message.log.initializer.Enterprise43Initializer;
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
+import com.hivemq.extension.sdk.api.client.parameter.ServerInformation;
 import com.hivemq.extension.sdk.api.parameter.*;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.admin.LicenseEdition;
@@ -58,20 +60,7 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
                 return;
             }
 
-            @NotNull final LicenseEdition edition = Services.adminService().getLicenseInformation().getEdition();
-            @NotNull final String version = extensionStartInput.getServerInformation().getVersion();
-
-            final ClientInitializer initializer = (initializerInput, clientContext) -> {
-
-                if (LicenseEdition.COMMUNITY.equals(edition)) {
-                    final CommunityInitializer communityInitializer = new CommunityInitializer(clientContext, config);
-                    communityInitializer.init();
-
-                } else {
-                    final EnterpriseInitializer enterpriseInitializer = new EnterpriseInitializer(clientContext, version, config);
-                    enterpriseInitializer.init();
-                }
-            };
+            final @NotNull ClientInitializer initializer = getClientInitializerForEdition(extensionStartInput.getServerInformation(), config);
 
             Services.initializerRegistry().setClientInitializer(initializer);
 
@@ -83,9 +72,24 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
     }
 
     @Override
-    public void extensionStop(final @NotNull ExtensionStopInput extensionStopInput, final @NotNull ExtensionStopOutput extensionStopOutput) {
+    public void extensionStop(final @NotNull ExtensionStopInput extensionStopInput,
+                              final @NotNull ExtensionStopOutput extensionStopOutput) {
         final ExtensionInformation extensionInformation = extensionStopInput.getExtensionInformation();
         log.info("Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
+    }
+
+    private @NotNull ClientInitializer getClientInitializerForEdition(final @NotNull ServerInformation serverInformation,
+                                                                      final @NotNull MqttMessageLogConfig config) {
+        final @NotNull LicenseEdition edition = Services.adminService().getLicenseInformation().getEdition();
+        final @NotNull String version = serverInformation.getVersion();
+
+        if (LicenseEdition.COMMUNITY.equals(edition)) {
+            return new CommunityInitializer(config);
+        } else if (version.startsWith("4.2")) {
+            return new Enterprise42Initializer(config);
+        } else {
+            return new Enterprise43Initializer(config);
+        }
     }
 
 }

@@ -20,7 +20,9 @@ package com.hivemq.extension.mqtt.message.log.initializer;
 import com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.ClientContext;
+import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
+import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 
 import static com.hivemq.extension.mqtt.message.log.interceptor.InterceptorUtil.*;
 
@@ -28,26 +30,27 @@ import static com.hivemq.extension.mqtt.message.log.interceptor.InterceptorUtil.
  * @author Michael Walter
  * @version 1.1.0
  */
-public class CommunityInitializer {
-
-    private final @NotNull ClientContext clientContext;
+public class CommunityInitializer implements ClientInitializer {
 
     private final @NotNull MqttMessageLogConfig config;
 
-    public CommunityInitializer(final @NotNull ClientContext clientContext,
-                                final @NotNull MqttMessageLogConfig config) {
-        this.clientContext = clientContext;
+    public CommunityInitializer(final @NotNull MqttMessageLogConfig config) {
         this.config = config;
+
+        init();
     }
 
-    public void init() {
-
+    private void init() {
         createConnectOutboundInterceptor(config).ifPresent(connectInboundInterceptor ->
                 Services.interceptorRegistry().setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor));
 
         createConnackOutboundInterceptor(config).ifPresent(connackOutboundInterceptor ->
                 Services.interceptorRegistry().setConnackOutboundInterceptorProvider(input -> connackOutboundInterceptor));
+    }
 
+    @Override
+    public void initialize(final @NotNull InitializerInput initializerInput,
+                           final @NotNull ClientContext clientContext) {
         createDisconnectInboundInterceptor(config).ifPresent(clientContext::addDisconnectInboundInterceptor);
         createDisconnectOutboundInterceptor(config).ifPresent(clientContext::addDisconnectOutboundInterceptor);
 
@@ -75,5 +78,4 @@ public class CommunityInitializer {
         createPubcompInboundInterceptor(config).ifPresent(clientContext::addPubcompInboundInterceptor);
         createPubcompOutboundInterceptor(config).ifPresent(clientContext::addPubcompOutboundInterceptor);
     }
-
 }

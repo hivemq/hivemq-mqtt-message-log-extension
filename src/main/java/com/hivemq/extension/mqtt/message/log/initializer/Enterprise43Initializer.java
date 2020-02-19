@@ -18,11 +18,11 @@
 package com.hivemq.extension.mqtt.message.log.initializer;
 
 import com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig;
-import com.hivemq.extension.mqtt.message.log.interceptor.ConnectDisconnectEventListener;
-import com.hivemq.extension.mqtt.message.log.interceptor.ConnectInboundInterceptorImpl;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.ClientContext;
+import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
+import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 
 import static com.hivemq.extension.mqtt.message.log.interceptor.InterceptorUtil.*;
 
@@ -30,60 +30,27 @@ import static com.hivemq.extension.mqtt.message.log.interceptor.InterceptorUtil.
  * @author Michael Walter
  * @version 1.1.0
  */
-public class EnterpriseInitializer {
-
-    private final @NotNull ClientContext clientContext;
-
-    private final @NotNull String version;
+public class Enterprise43Initializer implements ClientInitializer {
 
     private final @NotNull MqttMessageLogConfig config;
 
-    public EnterpriseInitializer(final @NotNull ClientContext clientContext,
-                                 final @NotNull String version,
-                                 final @NotNull MqttMessageLogConfig config) {
-        this.clientContext = clientContext;
-        this.version = version;
+    public Enterprise43Initializer(final @NotNull MqttMessageLogConfig config) {
         this.config = config;
 
-
+        init();
     }
 
-    public void init() {
-
-        if (version.startsWith("4.2")) {
-            registerMessage42Logger();
-            return;
-        }
-
-        registerMessage43Logger();
-    }
-
-    private void registerMessage42Logger() {
-
-        if (config.isClientConnect() && config.isClientDisconnect()) {
-            final ConnectDisconnectEventListener connectDisconnectEventListener = new ConnectDisconnectEventListener(true, config.isVerbose());
-            Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
-        } else if (config.isClientDisconnect()) {
-            final ConnectDisconnectEventListener connectDisconnectEventListener = new ConnectDisconnectEventListener(false, config.isVerbose());
-            Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
-        } else if (config.isClientConnect()) {
-            final ConnectInboundInterceptorImpl connectInboundInterceptor = new ConnectInboundInterceptorImpl(config.isVerbose());
-            Services.interceptorRegistry().setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor);
-        }
-
-        createSubscribeInboundInterceptor(config).ifPresent(clientContext::addSubscribeInboundInterceptor);
-        createPublishInboundInterceptor(config).ifPresent(clientContext::addPublishInboundInterceptor);
-        createPublishOutboundInterceptor(config).ifPresent(clientContext::addPublishOutboundInterceptor);
-    }
-
-    private void registerMessage43Logger() {
-
+    private void init() {
         createConnectOutboundInterceptor(config).ifPresent(connectInboundInterceptor ->
                 Services.interceptorRegistry().setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor));
 
         createConnackOutboundInterceptor(config).ifPresent(connackOutboundInterceptor ->
                 Services.interceptorRegistry().setConnackOutboundInterceptorProvider(input -> connackOutboundInterceptor));
+    }
 
+    @Override
+    public void initialize(final @NotNull InitializerInput initializerInput,
+                           final @NotNull ClientContext clientContext) {
         createDisconnectInboundInterceptor(config).ifPresent(clientContext::addDisconnectInboundInterceptor);
         createDisconnectOutboundInterceptor(config).ifPresent(clientContext::addDisconnectOutboundInterceptor);
 
@@ -111,5 +78,4 @@ public class EnterpriseInitializer {
         createPubcompInboundInterceptor(config).ifPresent(clientContext::addPubcompInboundInterceptor);
         createPubcompOutboundInterceptor(config).ifPresent(clientContext::addPubcompOutboundInterceptor);
     }
-
 }
