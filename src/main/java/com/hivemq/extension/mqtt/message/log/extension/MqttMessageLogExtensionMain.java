@@ -25,7 +25,10 @@ import com.hivemq.extension.mqtt.message.log.initializer.Enterprise43Initializer
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.parameter.ServerInformation;
-import com.hivemq.extension.sdk.api.parameter.*;
+import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
+import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
+import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
+import com.hivemq.extension.sdk.api.parameter.ExtensionStopOutput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.admin.LicenseEdition;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
@@ -74,8 +77,6 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
     @Override
     public void extensionStop(final @NotNull ExtensionStopInput extensionStopInput,
                               final @NotNull ExtensionStopOutput extensionStopOutput) {
-        final ExtensionInformation extensionInformation = extensionStopInput.getExtensionInformation();
-        log.info("Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
     }
 
     private @NotNull ClientInitializer getClientInitializerForEdition(final @NotNull ServerInformation serverInformation,

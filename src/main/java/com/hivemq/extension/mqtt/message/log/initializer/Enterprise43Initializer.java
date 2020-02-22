@@ -27,6 +27,8 @@ import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import static com.hivemq.extension.mqtt.message.log.interceptor.InterceptorUtil.*;
 
 /**
+ * Creates a {@link ClientInitializer} that is usable for any HiveMQ 4.3 Enterprise Version.
+ *
  * @author Michael Walter
  * @version 1.1.0
  */
@@ -40,6 +42,9 @@ public class Enterprise43Initializer implements ClientInitializer {
         init();
     }
 
+    /**
+     * Initialize any logging logic that can be done without a {@link ClientInitializer}.
+     */
     private void init() {
         createConnectOutboundInterceptor(config).ifPresent(connectInboundInterceptor ->
                 Services.interceptorRegistry().setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor));

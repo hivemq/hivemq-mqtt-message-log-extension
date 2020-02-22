@@ -29,6 +29,8 @@ import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import static com.hivemq.extension.mqtt.message.log.interceptor.InterceptorUtil.*;
 
 /**
+ * Creates a {@link ClientInitializer} that is usable for any HiveMQ 4.2 Enterprise Version.
+ *
  * @author Michael Walter
  * @version 1.1.0
  */
@@ -42,7 +44,10 @@ public class Enterprise42Initializer implements ClientInitializer {
         init();
     }
 
-    public void init() {
+    /**
+     * Initialize any logging logic that can be done without a {@link ClientInitializer}.
+     */
+    private void init() {
         if (config.isClientConnect() && config.isClientDisconnect()) {
             final ConnectDisconnectEventListener connectDisconnectEventListener = new ConnectDisconnectEventListener(true, config.isVerbose());
             Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
