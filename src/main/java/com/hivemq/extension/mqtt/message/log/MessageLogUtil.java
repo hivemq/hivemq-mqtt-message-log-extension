@@ -95,7 +95,7 @@ public class MessageLogUtil {
             if (inbound) {
                 log.info("Received DISCONNECT from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             } else {
-                log.info("Send DISCONNECT to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+                log.info("Sent DISCONNECT to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             }
             return;
         }
@@ -109,7 +109,7 @@ public class MessageLogUtil {
             log.info("Received DISCONNECT from client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
                     clientId, reasonCode.toString(), reasonString, serverReference, sessionExpiry, userPropertiesAsString);
         } else {
-            log.info("Send DISCONNECT to client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
+            log.info("Sent DISCONNECT to client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
                     clientId, reasonCode.toString(), reasonString, serverReference, sessionExpiry, userPropertiesAsString);
         }
     }
@@ -176,7 +176,7 @@ public class MessageLogUtil {
         final @NotNull ConnackPacket connackPacket = connackOutboundInput.getConnackPacket();
 
         if (!verbose) {
-            log.info("Send CONNACK to client '{}': Reason Code: '{}', Session Present: '{}'",
+            log.info("Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}'",
                     clientId,
                     connackPacket.getReasonCode().toString(),
                     connackPacket.getSessionPresent());
@@ -192,7 +192,7 @@ public class MessageLogUtil {
             authDataAsString = null;
         }
 
-        log.info("Send CONNACK to client '{}': Reason Code: '{}', Session Present: '{}', Session Expiry Interval: '{}'," +
+        log.info("Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}', Session Expiry Interval: '{}'," +
                         " Assigned ClientId '{}', Maximum QoS: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}'," +
                         " Topic Alias Maximum: '{}', Reason String: '{}', Response Information: '{}', Server Keep Alive: '{}'," +
                         " Server Reference: '{}', Shared Subscription Available: '{}', Wildcards Available: '{}'," +
@@ -300,14 +300,14 @@ public class MessageLogUtil {
         suback.append(" }");
 
         if (!verbose) {
-            log.info("Send SUBACK to client '{}': {}", clientId, suback.toString());
+            log.info("Sent SUBACK to client '{}': {}", clientId, suback.toString());
             return;
         }
 
         final String userPropertiesAsString = getUserPropertiesAsString(subackPacket.getUserProperties());
         final String reasonString = subackPacket.getReasonString().orElse(null);
 
-        log.info("Send SUBACK to client '{}': {}, Reason String: '{}', {}", clientId, suback.toString(), reasonString, userPropertiesAsString);
+        log.info("Sent SUBACK to client '{}': {}, Reason String: '{}', {}", clientId, suback.toString(), reasonString, userPropertiesAsString);
     }
 
     public static void logUnsubscribe(final @NotNull UnsubscribeInboundInput unsubscribeInboundInput, final boolean verbose) {
@@ -351,14 +351,14 @@ public class MessageLogUtil {
         unsuback.append(" }");
 
         if (!verbose) {
-            log.info("Send UNSUBACK to client '{}': {}", clientId, unsuback.toString());
+            log.info("Sent UNSUBACK to client '{}': {}", clientId, unsuback.toString());
             return;
         }
 
         final String userPropertiesAsString = getUserPropertiesAsString(unsubackPacket.getUserProperties());
         final String reasonString = unsubackPacket.getReasonString().orElse(null);
 
-        log.info("Send UNSUBACK to client '{}': {}, Reason String: '{}', {}", clientId, unsuback.toString(), reasonString, userPropertiesAsString);
+        log.info("Sent UNSUBACK to client '{}': {}, Reason String: '{}', {}", clientId, unsuback.toString(), reasonString, userPropertiesAsString);
     }
 
     public static void logPingreq(final @NotNull PingReqInboundInput pingReqInboundInput) {
@@ -370,7 +370,7 @@ public class MessageLogUtil {
     public static void logPingresp(final @NotNull PingRespOutboundInput pingRespOutboundInput) {
         final String clientId = pingRespOutboundInput.getClientInformation().getClientId();
 
-        log.info("Send PING RESPONSE to client '{}'", clientId);
+        log.info("Sent PING RESPONSE to client '{}'", clientId);
     }
 
     public static void logPuback(final @NotNull PubackPacket pubackPacket,
@@ -383,7 +383,7 @@ public class MessageLogUtil {
             if (inbound) {
                 log.info("Received PUBACK from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             } else {
-                log.info("Send PUBACK to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+                log.info("Sent PUBACK to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             }
             return;
         }
@@ -394,7 +394,7 @@ public class MessageLogUtil {
         if (inbound) {
             log.info("Received PUBACK from client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
         } else {
-            log.info("Send PUBACK to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+            log.info("Sent PUBACK to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
         }
     }
 
@@ -408,7 +408,7 @@ public class MessageLogUtil {
             if (inbound) {
                 log.info("Received PUBREC from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             } else {
-                log.info("Send PUBREC to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+                log.info("Sent PUBREC to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             }
             return;
         }
@@ -419,7 +419,7 @@ public class MessageLogUtil {
         if (inbound) {
             log.info("Received PUBREC from client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
         } else {
-            log.info("Send PUBREC to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+            log.info("Sent PUBREC to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
         }
     }
 
@@ -433,7 +433,7 @@ public class MessageLogUtil {
             if (inbound) {
                 log.info("Received PUBREL from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             } else {
-                log.info("Send PUBREL to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+                log.info("Sent PUBREL to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             }
             return;
         }
@@ -444,7 +444,7 @@ public class MessageLogUtil {
         if (inbound) {
             log.info("Received PUBREL from client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
         } else {
-            log.info("Send PUBREL to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+            log.info("Sent PUBREL to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
         }
     }
 
@@ -458,7 +458,7 @@ public class MessageLogUtil {
             if (inbound) {
                 log.info("Received PUBCOMP from client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             } else {
-                log.info("Send PUBCOMP to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
+                log.info("Sent PUBCOMP to client '{}': Reason Code: '{}'", clientId, reasonCode.toString());
             }
             return;
         }
@@ -469,7 +469,7 @@ public class MessageLogUtil {
         if (inbound) {
             log.info("Received PUBCOMP from client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
         } else {
-            log.info("Send PUBCOMP to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
+            log.info("Sent PUBCOMP to client '{}': Reason Code: '{}', Reason String: '{}', {}", clientId, reasonCode.toString(), reasonString, userPropertiesAsString);
         }
     }
 
