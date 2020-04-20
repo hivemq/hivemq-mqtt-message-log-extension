@@ -34,11 +34,11 @@ import static com.hivemq.extension.mqtt.message.log.interceptor.InterceptorUtil.
  * @author Michael Walter
  * @version 1.1.0
  */
-public class Enterprise42Initializer implements ClientInitializer {
+public class ClientInitializerImpl4_2 implements ClientInitializer {
 
     private final @NotNull MqttMessageLogConfig config;
 
-    public Enterprise42Initializer(final @NotNull MqttMessageLogConfig config) {
+    public ClientInitializerImpl4_2(final @NotNull MqttMessageLogConfig config) {
         this.config = config;
 
         init();

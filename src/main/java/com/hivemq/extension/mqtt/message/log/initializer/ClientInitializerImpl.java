@@ -27,16 +27,16 @@ import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import static com.hivemq.extension.mqtt.message.log.interceptor.InterceptorUtil.*;
 
 /**
- * Creates a {@link ClientInitializer} that is usable for the community edition.
+ * Creates a {@link ClientInitializer} that is usable since HiveMQ 4.3 Enterprise Version or Community Version 2020.1.
  *
  * @author Michael Walter
  * @version 1.1.0
  */
-public class CommunityInitializer implements ClientInitializer {
+public class ClientInitializerImpl implements ClientInitializer {
 
     private final @NotNull MqttMessageLogConfig config;
 
-    public CommunityInitializer(final @NotNull MqttMessageLogConfig config) {
+    public ClientInitializerImpl(final @NotNull MqttMessageLogConfig config) {
         this.config = config;
 
         init();
@@ -59,9 +59,6 @@ public class CommunityInitializer implements ClientInitializer {
         createDisconnectInboundInterceptor(config).ifPresent(clientContext::addDisconnectInboundInterceptor);
         createDisconnectOutboundInterceptor(config).ifPresent(clientContext::addDisconnectOutboundInterceptor);
 
-        createPublishInboundInterceptor(config).ifPresent(clientContext::addPublishInboundInterceptor);
-        createPublishOutboundInterceptor(config).ifPresent(clientContext::addPublishOutboundInterceptor);
-
         createSubscribeInboundInterceptor(config).ifPresent(clientContext::addSubscribeInboundInterceptor);
         createSubackOutboundInterceptor(config).ifPresent(clientContext::addSubackOutboundInterceptor);
 
@@ -70,6 +67,9 @@ public class CommunityInitializer implements ClientInitializer {
 
         createUnsubscribeInboundInterceptor(config).ifPresent(clientContext::addUnsubscribeInboundInterceptor);
         createUnsubackOutboundInterceptor(config).ifPresent(clientContext::addUnsubackOutboundInterceptor);
+
+        createPublishInboundInterceptor(config).ifPresent(clientContext::addPublishInboundInterceptor);
+        createPublishOutboundInterceptor(config).ifPresent(clientContext::addPublishOutboundInterceptor);
 
         createPubackInboundInterceptor(config).ifPresent(clientContext::addPubackInboundInterceptor);
         createPubackOutboundInterceptor(config).ifPresent(clientContext::addPubackOutboundInterceptor);

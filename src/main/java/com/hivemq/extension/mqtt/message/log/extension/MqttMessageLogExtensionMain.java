@@ -19,9 +19,8 @@ package com.hivemq.extension.mqtt.message.log.extension;
 
 import com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig;
 import com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfigReader;
-import com.hivemq.extension.mqtt.message.log.initializer.CommunityInitializer;
-import com.hivemq.extension.mqtt.message.log.initializer.Enterprise42Initializer;
-import com.hivemq.extension.mqtt.message.log.initializer.Enterprise43Initializer;
+import com.hivemq.extension.mqtt.message.log.initializer.ClientInitializerImpl;
+import com.hivemq.extension.mqtt.message.log.initializer.ClientInitializerImpl4_2;
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.parameter.ServerInformation;
@@ -85,11 +84,11 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
         final @NotNull String version = serverInformation.getVersion();
 
         if (LicenseEdition.COMMUNITY.equals(edition)) {
-            return new CommunityInitializer(config);
+            return new ClientInitializerImpl(config);
         } else if (version.startsWith("4.2")) {
-            return new Enterprise42Initializer(config);
+            return new ClientInitializerImpl4_2(config);
         } else {
-            return new Enterprise43Initializer(config);
+            return new ClientInitializerImpl(config);
         }
     }
 
