@@ -18,7 +18,6 @@
 package com.hivemq.extension.mqtt.message.log.config;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.hivemq.extension.sdk.api.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +27,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.*;
-import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.FALSE;
-import static com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig.TRUE;
 
 public class MqttMessageLogConfigReader {
 
@@ -53,10 +50,34 @@ public class MqttMessageLogConfigReader {
 
     private void setDefaults() {
         properties.setProperty(CLIENT_CONNECT, TRUE);
+        properties.setProperty(CONNACK_SEND, TRUE);
+
         properties.setProperty(CLIENT_DISCONNECT, TRUE);
+
         properties.setProperty(PUBLISH_RECEIVED, TRUE);
         properties.setProperty(PUBLISH_SEND, TRUE);
+
         properties.setProperty(SUBSCRIBE_RECEIVED, TRUE);
+        properties.setProperty(SUBACK_SEND, TRUE);
+
+        properties.setProperty(UNSUBSCRIBE_RECEIVED, TRUE);
+        properties.setProperty(UNSUBACK_SEND, TRUE);
+
+        properties.setProperty(PING_REQ_RECEIVED, TRUE);
+        properties.setProperty(PING_RESP_SEND, TRUE);
+
+        properties.setProperty(PUBACK_RECEIVED, TRUE);
+        properties.setProperty(PUBACK_SEND, TRUE);
+
+        properties.setProperty(PUBREC_RECEIVED, TRUE);
+        properties.setProperty(PUBREC_SEND, TRUE);
+
+        properties.setProperty(PUBREL_RECEIVED, TRUE);
+        properties.setProperty(PUBREL_SEND, TRUE);
+
+        properties.setProperty(PUBCOMP_RECEIVED, TRUE);
+        properties.setProperty(PUBCOMP_SEND, TRUE);
+
         properties.setProperty(VERBOSE, FALSE);
     }
 
@@ -75,7 +96,7 @@ public class MqttMessageLogConfigReader {
                 log.warn("HiveMQ MQTT Message Log Extension: Could not load properties file, reason {}", e.getMessage());
             }
         }
-        log.info("HiveMQ MQTT Message Log Extension: Properties initialized  to: {}", properties);
+        log.info("HiveMQ MQTT Message Log Extension: Properties initialized to: {}", properties);
         return properties;
     }
 }

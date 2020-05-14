@@ -9,9 +9,14 @@
 
 *Type*: Logging Extension
 
-*Version*: 1.0.1
+*Version*: 1.1.0
 
 *License*: Apache License Version 2.0
+
+=== Prerequisites
+
+* HiveMQ Enterprise Edition (EE) 4.2.0 or later
+* HiveMQ Community Edition (CE) 2020.1 or later
 
 === Purpose
 
@@ -19,44 +24,51 @@ The HiveMQ MQTT Message Log Extension is a very useful HiveMQ Extension for debu
 
 *The extension logs the following events:*
 
-* A client connects to HiveMQ
-* A client sends a publish message
-* A client sends a subscribe message
-* A client disconnects from HiveMQ
-* HiveMQ sends a publish message to a client
+[cols="6,2,2"]
+|===
+|Event | Config Property | Minimum Version
 
-=== Prerequisites
+|A client connects to HiveMQ | client-connect | 4.2 EE or 2020.1 CE
+|A client disconnects from HiveMQ | client-disconnect | 4.2 EE or 2020.1 CE
+|A client sends a publish message | publish-received | 4.2 EE or 2020.1 CE
+|A client sends a subscribe message | subscribe-received |4.2 EE or 2020.1 CE
+|HiveMQ sends a publish message to a client | publish-send |4.2 EE or 2020.1 CE
+|A client sends a unsubscribe message | unsubscribe-received | 4.3 EE or 2020.1 CE
+|A client send a ping request | ping-request-received | 4.3 EE or 2020.1 CE
+|A client completes a received Qos1 publish with a puback message | puback-received | 4.3 EE or 2020.1 CE
+|A client acknowledges the reception of a Qos2 publish with a pubrec message | pubrec-received | 4.3 EE or 2020.1 CE
+|A client completes a sent Qos2 publish with a pubrel message | pubrel-received | 4.3 EE or 2020.1 CE
+|A client completes a received Qos2 publish with a pubcomp message | pubcomp-received | 4.3 EE or 2020.1 CE
+|HiveMQ sends a connack message to a client | connack-send | 4.3 EE or 2020.1 CE
+|HiveMQ disconnects a client with a disconnect message | client-disconnect | 4.3 EE or 2020.1 CE
+|HiveMQ sends a suback message to a client | suback-send | 4.3 EE or 2020.1 CE
+|HiveMQ sends a unsuback message to a client | unsuback-send | 4.3 EE or 2020.1 CE
+|HiveMQ sends a ping response to a client | ping-response-send | 4.3 EE or 2020.1 CE
+|HiveMQ completes a received Qos1 publish with a puback message | puback-send | 4.3 EE or 2020.1 CE
+|HiveMQ acknowledges the reception of a Qos2 publish with a pubrec message | pubrec-send | 4.3 EE or 2020.1 CE
+|HiveMQ completes a sent Qos2 publish with a pubrel message | pubrel-send | 4.3 EE or 2020.1 CE
+|HiveMQ completes a received Qos2 publish with a pubcomp message | pubcomp-send | 4.3 EE or 2020.1 CE
 
-* HiveMQ Enterprise 4.2.0 or later
-* Or the current master branch of the https://github.com/hivemq/hivemq-community-edition[HiveMQ Community Edition]
+|===
 
 === Installation
 
-. Download https://www.hivemq.com/releases/extensions/hivemq-mqtt-message-log-extension-1.0.1.zip[HiveMQ Mqtt Message Log Extension]
-.. Move the file: "hivemq-mqtt-message-log-extension-1.0.1.zip" to the directory: "HIVEMQ_HOME/extensions"
+. Download https://www.hivemq.com/releases/extensions/hivemq-mqtt-message-log-extension-1.1.0.zip[HiveMQ Mqtt Message Log Extension]
+.. Move the file: "hivemq-mqtt-message-log-extension-1.1.0.zip" to the directory: "HIVEMQ_HOME/extensions"
 . Or clone this repository into a Java 11 maven project
 .. run `mvn package` goal from Maven to build the extension.
-.. Move the file: "hivemq-mqtt-message-log-extension-1.0.1-distribution.zip" to the directory: "HIVEMQ_HOME/extensions"
+.. Move the file: "hivemq-mqtt-message-log-extension-1.1.0-distribution.zip" to the directory: "HIVEMQ_HOME/extensions"
 . Unzip the file.
 . Start HiveMQ.
 
 === Configuration
 
-It is possible to opt out of specific log event types by adding a
-*mqttMessageLog.properties* files to your +<HIVEMQ_HOME>/hivemq-mqtt-message-log-extension+  folder.
-There is an example file available which removes the logging of publish messages. Just rename it to *mqttMessageLog.properties*
+By default all MQTT events are logged. It is possible to opt out of specific log event types by adding a
+*mqttMessageLog.properties* files to your `<HIVEMQ_HOME>/hivemq-mqtt-message-log-extension`  folder.
+There is an example file available which removes the logging of publish messages. Just rename it to *mqttMessageLog.properties*.
 
-If you set verbose to true, all MQTT messages are logged with all the information available.
-Otherwise only basic information like client id, topic, qos and payload will be logged. See <<example, examples>>.
-
-This properties file could have the following entries:
-
-* client-connect=false|true
-* client-disconnect=false|true
-* publish-received=false|true
-* publish-send=false|true
-* subscribe-received=false|true
-* verbose=false|true
+The events log only important information, if it required that MQTT messages are logging all information available the `verbose` property can be set to true.
+You can see the difference of a normal log versus a verbose log in the <<example, examples>>.
 
 CAUTION: use verbose=true very carefully as it will flood your log immediately.
 

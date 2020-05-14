@@ -78,11 +78,11 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
 
     @Override
     public void onClientInitiatedDisconnect(@NotNull final ClientInitiatedDisconnectInput clientInitiatedDisconnectInput) {
-        MessageLogUtil.logDisconnect(String.format("Received DISCONNECT from client '%s'.", clientInitiatedDisconnectInput.getClientInformation().getClientId()), clientInitiatedDisconnectInput, verbose);
+        MessageLogUtil.logDisconnect(String.format("Received DISCONNECT from client '%s':", clientInitiatedDisconnectInput.getClientInformation().getClientId()), clientInitiatedDisconnectInput, verbose);
     }
 
     @Override
     public void onServerInitiatedDisconnect(@NotNull final ServerInitiatedDisconnectInput serverInitiatedDisconnectInput) {
-        MessageLogUtil.logDisconnect(String.format("Sent DISCONNECT to client '%s'.", serverInitiatedDisconnectInput.getClientInformation().getClientId()), serverInitiatedDisconnectInput, verbose);
+        MessageLogUtil.logDisconnect(String.format("Sent DISCONNECT to client '%s':", serverInitiatedDisconnectInput.getClientInformation().getClientId()), serverInitiatedDisconnectInput, verbose);
     }
 }

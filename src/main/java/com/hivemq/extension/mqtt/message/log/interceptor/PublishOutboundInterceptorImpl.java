@@ -40,7 +40,8 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
     }
 
     @Override
-    public void onOutboundPublish(final @NotNull PublishOutboundInput publishOutboundInput, final @NotNull PublishOutboundOutput publishOutboundOutput) {
+    public void onOutboundPublish(final @NotNull PublishOutboundInput publishOutboundInput,
+                                  final @NotNull PublishOutboundOutput publishOutboundOutput) {
         try {
             final String clientID = publishOutboundInput.getClientInformation().getClientId();
             MessageLogUtil.logPublish(String.format("Sent PUBLISH to client '%s' on topic", clientID), publishOutboundInput.getPublishPacket(), verbose);

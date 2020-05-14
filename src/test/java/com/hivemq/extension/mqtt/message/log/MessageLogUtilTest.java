@@ -1,35 +1,16 @@
 package com.hivemq.extension.mqtt.message.log;
 
-import com.hivemq.extension.mqtt.message.log.config.MqttMessageLogConfig;
-import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.hivemq.extension.sdk.api.client.parameter.ClientInformation;
-import com.hivemq.extension.sdk.api.client.parameter.ConnectionInformation;
-import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
-import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
-import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
-import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
-import com.hivemq.extension.sdk.api.packets.general.*;
-import com.hivemq.extension.sdk.api.packets.publish.PayloadFormatIndicator;
-import com.hivemq.extension.sdk.api.packets.publish.PublishPacket;
-import com.hivemq.extension.sdk.api.packets.subscribe.RetainHandling;
-import com.hivemq.extension.sdk.api.packets.subscribe.SubscribePacket;
-import com.hivemq.extension.sdk.api.packets.subscribe.Subscription;
+import com.hivemq.extension.sdk.api.packets.general.DisconnectedReasonCode;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import util.LogbackCapturingAppender;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
+import static com.hivemq.extension.mqtt.PacketUtil.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Florian Limpöck
- * @since 4.2.0
+ * @since 1.0.0
  */
 @SuppressWarnings("NullabilityAnnotations")
 public class MessageLogUtilTest {
@@ -42,30 +23,99 @@ public class MessageLogUtilTest {
     }
 
     @Test
-    public void test_log_disconnect_verbose_all_set() {
-        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(DisconnectedReasonCode.BAD_AUTHENTICATION_METHOD, "ReasonString", new TestUserProperties(5)), true);
-        assertEquals("Received DISCONNECT from client 'clientid'. Reason Code: 'BAD_AUTHENTICATION_METHOD', Reason String: 'ReasonString', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2'], [Name: 'name3', Value: 'value3'], [Name: 'name4', Value: 'value4']",
+    public void test_lifecycle_and_interceptor_disconnect_logs_have_same_format(){
+        final String expectedLog = "Received DISCONNECT from client 'clientId': Reason Code: 'BAD_AUTHENTICATION_METHOD'";
+
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientId':", new TestDisconnect(DisconnectedReasonCode.BAD_AUTHENTICATION_METHOD, "Okay", new TestUserProperties(3)), false);
+
+        assertEquals(expectedLog, logCapture.getLastCapturedLog().getFormattedMessage());
+
+        MessageLogUtil.logDisconnect(createLifeCycleCompareDisconnect(),"clientId",true, false);
+
+        assertEquals(expectedLog, logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_lifecycle_disconnect_verbose_all_set() {
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid':", new TestDisconnect(DisconnectedReasonCode.BAD_AUTHENTICATION_METHOD, "ReasonString", new TestUserProperties(5)), true);
+        assertEquals("Received DISCONNECT from client 'clientid': Reason Code: 'BAD_AUTHENTICATION_METHOD', Reason String: 'ReasonString', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2'], [Name: 'name3', Value: 'value3'], [Name: 'name4', Value: 'value4']",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
-    public void test_log_disconnect_verbose_none_set() {
-        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(null, null, null), true);
-        assertEquals("Received DISCONNECT from client 'clientid'. Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
+    public void test_log_lifecycle_disconnect_verbose_none_set() {
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid':", new TestDisconnect(null, null, null), true);
+        assertEquals("Received DISCONNECT from client 'clientid': Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
-    public void test_log_disconnect_verbose_user_properties_empty() {
-        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(null, null, new TestUserProperties(0)), true);
-        assertEquals("Received DISCONNECT from client 'clientid'. Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
+    public void test_log_lifecycle_disconnect_verbose_user_properties_empty() {
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid':", new TestDisconnect(null, null, new TestUserProperties(0)), true);
+        assertEquals("Received DISCONNECT from client 'clientid': Reason Code: 'null', Reason String: 'null', User Properties: 'null'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
     @Test
-    public void test_log_disconnect_not_verbose() {
-        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid'.", new TestDisconnect(null, null, null), false);
-        assertEquals("Received DISCONNECT from client 'clientid'.",
+    public void test_log_lifecycle_disconnect_not_verbose() {
+        MessageLogUtil.logDisconnect("Received DISCONNECT from client 'clientid':", new TestDisconnect(null, null, null), false);
+        assertEquals("Received DISCONNECT from client 'clientid': Reason Code: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_inbound_disconnect_verbose_all_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",true, true);
+        assertEquals("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED', Reason String: 'Okay', Server Reference: 'Server2', Session Expiry: '123', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_inbound_disconnect_verbose_none_set() {
+        MessageLogUtil.logDisconnect(createEmptyDisconnect(), "clientId", true,true);
+        assertEquals("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED', Reason String: 'null', Server Reference: 'null', Session Expiry: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_inbound_disconnect_not_verbose_all_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",true, false);
+        assertEquals("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_inbound_disconnect_not_verbose_none_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",true, false);
+        assertEquals("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_outound_disconnect_verbose_all_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",false, true);
+        assertEquals("Sent DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED', Reason String: 'Okay', Server Reference: 'Server2', Session Expiry: '123', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_outound_disconnect_verbose_none_set() {
+        MessageLogUtil.logDisconnect(createEmptyDisconnect(), "clientId", false,true);
+        assertEquals("Sent DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED', Reason String: 'null', Server Reference: 'null', Session Expiry: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_outound_disconnect_not_verbose_all_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",false, false);
+        assertEquals("Sent DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_outound_disconnect_not_verbose_none_set() {
+        MessageLogUtil.logDisconnect(createFullDisconnect(),"clientId",false, false);
+        assertEquals("Sent DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
@@ -86,6 +136,7 @@ public class MessageLogUtilTest {
                         "[Name: 'name2', Value: 'value2'], Will Delay: '100' }",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
+
     @Test
     public void test_log_connect_verbose_none_set() {
         MessageLogUtil.logConnect(createEmptyConnect(), true);
@@ -101,6 +152,47 @@ public class MessageLogUtilTest {
         MessageLogUtil.logConnect(createFullConnect(), false);
         assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
                         "Session Expiry Interval: '10000'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_connack_verbose_all_set() {
+        MessageLogUtil.logConnack(createFullConnack(), true);
+
+        assertEquals("Sent CONNACK to client 'clientid': Reason Code: 'SUCCESS', Session Present: 'false'," +
+                        " Session Expiry Interval: '100', Assigned ClientId 'overwriteClientId', Maximum QoS: 'AT_MOST_ONCE'," +
+                        " Maximum Packet Size: '5', Receive Maximum: '10', Topic Alias Maximum: '5', Reason String: 'Okay'," +
+                        " Response Information: 'Everything fine', Server Keep Alive: '100'," +
+                        " Server Reference: 'Server2', Shared Subscription Available: 'false'," +
+                        " Wildcards Available: 'false', Retain Available: 'false', Subscription Identifiers Available: 'false'," +
+                        " Auth Method: 'JSON', Auth Data (Base64): 'YXV0aCBkYXRh', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_connack_not_verbose_all_set() {
+        MessageLogUtil.logConnack(createFullConnack(), false);
+        assertEquals("Sent CONNACK to client 'clientid': Reason Code: 'SUCCESS', Session Present: 'false'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_connack_verbose_none_set() {
+        MessageLogUtil.logConnack(createEmptyConnack(), true);
+        assertEquals("Sent CONNACK to client 'clientid': Reason Code: 'SUCCESS', Session Present: 'false'," +
+                        " Session Expiry Interval: 'null', Assigned ClientId 'null', Maximum QoS: 'null'," +
+                        " Maximum Packet Size: '2', Receive Maximum: '1', Topic Alias Maximum: '3', Reason String: 'null'," +
+                        " Response Information: 'null', Server Keep Alive: 'null'," +
+                        " Server Reference: 'null', Shared Subscription Available: 'false'," +
+                        " Wildcards Available: 'false', Retain Available: 'false', Subscription Identifiers Available: 'false'," +
+                        " Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_connack_not_verbose_none_set() {
+        MessageLogUtil.logConnack(createEmptyConnack(), false);
+        assertEquals("Sent CONNACK to client 'clientid': Reason Code: 'SUCCESS', Session Present: 'false'",
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
@@ -167,625 +259,348 @@ public class MessageLogUtilTest {
                 logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
-    private SubscribeInboundInput createEmptySubscribe() {
-        return new SubscribeInboundInput() {
-            @Override
-            public @NotNull SubscribePacket getSubscribePacket() {
-                return new SubscribePacket() {
-                    @Override
-                    public @NotNull List<Subscription> getSubscriptions() {
-                        return List.of(new Subscription() {
-                            @Override
-                            public @NotNull String getTopicFilter() {
-                                return "topic";
-                            }
-
-                            @Override
-                            public @NotNull Qos getQos() {
-                                return Qos.AT_MOST_ONCE;
-                            }
-
-                            @Override
-                            public @NotNull RetainHandling getRetainHandling() {
-                                return RetainHandling.SEND;
-                            }
-
-                            @Override
-                            public boolean getRetainAsPublished() {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean getNoLocal() {
-                                return false;
-                            }
-                        });
-                    }
-
-                    @Override
-                    public @NotNull UserProperties getUserProperties() {
-                        return new TestUserProperties(0);
-                    }
-
-                    @Override
-                    public @NotNull Optional<Integer> getSubscriptionIdentifier() {
-                        return Optional.empty();
-                    }
-
-                    @Override
-                    public int getPacketId() {
-                        return 1;
-                    }
-                };
-            }
-
-            @Override
-            public @NotNull ConnectionInformation getConnectionInformation() {
-                return null;
-            }
-
-            @Override
-            public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
-            }
-        };
+    @Test
+    public void test_log_suback_verbose_all_set() {
+        MessageLogUtil.logSuback(createFullSuback(), true);
+        assertEquals("Sent SUBACK to client 'clientid': Suback Reason Codes: { " +
+                        "[Reason Code: 'GRANTED_QOS_1'], [Reason Code: 'GRANTED_QOS_0'] }, Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
-    private SubscribeInboundInput createFullSubsribe() {
-        return new SubscribeInboundInput() {
-            @Override
-            public @NotNull SubscribePacket getSubscribePacket() {
-                return new SubscribePacket() {
-                    @Override
-                    public @NotNull List<Subscription> getSubscriptions() {
-                        return List.of(new Subscription() {
-                            @Override
-                            public @NotNull String getTopicFilter() {
-                                return "topic1";
-                            }
-
-                            @Override
-                            public @NotNull Qos getQos() {
-                                return Qos.EXACTLY_ONCE;
-                            }
-
-                            @Override
-                            public @NotNull RetainHandling getRetainHandling() {
-                                return RetainHandling.DO_NOT_SEND;
-                            }
-
-                            @Override
-                            public boolean getRetainAsPublished() {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean getNoLocal() {
-                                return false;
-                            }
-                        }, new Subscription() {
-                            @Override
-                            public @NotNull String getTopicFilter() {
-                                return "topic2";
-                            }
-
-                            @Override
-                            public @NotNull Qos getQos() {
-                                return Qos.AT_MOST_ONCE;
-                            }
-
-                            @Override
-                            public @NotNull RetainHandling getRetainHandling() {
-                                return RetainHandling.SEND_IF_NEW_SUBSCRIPTION;
-                            }
-
-                            @Override
-                            public boolean getRetainAsPublished() {
-                                return true;
-                            }
-
-                            @Override
-                            public boolean getNoLocal() {
-                                return true;
-                            }
-                        });
-                    }
-
-                    @Override
-                    public @NotNull UserProperties getUserProperties() {
-                        return new TestUserProperties(2);
-                    }
-
-                    @Override
-                    public @NotNull Optional<Integer> getSubscriptionIdentifier() {
-                        return Optional.of(10);
-                    }
-
-                    @Override
-                    public int getPacketId() {
-                        return 1;
-                    }
-                };
-            }
-
-            @Override
-            public @NotNull ConnectionInformation getConnectionInformation() {
-                return null;
-            }
-
-            @Override
-            public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
-            }
-        };
+    @Test
+    public void test_log_suback_not_verbose_all_set() {
+        MessageLogUtil.logSuback(createFullSuback(), false);
+        assertEquals("Sent SUBACK to client 'clientid': Suback Reason Codes: { " +
+                        "[Reason Code: 'GRANTED_QOS_1'], [Reason Code: 'GRANTED_QOS_0'] }",
+                logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
-    private PublishPacket createEmptyPublish() {
-        return new PublishPacket() {
-            @Override
-            public boolean getDupFlag() {
-                return false;
-            }
-
-            @Override
-            public @NotNull Qos getQos() {
-                return Qos.AT_LEAST_ONCE;
-            }
-
-            @Override
-            public boolean getRetain() {
-                return false;
-            }
-
-            @Override
-            public @NotNull String getTopic() {
-                return "topic";
-            }
-
-            @Override
-            public int getPacketId() {
-                return 0;
-            }
-
-            @Override
-            public @NotNull Optional<PayloadFormatIndicator> getPayloadFormatIndicator() {
-                return Optional.empty();
-            }
-
-            @Override
-            public @NotNull Optional<Long> getMessageExpiryInterval() {
-                return Optional.empty();
-            }
-
-            @Override
-            public @NotNull Optional<String> getResponseTopic() {
-                return Optional.empty();
-            }
-
-            @Override
-            public @NotNull Optional<ByteBuffer> getCorrelationData() {
-                return Optional.empty();
-            }
-
-            @Override
-            public @NotNull List<Integer> getSubscriptionIdentifiers() {
-                return new ArrayList<>();
-            }
-
-            @Override
-            public @NotNull Optional<String> getContentType() {
-                return Optional.empty();
-            }
-
-            @Override
-            public @NotNull Optional<ByteBuffer> getPayload() {
-                return Optional.of(ByteBuffer.wrap("message".getBytes()));
-            }
-
-            @Override
-            public @NotNull UserProperties getUserProperties() {
-                return null;
-            }
-        };
+    @Test
+    public void test_log_suback_verbose_none_set() {
+        MessageLogUtil.logSuback(createEmptySuback(), true);
+        assertEquals("Sent SUBACK to client 'clientid': Suback Reason Codes: { " +
+                        "[Reason Code: 'GRANTED_QOS_1'] }, Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
-    private PublishPacket createFullPublish() {
-        return new PublishPacket() {
-            @Override
-            public boolean getDupFlag() {
-                return false;
-            }
-
-            @Override
-            public @NotNull Qos getQos() {
-                return Qos.AT_LEAST_ONCE;
-            }
-
-            @Override
-            public boolean getRetain() {
-                return false;
-            }
-
-            @Override
-            public @NotNull String getTopic() {
-                return "topic";
-            }
-
-            @Override
-            public int getPacketId() {
-                return 0;
-            }
-
-            @Override
-            public @NotNull Optional<PayloadFormatIndicator> getPayloadFormatIndicator() {
-                return Optional.of(PayloadFormatIndicator.UTF_8);
-            }
-
-            @Override
-            public @NotNull Optional<Long> getMessageExpiryInterval() {
-                return Optional.of(10000L);
-            }
-
-            @Override
-            public @NotNull Optional<String> getResponseTopic() {
-                return Optional.of("response topic");
-            }
-
-            @Override
-            public @NotNull Optional<ByteBuffer> getCorrelationData() {
-                return Optional.of(ByteBuffer.wrap("data".getBytes()));
-            }
-
-            @Override
-            public @NotNull List<Integer> getSubscriptionIdentifiers() {
-                return List.of(1,2,3,4);
-            }
-
-            @Override
-            public @NotNull Optional<String> getContentType() {
-                return Optional.of("content type");
-            }
-
-            @Override
-            public @NotNull Optional<ByteBuffer> getPayload() {
-                return Optional.of(ByteBuffer.wrap("message".getBytes()));
-            }
-
-            @Override
-            public @NotNull UserProperties getUserProperties() {
-                return new TestUserProperties(2);
-            }
-        };
+    @Test
+    public void test_log_suback_not_verbose_none_set() {
+        MessageLogUtil.logSuback(createEmptySuback(), false);
+        assertEquals("Sent SUBACK to client 'clientid': Suback Reason Codes: { " +
+                        "[Reason Code: 'GRANTED_QOS_1'] }",
+                logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
-    private ConnectPacket createEmptyConnect() {
-        return new ConnectPacket() {
-            @Override
-            public @NotNull MqttVersion getMqttVersion() {
-                return MqttVersion.V_5;
-            }
-
-            @Override
-            public @NotNull String getClientId() {
-                return "clientid";
-            }
-
-            @Override
-            public boolean getCleanStart() {
-                return false;
-            }
-
-            @Override
-            public @NotNull Optional<WillPublishPacket> getWillPublish() {
-                return Optional.empty();
-            }
-
-            @Override
-            public long getSessionExpiryInterval() {
-                return 10000;
-            }
-
-            @Override
-            public int getKeepAlive() {
-                return 0;
-            }
-
-            @Override
-            public int getReceiveMaximum() {
-                return 0;
-            }
-
-            @Override
-            public long getMaximumPacketSize() {
-                return 0;
-            }
-
-            @Override
-            public int getTopicAliasMaximum() {
-                return 0;
-            }
-
-            @Override
-            public boolean getRequestResponseInformation() {
-                return false;
-            }
-
-            @Override
-            public boolean getRequestProblemInformation() {
-                return false;
-            }
-
-            @Override
-            public @NotNull Optional<String> getAuthenticationMethod() {
-                return Optional.empty();
-            }
-
-            @Override
-            public @NotNull Optional<ByteBuffer> getAuthenticationData() {
-                return Optional.empty();
-            }
-
-            @Override
-            public @NotNull UserProperties getUserProperties() {
-                return null;
-            }
-
-            @Override
-            public @NotNull Optional<String> getUserName() {
-                return Optional.empty();
-            }
-
-            @Override
-            public @NotNull Optional<ByteBuffer> getPassword() {
-                return Optional.empty();
-            }
-        };
-    }
-    private ConnectPacket createFullConnect() {
-        return new ConnectPacket() {
-            @Override
-            public @NotNull MqttVersion getMqttVersion() {
-                return MqttVersion.V_5;
-            }
-
-            @Override
-            public @NotNull String getClientId() {
-                return "clientid";
-            }
-
-            @Override
-            public boolean getCleanStart() {
-                return false;
-            }
-
-            @Override
-            public @NotNull Optional<WillPublishPacket> getWillPublish() {
-                return Optional.of(new WillPublishPacket() {
-                    @Override
-                    public long getWillDelay() {
-                        return 100;
-                    }
-
-                    @Override
-                    public boolean getDupFlag() {
-                        return false;
-                    }
-
-                    @Override
-                    public @NotNull Qos getQos() {
-                        return Qos.AT_LEAST_ONCE;
-                    }
-
-                    @Override
-                    public boolean getRetain() {
-                        return false;
-                    }
-
-                    @Override
-                    public @NotNull String getTopic() {
-                        return "willtopic";
-                    }
-
-                    @Override
-                    public int getPacketId() {
-                        return 1;
-                    }
-
-                    @Override
-                    public @NotNull Optional<PayloadFormatIndicator> getPayloadFormatIndicator() {
-                        return Optional.of(PayloadFormatIndicator.UTF_8);
-                    }
-
-                    @Override
-                    public @NotNull Optional<Long> getMessageExpiryInterval() {
-                        return Optional.of(1234L);
-                    }
-
-                    @Override
-                    public @NotNull Optional<String> getResponseTopic() {
-                        return Optional.of("response topic");
-                    }
-
-                    @Override
-                    public @NotNull Optional<ByteBuffer> getCorrelationData() {
-                        return Optional.of(ByteBuffer.wrap("data".getBytes()));
-                    }
-
-                    @Override
-                    public @NotNull List<Integer> getSubscriptionIdentifiers() {
-                        return List.of(1,2,3,4);
-                    }
-
-                    @Override
-                    public @NotNull Optional<String> getContentType() {
-                        return Optional.of("content type");
-                    }
-
-                    @Override
-                    public @NotNull Optional<ByteBuffer> getPayload() {
-                        return Optional.of(ByteBuffer.wrap("payload".getBytes()));
-                    }
-
-                    @Override
-                    public @NotNull UserProperties getUserProperties() {
-                        return new TestUserProperties(3);
-                    }
-                });
-            }
-
-            @Override
-            public long getSessionExpiryInterval() {
-                return 10000;
-            }
-
-            @Override
-            public int getKeepAlive() {
-                return 20000;
-            }
-
-            @Override
-            public int getReceiveMaximum() {
-                return 30000;
-            }
-
-            @Override
-            public long getMaximumPacketSize() {
-                return 40000;
-            }
-
-            @Override
-            public int getTopicAliasMaximum() {
-                return 50000;
-            }
-
-            @Override
-            public boolean getRequestResponseInformation() {
-                return false;
-            }
-
-            @Override
-            public boolean getRequestProblemInformation() {
-                return true;
-            }
-
-            @Override
-            public @NotNull Optional<String> getAuthenticationMethod() {
-                return Optional.of("auth method");
-            }
-
-            @Override
-            public @NotNull Optional<ByteBuffer> getAuthenticationData() {
-                return Optional.of(ByteBuffer.wrap("auth data".getBytes()));
-            }
-
-            @Override
-            public @NotNull UserProperties getUserProperties() {
-                return new TestUserProperties(2);
-            }
-
-            @Override
-            public @NotNull Optional<String> getUserName() {
-                return Optional.of("the username");
-            }
-
-            @Override
-            public @NotNull Optional<ByteBuffer> getPassword() {
-                return Optional.of(ByteBuffer.wrap("the password".getBytes()));
-            }
-        };
+    @Test
+    public void test_log_unsuback_verbose_all_set() {
+        MessageLogUtil.logUnsuback(createFullUnsuback(), true);
+        assertEquals("Sent UNSUBACK to client 'clientid': Unsuback Reason Codes: { " +
+                        "[Reason Code: 'NOT_AUTHORIZED'], [Reason Code: 'SUCCESS'] }, Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
-    @SuppressWarnings("NullabilityAnnotations")
-    private class TestDisconnect implements DisconnectEventInput {
-
-        private final DisconnectedReasonCode reasonCode;
-        private final String reasonString;
-        private final UserProperties userProperties;
-
-        public TestDisconnect(final DisconnectedReasonCode reasonCode, final String reasonString, final UserProperties userProperties) {
-
-            this.reasonCode = reasonCode;
-            this.reasonString = reasonString;
-            this.userProperties = userProperties;
-        }
-
-        @Override
-        public @NotNull Optional<DisconnectedReasonCode> getReasonCode() {
-            return Optional.ofNullable(reasonCode);
-        }
-
-        @Override
-        public @NotNull Optional<String> getReasonString() {
-            return Optional.ofNullable(reasonString);
-        }
-
-        @Override
-        public @NotNull Optional<UserProperties> getUserProperties() {
-            return Optional.ofNullable(userProperties);
-        }
-
-        @Override
-        public @NotNull ConnectionInformation getConnectionInformation() {
-            return null;
-        }
-
-        @Override
-        public @NotNull ClientInformation getClientInformation() {
-            return null;
-        }
+    @Test
+    public void test_log_unsuback_not_verbose_all_set() {
+        MessageLogUtil.logUnsuback(createFullUnsuback(), false);
+        assertEquals("Sent UNSUBACK to client 'clientid': Unsuback Reason Codes: { " +
+                        "[Reason Code: 'NOT_AUTHORIZED'], [Reason Code: 'SUCCESS'] }",
+                logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
-    private static class TestUserProperties implements UserProperties {
-
-        private final List<UserProperty> userProperties;
-
-        TestUserProperties(final int amount) {
-            final List<UserProperty> properties =new ArrayList<>();
-            for (int i = 0; i < amount; i++) {
-                properties.add(new TestUserProperty("name" + i, "value" + i));
-            }
-            userProperties = properties;
-        }
-
-        @Override
-        public @NotNull Optional<String> getFirst(@NotNull String s) {
-            return Optional.empty();
-        }
-
-        @Override
-        public @NotNull List<String> getAllForName(@NotNull String s) {
-            return null;
-        }
-
-        @Override
-        public @NotNull List<UserProperty> asList() {
-            return userProperties;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return userProperties.isEmpty();
-        }
+    @Test
+    public void test_log_unsuback_verbose_none_set() {
+        MessageLogUtil.logUnsuback(createEmptyUnsuback(), true);
+        assertEquals("Sent UNSUBACK to client 'clientid': Unsuback Reason Codes: { " +
+                        "[Reason Code: 'NOT_AUTHORIZED'] }, Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
     }
 
-    private static class TestUserProperty implements UserProperty {
+    @Test
+    public void test_log_unsuback_not_verbose_none_set() {
+        MessageLogUtil.logUnsuback(createEmptyUnsuback(), false);
+        assertEquals("Sent UNSUBACK to client 'clientid': Unsuback Reason Codes: { " +
+                        "[Reason Code: 'NOT_AUTHORIZED'] }",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
 
-        private final String name;
-        private final String value;
+    @Test
+    public void test_log_unsubscribe_verbose_all_set() {
+        MessageLogUtil.logUnsubscribe(createFullUnsubsribe(), true);
+        assertEquals("Received UNSUBSCRIBE from client 'clientid': Topics: { " +
+                        "[Topic: 'topic1'] }, User Properties: " +
+                        "[Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
 
-        public TestUserProperty(final String name, final String value) {
-            this.name = name;
-            this.value = value;
-        }
+    @Test
+    public void test_log_unsubscribe_not_verbose_all_set() {
+        MessageLogUtil.logUnsubscribe(createFullUnsubsribe(), false);
+        assertEquals("Received UNSUBSCRIBE from client 'clientid': Topics: { " +
+                        "[Topic: 'topic1'] }",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
 
-        @Override
-        public @NotNull String getName() {
-            return name;
-        }
+    @Test
+    public void test_log_unsubscribe_verbose_none_set() {
+        MessageLogUtil.logUnsubscribe(createEmptyUnsubscribe(), true);
+        assertEquals("Received UNSUBSCRIBE from client 'clientid': Topics: { " +
+                        "[Topic: 'topic1'], [Topic: 'topic2'] }, User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
 
-        @Override
-        public @NotNull String getValue() {
-            return value;
-        }
+    @Test
+    public void test_log_unsubscribe_not_verbose_none_set() {
+        MessageLogUtil.logUnsubscribe(createEmptyUnsubscribe(), false);
+        assertEquals("Received UNSUBSCRIBE from client 'clientid': Topics: { " +
+                        "[Topic: 'topic1'], [Topic: 'topic2'] }",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pingreq() {
+        MessageLogUtil.logPingreq(createPingreq());
+        assertEquals("Received PING REQUEST from client 'clientid'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pingresp() {
+        MessageLogUtil.logPingresp(createPingresp());
+        assertEquals("Sent PING RESPONSE to client 'clientid'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_puback_inbound_verbose_all_set() {
+        MessageLogUtil.logPuback(createFullPuback(), "clientid", true, true);
+        assertEquals("Received PUBACK from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_puback_inbound_not_verbose_all_set() {
+        MessageLogUtil.logPuback(createFullPuback(), "clientid", true, false);
+        assertEquals("Received PUBACK from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_puback_inbound_verbose_none_set() {
+        MessageLogUtil.logPuback(createEmptyPuback(), "clientid", true, true);
+        assertEquals("Received PUBACK from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_puback_inbound_not_verbose_none_set() {
+        MessageLogUtil.logPuback(createEmptyPuback(), "clientid", true, false);
+        assertEquals("Received PUBACK from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_puback_outbound_verbose_all_set() {
+        MessageLogUtil.logPuback(createFullPuback(), "clientid", false, true);
+        assertEquals("Sent PUBACK to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_puback_outbound_not_verbose_all_set() {
+        MessageLogUtil.logPuback(createFullPuback(), "clientid", false, false);
+        assertEquals("Sent PUBACK to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_puback_outbound_verbose_none_set() {
+        MessageLogUtil.logPuback(createEmptyPuback(), "clientid", false, true);
+        assertEquals("Sent PUBACK to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_puback_outbound_not_verbose_none_set() {
+        MessageLogUtil.logPuback(createEmptyPuback(), "clientid", false, false);
+        assertEquals("Sent PUBACK to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrec_inbound_verbose_all_set() {
+        MessageLogUtil.logPubrec(createFullPubrec(), "clientid", true, true);
+        assertEquals("Received PUBREC from client 'clientid': Reason Code: 'SUCCESS', Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrec_inbound_not_verbose_all_set() {
+        MessageLogUtil.logPubrec(createFullPubrec(), "clientid", true, false);
+        assertEquals("Received PUBREC from client 'clientid': Reason Code: 'SUCCESS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrec_inbound_verbose_none_set() {
+        MessageLogUtil.logPubrec(createEmptyPubrec(), "clientid", true, true);
+        assertEquals("Received PUBREC from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrec_inbound_not_verbose_none_set() {
+        MessageLogUtil.logPubrec(createEmptyPubrec(), "clientid", true, false);
+        assertEquals("Received PUBREC from client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrec_outbound_verbose_all_set() {
+        MessageLogUtil.logPubrec(createFullPubrec(), "clientid", false, true);
+        assertEquals("Sent PUBREC to client 'clientid': Reason Code: 'SUCCESS', Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrec_outbound_not_verbose_all_set() {
+        MessageLogUtil.logPubrec(createFullPubrec(), "clientid", false, false);
+        assertEquals("Sent PUBREC to client 'clientid': Reason Code: 'SUCCESS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrec_outbound_verbose_none_set() {
+        MessageLogUtil.logPubrec(createEmptyPubrec(), "clientid", false, true);
+        assertEquals("Sent PUBREC to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrec_outbound_not_verbose_none_set() {
+        MessageLogUtil.logPubrec(createEmptyPubrec(), "clientid", false, false);
+        assertEquals("Sent PUBREC to client 'clientid': Reason Code: 'NO_MATCHING_SUBSCRIBERS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrel_inbound_verbose_all_set() {
+        MessageLogUtil.logPubrel(createFullPubrel(), "clientid", true, true);
+        assertEquals("Received PUBREL from client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrel_inbound_not_verbose_all_set() {
+        MessageLogUtil.logPubrel(createFullPubrel(), "clientid", true, false);
+        assertEquals("Received PUBREL from client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrel_inbound_verbose_none_set() {
+        MessageLogUtil.logPubrel(createEmptyPubrel(), "clientid", true, true);
+        assertEquals("Received PUBREL from client 'clientid': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrel_inbound_not_verbose_none_set() {
+        MessageLogUtil.logPubrel(createEmptyPubrel(), "clientid", true, false);
+        assertEquals("Received PUBREL from client 'clientid': Reason Code: 'SUCCESS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrel_outbound_verbose_all_set() {
+        MessageLogUtil.logPubrel(createFullPubrel(), "clientid", false, true);
+        assertEquals("Sent PUBREL to client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrel_outbound_not_verbose_all_set() {
+        MessageLogUtil.logPubrel(createFullPubrel(), "clientid", false, false);
+        assertEquals("Sent PUBREL to client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrel_outbound_verbose_none_set() {
+        MessageLogUtil.logPubrel(createEmptyPubrel(), "clientid", false, true);
+        assertEquals("Sent PUBREL to client 'clientid': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubrel_outbound_not_verbose_none_set() {
+        MessageLogUtil.logPubrel(createEmptyPubrel(), "clientid", false, false);
+        assertEquals("Sent PUBREL to client 'clientid': Reason Code: 'SUCCESS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubcomp_inbound_verbose_all_set() {
+        MessageLogUtil.logPubcomp(createFullPubcomp(), "clientid", true, true);
+        assertEquals("Received PUBCOMP from client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubcomp_inbound_not_verbose_all_set() {
+        MessageLogUtil.logPubcomp(createFullPubcomp(), "clientid", true, false);
+        assertEquals("Received PUBCOMP from client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubcomp_inbound_verbose_none_set() {
+        MessageLogUtil.logPubcomp(createEmptyPubcomp(), "clientid", true, true);
+        assertEquals("Received PUBCOMP from client 'clientid': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubcomp_inbound_not_verbose_none_set() {
+        MessageLogUtil.logPubcomp(createEmptyPubcomp(), "clientid", true, false);
+        assertEquals("Received PUBCOMP from client 'clientid': Reason Code: 'SUCCESS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubcomp_outbound_verbose_all_set() {
+        MessageLogUtil.logPubcomp(createFullPubcomp(), "clientid", false, true);
+        assertEquals("Sent PUBCOMP to client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', User Properties: " +
+                        "[Name: 'name0', Value: 'value0']",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubcomp_outbound_not_verbose_all_set() {
+        MessageLogUtil.logPubcomp(createFullPubcomp(), "clientid", false, false);
+        assertEquals("Sent PUBCOMP to client 'clientid': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubcomp_outbound_verbose_none_set() {
+        MessageLogUtil.logPubcomp(createEmptyPubcomp(), "clientid", false, true);
+        assertEquals("Sent PUBCOMP to client 'clientid': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
+    }
+
+    @Test
+    public void test_log_pubcomp_outbound_not_verbose_none_set() {
+        MessageLogUtil.logPubcomp(createEmptyPubcomp(), "clientid", false, false);
+        assertEquals("Sent PUBCOMP to client 'clientid': Reason Code: 'SUCCESS'",
+                logCapture.getLastCapturedLog().getFormattedMessage());
     }
 }

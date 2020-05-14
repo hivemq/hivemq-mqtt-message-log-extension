@@ -22,13 +22,18 @@
     <name>HiveMQ Mqtt Message Log Extension</name>
     <groupId>com.hivemq.extension</groupId>
     <artifactId>hivemq-mqtt-message-log-extension</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 
     <description>HiveMQ Mqtt Message Log Extension</description>
 
     <developers>
         <developer>
             <name>Florian Limpöck</name>
+            <organization>dc-square GmbH</organization>
+            <url>www.hivemq.com</url>
+        </developer>
+        <developer>
+            <name>Michael Walter</name>
             <organization>dc-square GmbH</organization>
             <url>www.hivemq.com</url>
         </developer>
@@ -44,7 +49,7 @@
         <dependency>
             <groupId>com.hivemq</groupId>
             <artifactId>hivemq-extension-sdk</artifactId>
-            <version>4.2.0</version>
+            <version>4.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
