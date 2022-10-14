@@ -1,24 +1,14 @@
-# Created
-# idea files
-/.idea/
+# Gradle
+.gradle
+build/
 
-#target
-.target
+# IntelliJ
+out/
+*.iml
+.idea/*
+!.idea/codeStyles
+!.idea/inspectionProfiles
+!.idea/runConfigurations
 
-
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# Package Files #
-*.jar
-*.zip
-*.tar.gz
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-/target/
-/dependency-reduced-pom.xml
-/hivemq-heartbeat-extension.iml
+.java-version
+.DS_Store
