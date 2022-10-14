@@ -55,6 +55,7 @@ tasks.withType<Test>().configureEach {
 license {
     header = rootDir.resolve("HEADER")
     mapping("java", "SLASHSTAR_STYLE")
+    exclude("**/test-conf/mqttMessageLog.properties")
 }
 
 /* ******************** run ******************** */
