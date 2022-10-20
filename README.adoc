@@ -1,26 +1,23 @@
-:hivemq-link: http://www.hivemq.com
-:hivemq-extension-docs-link: http://www.hivemq.com/docs/extensions/latest/
-:hivemq-extension-docs-archetype-link: http://www.hivemq.com/docs/extensions/latest/#maven-archetype-chapter
 :hivemq-blog-tools: http://www.hivemq.com/mqtt-toolbox
-:maven-documentation-profile-link: http://maven.apache.org/guides/introduction/introduction-to-profiles.html
 :hivemq-support: http://www.hivemq.com/support/
+:hivemq-extension-download: https://www.hivemq.com/extension/mqtt-message-log-extension/
 
-== HiveMQ Mqtt Message Log Extension
+= HiveMQ Mqtt Message Log Extension
 
-*Type*: Logging Extension
+image:https://img.shields.io/badge/Extension_Type-Logging-orange?style=for-the-badge[Extension Type]
+image:https://img.shields.io/github/v/release/hivemq/hivemq-mqtt-message-log-extension?style=for-the-badge[GitHub release (latest by date),link=https://github.com/hivemq/hivemq-mqtt-message-log-extension/releases/latest]
+image:https://img.shields.io/github/license/hivemq/hivemq-mqtt-message-log-extension?style=for-the-badge&color=brightgreen[GitHub,link=LICENSE]
+image:https://img.shields.io/github/workflow/status/hivemq/hivemq-mqtt-message-log-extension/CI%20Check/master?style=for-the-badge[GitHub Workflow Status (branch),link=https://github.com/hivemq/hivemq-mqtt-message-log-extension/actions/workflows/check.yml?query=branch%3Amaster]
 
-*Version*: 1.1.0
-
-*License*: Apache License Version 2.0
-
-=== Prerequisites
+== Prerequisites
 
 * HiveMQ Enterprise Edition (EE) 4.2.0 or later
 * HiveMQ Community Edition (CE) 2020.1 or later
 
-=== Purpose
+== Purpose
 
-The HiveMQ MQTT Message Log Extension is a very useful HiveMQ Extension for debugging and development purposes. It provides the possibility to follow up on any clients communicating with the broker on the terminal.
+The HiveMQ MQTT Message Log Extension is a very useful HiveMQ Extension for debugging and development purposes.
+It provides the possibility to follow up on any clients communicating with the broker on the terminal.
 
 *The extension logs the following events:*
 
@@ -48,24 +45,20 @@ The HiveMQ MQTT Message Log Extension is a very useful HiveMQ Extension for debu
 |HiveMQ acknowledges the reception of a Qos2 publish with a pubrec message | pubrec-send | 4.3 EE or 2020.1 CE
 |HiveMQ completes a sent Qos2 publish with a pubrel message | pubrel-send | 4.3 EE or 2020.1 CE
 |HiveMQ completes a received Qos2 publish with a pubcomp message | pubcomp-send | 4.3 EE or 2020.1 CE
-
 |===
 
-=== Installation
+== Installation
 
-. Download https://www.hivemq.com/releases/extensions/hivemq-mqtt-message-log-extension-1.1.0.zip[HiveMQ Mqtt Message Log Extension]
-.. Move the file: "hivemq-mqtt-message-log-extension-1.1.0.zip" to the directory: "HIVEMQ_HOME/extensions"
-. Or clone this repository into a Java 11 maven project
-.. run `mvn package` goal from Maven to build the extension.
-.. Move the file: "hivemq-mqtt-message-log-extension-1.1.0-distribution.zip" to the directory: "HIVEMQ_HOME/extensions"
-. Unzip the file.
-. Start HiveMQ.
+* Download the extension from the {hivemq-extension-download}[HiveMQ Marketplace^].
+* Copy the content of the zip file to the `extensions` folder of your HiveMQ nodes.
+* Modify the `mqttMessageLog.properties` file for your needs.
 
-=== Configuration
+== Configuration
 
-By default, all MQTT events are logged. It is possible to opt out of specific log event types by adding a
-*mqttMessageLog.properties* files to your `<HIVEMQ_HOME>/hivemq-mqtt-message-log-extension`  folder.
-There is an example file available which removes the logging of publish messages. Just rename it to *mqttMessageLog.properties*.
+By default, all MQTT events are logged.
+It is possible to opt out of specific log event types by adding a *mqttMessageLog.properties* files to your `<HIVEMQ_HOME>/hivemq-mqtt-message-log-extension` folder.
+There is an example file available which removes the logging of publish messages.
+Just rename it to *mqttMessageLog.properties*.
 
 The events log only important information, if it is required that MQTT messages are logging all information available the `verbose` property can be set to true.
 You can see the difference of a normal log versus a verbose log in the <<example, examples>>.
@@ -74,14 +67,16 @@ CAUTION: use verbose=true very carefully as it will flood your log immediately.
 
 Missing entries default to true. *verbose* defaults to false.
 
-=== First Steps
+== First Steps
 
-Connect with an {hivemq-blog-tools}[MQTT client] of your choice. You should see a log message with its client identifier, MQTT version, clean start flag and session expiry interval.
+Connect with an {hivemq-blog-tools}[MQTT client] of your choice.
+You should see a log message with its client identifier, MQTT version, clean start flag and session expiry interval.
 
 [[example]]
-=== Examples
+== Examples
 
-==== Verbose CONNECT message
+=== Verbose CONNECT message
+
 [source,bash]
 ----
 "17:26:23.602 INFO - Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false',
@@ -97,11 +92,17 @@ User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value
 [Name: 'name2', Value: 'value2'], Will Delay: '100' }"
 ----
 
-==== Basic CONNECT message
+=== Basic CONNECT message
+
 [source,bash]
 ----
 "17:26:23.602 INFO - Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', Session Expiry Interval: '10000'"
 ----
+
+== Need Help?
+
+If you encounter any problems, we are happy to help.
+The best place to get in contact is our {hivemq-support}[support^].
 
 == Contributing
 
@@ -109,4 +110,5 @@ If you want to contribute to HiveMQ Mqtt Message Log Extension, see the link:CON
 
 == License
 
-HiveMQ Mqtt Message Log Extension is licensed under the `APACHE LICENSE, VERSION 2.0`. A copy of the license can be found link:LICENSE.txt[here].
+HiveMQ Mqtt Message Log Extension is licensed under the `APACHE LICENSE, VERSION 2.0`.
+A copy of the license can be found link:LICENSE[here].
