@@ -20,7 +20,7 @@ import com.hivemq.extension.sdk.api.interceptor.connect.ConnectInboundIntercepto
 import com.hivemq.extension.sdk.api.interceptor.connect.parameter.ConnectInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.connect.parameter.ConnectInboundOutput;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
-import com.hivemq.extensions.mqtt.message.log.MessageLogUtil;
+import com.hivemq.extensions.mqtt.message.log.util.MessageLogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -19,7 +19,7 @@ import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.pingresp.PingRespOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.pingresp.parameter.PingRespOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pingresp.parameter.PingRespOutboundOutput;
-import com.hivemq.extensions.mqtt.message.log.MessageLogUtil;
+import com.hivemq.extensions.mqtt.message.log.util.MessageLogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -19,7 +19,7 @@ import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.UnsubackOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundOutput;
-import com.hivemq.extensions.mqtt.message.log.MessageLogUtil;
+import com.hivemq.extensions.mqtt.message.log.util.MessageLogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

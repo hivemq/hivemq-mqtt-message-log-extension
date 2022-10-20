@@ -19,7 +19,7 @@ import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.pubrec.PubrecInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.pubrec.parameter.PubrecInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pubrec.parameter.PubrecInboundOutput;
-import com.hivemq.extensions.mqtt.message.log.MessageLogUtil;
+import com.hivemq.extensions.mqtt.message.log.util.MessageLogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

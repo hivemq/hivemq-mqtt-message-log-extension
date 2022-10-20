@@ -25,7 +25,7 @@ import com.hivemq.extension.sdk.api.events.client.parameters.ConnectionStartInpu
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
 import com.hivemq.extension.sdk.api.events.client.parameters.ServerInitiatedDisconnectInput;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
-import com.hivemq.extensions.mqtt.message.log.MessageLogUtil;
+import com.hivemq.extensions.mqtt.message.log.util.MessageLogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
