@@ -1,6 +1,6 @@
 :hivemq-blog-tools: http://www.hivemq.com/mqtt-toolbox
 :hivemq-support: http://www.hivemq.com/support/
-:hivemq-extension-downloads: https://www.hivemq.com/extension/mqtt-message-log-extension/
+:hivemq-extension-download: https://www.hivemq.com/extension/mqtt-message-log-extension/
 
 = HiveMQ Mqtt Message Log Extension
 
@@ -49,7 +49,7 @@ It provides the possibility to follow up on any clients communicating with the b
 
 == Installation
 
-* Download the extension from the {hivemq-extension-downloads}[HiveMQ Marketplace^].
+* Download the extension from the {hivemq-extension-download}[HiveMQ Marketplace^].
 * Copy the content of the zip file to the `extensions` folder of your HiveMQ nodes.
 * Modify the `mqttMessageLog.properties` file for your needs.
 
