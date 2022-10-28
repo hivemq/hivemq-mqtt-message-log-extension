@@ -11,8 +11,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '11'
+          distribution: temurin
+          java-version: 11
           cache: gradle
       - name: Check
         run: ./gradlew check
