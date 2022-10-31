@@ -17,9 +17,12 @@ package com.hivemq.extensions.log.mqtt.config;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,8 +58,8 @@ class MqttMessageLogConfigReaderTest {
             MqttMessageLogConfig.VERBOSE);
 
     @Test
-    void defaultPropertiesWhenNoPropertyFileInConfigFolder() {
-        final Properties properties = getProperties("src/test/resources/empty-conf");
+    void defaultPropertiesWhenNoPropertyFileInConfigFolder(@TempDir final @NotNull Path tempDir) {
+        final Properties properties = new MqttMessageLogConfigReader(tempDir.toFile()).readProperties();
 
         assertEquals(properties.size(), totalAvailableFlags);
         assertTrue(properties.stringPropertyNames().containsAll(defaultProperties));
@@ -65,16 +68,11 @@ class MqttMessageLogConfigReaderTest {
 
     @Test
     void nonEmptyPropertiesWhenPropertyFileInConfigFolder() {
-        final Properties properties = getProperties("src/test/resources/test-conf");
+        final String path = Objects.requireNonNull(getClass().getResource("/test-conf")).getPath();
+        final Properties properties = new MqttMessageLogConfigReader(new File(path)).readProperties();
 
         assertEquals(properties.size(), totalAvailableFlags);
         assertTrue(properties.stringPropertyNames().containsAll(defaultProperties));
         assertTrue(defaultProperties.containsAll(properties.stringPropertyNames()));
-    }
-
-    private @NotNull Properties getProperties(final @NotNull String confPath) {
-        final MqttMessageLogConfigReader mqttMessageLogConfigReader =
-                new MqttMessageLogConfigReader(new File(confPath));
-        return mqttMessageLogConfigReader.readProperties();
     }
 }
