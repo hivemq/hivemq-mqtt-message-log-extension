@@ -16,6 +16,8 @@
 package com.hivemq.extensions.log.mqtt.interceptor;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
+import com.hivemq.extension.sdk.api.interceptor.connack.ConnackOutboundInterceptor;
+import com.hivemq.extension.sdk.api.interceptor.connect.ConnectInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.disconnect.DisconnectInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.disconnect.DisconnectOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.pingreq.PingReqInboundInterceptor;
@@ -44,7 +46,7 @@ import java.util.Optional;
  */
 public class InterceptorUtil {
 
-    public static @NotNull Optional<ConnectInboundInterceptorImpl> createConnectOutboundInterceptor(final @NotNull MqttMessageLogConfig config) {
+    public static @NotNull Optional<ConnectInboundInterceptor> createConnectOutboundInterceptor(final @NotNull MqttMessageLogConfig config) {
         if (config.isClientConnect()) {
             return Optional.of(new ConnectInboundInterceptorImpl(config.isVerbose()));
         } else {
@@ -52,7 +54,7 @@ public class InterceptorUtil {
         }
     }
 
-    public static @NotNull Optional<ConnackOutboundInterceptorImpl> createConnackOutboundInterceptor(final @NotNull MqttMessageLogConfig config) {
+    public static @NotNull Optional<ConnackOutboundInterceptor> createConnackOutboundInterceptor(final @NotNull MqttMessageLogConfig config) {
         if (config.isConnackSend()) {
             return Optional.of(new ConnackOutboundInterceptorImpl(config.isVerbose()));
         } else {

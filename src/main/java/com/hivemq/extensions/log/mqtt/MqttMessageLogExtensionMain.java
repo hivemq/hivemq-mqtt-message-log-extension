@@ -75,7 +75,6 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
             LOG.error(extensionStartInput.getExtensionInformation().getName() +
                     " could not be started. An exception was thrown!", e);
         }
-
     }
 
     @Override
@@ -86,8 +85,8 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
 
     private @NotNull ClientInitializer getClientInitializerForEdition(
             final @NotNull ServerInformation serverInformation, final @NotNull MqttMessageLogConfig config) {
-        final @NotNull LicenseEdition edition = Services.adminService().getLicenseInformation().getEdition();
-        final @NotNull String version = serverInformation.getVersion();
+        final LicenseEdition edition = Services.adminService().getLicenseInformation().getEdition();
+        final String version = serverInformation.getVersion();
 
         if (LicenseEdition.COMMUNITY.equals(edition)) {
             return new ClientInitializerImpl(config);

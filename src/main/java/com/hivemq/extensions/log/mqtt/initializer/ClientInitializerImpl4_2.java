@@ -37,7 +37,6 @@ public class ClientInitializerImpl4_2 implements ClientInitializer {
 
     public ClientInitializerImpl4_2(final @NotNull MqttMessageLogConfig config) {
         this.config = config;
-
         init();
     }
 
@@ -63,8 +62,10 @@ public class ClientInitializerImpl4_2 implements ClientInitializer {
     @Override
     public void initialize(
             final @NotNull InitializerInput initializerInput, final @NotNull ClientContext clientContext) {
-        InterceptorUtil.createSubscribeInboundInterceptor(config).ifPresent(clientContext::addSubscribeInboundInterceptor);
+        InterceptorUtil.createSubscribeInboundInterceptor(config)
+                .ifPresent(clientContext::addSubscribeInboundInterceptor);
         InterceptorUtil.createPublishInboundInterceptor(config).ifPresent(clientContext::addPublishInboundInterceptor);
-        InterceptorUtil.createPublishOutboundInterceptor(config).ifPresent(clientContext::addPublishOutboundInterceptor);
+        InterceptorUtil.createPublishOutboundInterceptor(config)
+                .ifPresent(clientContext::addPublishOutboundInterceptor);
     }
 }
