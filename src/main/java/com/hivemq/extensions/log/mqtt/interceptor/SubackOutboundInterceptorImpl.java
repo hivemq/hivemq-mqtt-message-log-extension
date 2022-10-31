@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * @author Michael Walter
  * @since 1.1.0
  */
-public class SubackOutboundInterceptorImpl implements SubackOutboundInterceptor {
+class SubackOutboundInterceptorImpl implements SubackOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(SubackOutboundInterceptorImpl.class);
     private final boolean verbose;

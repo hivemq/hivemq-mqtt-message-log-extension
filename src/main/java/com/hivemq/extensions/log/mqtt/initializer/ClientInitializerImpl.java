@@ -42,30 +42,39 @@ public class ClientInitializerImpl implements ClientInitializer {
      * Initialize any logging logic that can be done without a {@link ClientInitializer}.
      */
     private void init() {
-        InterceptorUtil.createConnectOutboundInterceptor(config).ifPresent(connectInboundInterceptor -> Services.interceptorRegistry()
-                .setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor));
+        InterceptorUtil.createConnectOutboundInterceptor(config)
+                .ifPresent(connectInboundInterceptor -> Services.interceptorRegistry()
+                        .setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor));
 
-        InterceptorUtil.createConnackOutboundInterceptor(config).ifPresent(connackOutboundInterceptor -> Services.interceptorRegistry()
-                .setConnackOutboundInterceptorProvider(input -> connackOutboundInterceptor));
+        InterceptorUtil.createConnackOutboundInterceptor(config)
+                .ifPresent(connackOutboundInterceptor -> Services.interceptorRegistry()
+                        .setConnackOutboundInterceptorProvider(input -> connackOutboundInterceptor));
     }
 
     @Override
     public void initialize(
             final @NotNull InitializerInput initializerInput, final @NotNull ClientContext clientContext) {
-        InterceptorUtil.createDisconnectInboundInterceptor(config).ifPresent(clientContext::addDisconnectInboundInterceptor);
-        InterceptorUtil.createDisconnectOutboundInterceptor(config).ifPresent(clientContext::addDisconnectOutboundInterceptor);
+        InterceptorUtil.createDisconnectInboundInterceptor(config)
+                .ifPresent(clientContext::addDisconnectInboundInterceptor);
+        InterceptorUtil.createDisconnectOutboundInterceptor(config)
+                .ifPresent(clientContext::addDisconnectOutboundInterceptor);
 
-        InterceptorUtil.createSubscribeInboundInterceptor(config).ifPresent(clientContext::addSubscribeInboundInterceptor);
+        InterceptorUtil.createSubscribeInboundInterceptor(config)
+                .ifPresent(clientContext::addSubscribeInboundInterceptor);
         InterceptorUtil.createSubackOutboundInterceptor(config).ifPresent(clientContext::addSubackOutboundInterceptor);
 
         InterceptorUtil.createPingreqInboundInterceptor(config).ifPresent(clientContext::addPingReqInboundInterceptor);
-        InterceptorUtil.createPingrespOutboundInterceptor(config).ifPresent(clientContext::addPingRespOutboundInterceptor);
+        InterceptorUtil.createPingrespOutboundInterceptor(config)
+                .ifPresent(clientContext::addPingRespOutboundInterceptor);
 
-        InterceptorUtil.createUnsubscribeInboundInterceptor(config).ifPresent(clientContext::addUnsubscribeInboundInterceptor);
-        InterceptorUtil.createUnsubackOutboundInterceptor(config).ifPresent(clientContext::addUnsubackOutboundInterceptor);
+        InterceptorUtil.createUnsubscribeInboundInterceptor(config)
+                .ifPresent(clientContext::addUnsubscribeInboundInterceptor);
+        InterceptorUtil.createUnsubackOutboundInterceptor(config)
+                .ifPresent(clientContext::addUnsubackOutboundInterceptor);
 
         InterceptorUtil.createPublishInboundInterceptor(config).ifPresent(clientContext::addPublishInboundInterceptor);
-        InterceptorUtil.createPublishOutboundInterceptor(config).ifPresent(clientContext::addPublishOutboundInterceptor);
+        InterceptorUtil.createPublishOutboundInterceptor(config)
+                .ifPresent(clientContext::addPublishOutboundInterceptor);
 
         InterceptorUtil.createPubackInboundInterceptor(config).ifPresent(clientContext::addPubackInboundInterceptor);
         InterceptorUtil.createPubackOutboundInterceptor(config).ifPresent(clientContext::addPubackOutboundInterceptor);
@@ -77,6 +86,7 @@ public class ClientInitializerImpl implements ClientInitializer {
         InterceptorUtil.createPubrelOutboundInterceptor(config).ifPresent(clientContext::addPubrelOutboundInterceptor);
 
         InterceptorUtil.createPubcompInboundInterceptor(config).ifPresent(clientContext::addPubcompInboundInterceptor);
-        InterceptorUtil.createPubcompOutboundInterceptor(config).ifPresent(clientContext::addPubcompOutboundInterceptor);
+        InterceptorUtil.createPubcompOutboundInterceptor(config)
+                .ifPresent(clientContext::addPubcompOutboundInterceptor);
     }
 }
