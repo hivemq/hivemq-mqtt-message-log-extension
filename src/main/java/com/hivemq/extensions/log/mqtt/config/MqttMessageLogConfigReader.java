@@ -51,7 +51,7 @@ public class MqttMessageLogConfigReader {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(MqttMessageLogConfigReader.class);
 
-    private static final @NotNull String PROPERTIES_FILE_NAME = "src/hivemq-extension/mqttMessageLog.properties";
+    private static final @NotNull String PROPERTIES_FILE_NAME = "mqttMessageLog.properties";
 
     private final @NotNull Properties properties;
 
