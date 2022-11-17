@@ -20,6 +20,5 @@ import org.testcontainers.utility.DockerImageName;
 
 public class DockerImageNames {
 
-    public static final @NotNull DockerImageName HIVEMQ =
-            DockerImageName.parse("acidsepp/hivemq-ce").withTag("latest").asCompatibleSubstituteFor("hivemq/hivemq-ce");
+    public static final @NotNull DockerImageName HIVEMQ = DockerImageName.parse("hivemq/hivemq-ce").withTag("latest");
 }
