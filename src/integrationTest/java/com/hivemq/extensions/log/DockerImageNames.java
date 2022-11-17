@@ -18,6 +18,10 @@ package com.hivemq.extensions.log;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import org.testcontainers.utility.DockerImageName;
 
+/**
+ * @author Yannick Weber
+ * @since 1.1.3
+ */
 public class DockerImageNames {
 
     public static final @NotNull DockerImageName HIVEMQ = DockerImageName.parse("hivemq/hivemq-ce").withTag("latest");

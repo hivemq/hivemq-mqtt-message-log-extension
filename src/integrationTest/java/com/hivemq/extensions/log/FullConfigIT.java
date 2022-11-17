@@ -13,6 +13,11 @@ import org.testcontainers.utility.MountableFile;
 import static com.hivemq.extensions.log.DockerImageNames.HIVEMQ;
 import static org.awaitility.Awaitility.await;
 
+
+/**
+ * @author Yannick Weber
+ * @since 1.1.3
+ */
 @Testcontainers
 public class FullConfigIT {
 
