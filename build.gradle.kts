@@ -1,8 +1,8 @@
 plugins {
-    id("com.hivemq.extension")
-    id("com.github.hierynomus.license")
-    id("io.github.sgtsilvio.gradle.defaults")
-    id("org.asciidoctor.jvm.convert")
+    alias(libs.plugins.hivemq.extension)
+    alias(libs.plugins.defaults)
+    alias(libs.plugins.license)
+    alias(libs.plugins.asciidoctor)
 }
 
 group = "com.hivemq.extensions"
@@ -13,7 +13,7 @@ hivemqExtension {
     author.set("HiveMQ")
     priority.set(1000)
     startPriority.set(1000)
-    sdkVersion.set("${property("hivemq-extension-sdk.version")}")
+    sdkVersion.set(libs.versions.hivemq.extensionSdk)
 
     resources {
         from("LICENSE")
@@ -23,7 +23,7 @@ hivemqExtension {
 }
 
 dependencies {
-    implementation("org.apache.commons:commons-lang3:${property("commons-lang.version")}")
+    implementation(libs.commonsLang)
 }
 
 tasks.asciidoctor {
@@ -35,9 +35,9 @@ tasks.asciidoctor {
 /* ******************** test ******************** */
 
 dependencies {
-    testImplementation("ch.qos.logback:logback-classic:${property("logback.version")}")
-    testImplementation("org.junit.jupiter:junit-jupiter:${property("junit-jupiter.version")}")
-    testImplementation("org.mockito:mockito-core:${property("mockito.version")}")
+    testImplementation(libs.logback.classic)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockito)
 }
 
 tasks.withType<Test>().configureEach {
@@ -47,13 +47,13 @@ tasks.withType<Test>().configureEach {
 /* ******************** integration test ******************** */
 
 dependencies {
-    integrationTestCompileOnly("org.jetbrains:annotations:${property("jetbrains-annotations.version")}")
-    integrationTestImplementation("com.hivemq:hivemq-mqtt-client:${property("hivemq-mqtt-client.version")}")
-    integrationTestImplementation("com.squareup.okhttp3:okhttp:${property("ok-http.version")}")
-    integrationTestImplementation("org.testcontainers:junit-jupiter:${property("testcontainers.version")}")
-    integrationTestImplementation("org.testcontainers:hivemq:${property("testcontainers.version")}")
-    integrationTestImplementation("org.awaitility:awaitility:${property("awaitility.version")}")
-    integrationTestRuntimeOnly("ch.qos.logback:logback-classic:${property("logback.version")}")
+    integrationTestCompileOnly(libs.jetbrains.annotations)
+    integrationTestImplementation(libs.hivemq.mqttClient)
+    integrationTestImplementation(libs.okhttp)
+    integrationTestImplementation(libs.testcontainers.junitJupiter)
+    integrationTestImplementation(libs.testcontainers.hivemq)
+    integrationTestImplementation(libs.awaitility)
+    integrationTestRuntimeOnly(libs.logback.classic)
 }
 
 /* ******************** checks ******************** */
