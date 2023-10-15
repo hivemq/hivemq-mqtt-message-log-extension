@@ -63,9 +63,3 @@ license {
     mapping("java", "SLASHSTAR_STYLE")
     exclude("**/test-conf/mqttMessageLog.properties")
 }
-
-/* ******************** run ******************** */
-
-tasks.prepareHivemqHome {
-    hivemqHomeDirectory.set(file("/path/to/a/hivemq/folder"))
-}
