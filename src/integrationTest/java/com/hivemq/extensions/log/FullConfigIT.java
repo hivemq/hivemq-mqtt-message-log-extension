@@ -18,7 +18,7 @@ package com.hivemq.extensions.log;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
-import com.hivemq.extension.sdk.api.annotations.NotNull;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -27,7 +27,6 @@ import org.testcontainers.utility.MountableFile;
 
 import static com.hivemq.extensions.log.DockerImageNames.HIVEMQ;
 import static org.awaitility.Awaitility.await;
-
 
 /**
  * @author Yannick Weber
