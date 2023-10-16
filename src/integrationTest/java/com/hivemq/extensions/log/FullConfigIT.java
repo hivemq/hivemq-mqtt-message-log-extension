@@ -45,28 +45,19 @@ public class FullConfigIT {
             .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()));
 
     @Test
-    void test() throws Exception {
+    void test() {
         final Mqtt5BlockingClient client =
                 Mqtt5Client.builder().serverHost(hivemq.getHost()).serverPort(hivemq.getMqttPort()).buildBlocking();
-        client.connectWith().keepAlive(1).send();
 
-        client.subscribeWith().topicFilter("#").send();
-        client.publishWith().topic("topic").qos(MqttQos.EXACTLY_ONCE).send();
-        client.publishWith().topic("topic").qos(MqttQos.AT_LEAST_ONCE).send();
-        client.unsubscribeWith().topicFilter("#").send();
-        client.disconnect();
-
-        Thread.sleep(5_000);
-
-        // connect
+        client.connectWith().send();
         await().until(() -> hivemq.getLogs().contains("Received CONNECT from client"));
         await().until(() -> hivemq.getLogs().contains("Sent CONNACK to client"));
 
-        // subscribe
+        client.subscribeWith().topicFilter("#").send();
         await().until(() -> hivemq.getLogs().contains("Received SUBSCRIBE from client"));
         await().until(() -> hivemq.getLogs().contains("Sent SUBACK to client"));
 
-        // qos 2 publish
+        client.publishWith().topic("topic").qos(MqttQos.EXACTLY_ONCE).send();
         await().until(() -> hivemq.getLogs().contains("Received PUBLISH from client"));
         await().until(() -> hivemq.getLogs().contains("Sent PUBREC to client"));
         await().until(() -> hivemq.getLogs().contains("Received PUBREL from client"));
@@ -77,17 +68,17 @@ public class FullConfigIT {
         await().until(() -> hivemq.getLogs().contains("Sent PUBREL to client"));
         await().until(() -> hivemq.getLogs().contains("Received PUBCOMP from client"));
 
-        // qos 1 publish
+        client.publishWith().topic("topic").qos(MqttQos.AT_LEAST_ONCE).send();
         await().until(() -> hivemq.getLogs().contains("Received PUBLISH from client"));
         await().until(() -> hivemq.getLogs().contains("Sent PUBACK to client"));
         await().until(() -> hivemq.getLogs().contains("Sent PUBLISH to client"));
         await().until(() -> hivemq.getLogs().contains("Received PUBACK from client"));
 
-        // unsubscribe
+        client.unsubscribeWith().topicFilter("#").send();
         await().until(() -> hivemq.getLogs().contains("Received UNSUBSCRIBE from client"));
         await().until(() -> hivemq.getLogs().contains("Sent UNSUBACK to client"));
 
-        // disconnect
+        client.disconnect();
         await().until(() -> hivemq.getLogs().contains("Received DISCONNECT from client"));
     }
 }
