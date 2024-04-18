@@ -8,11 +8,11 @@ group = "com.hivemq.extensions"
 description = "HiveMQ Mqtt Message Log Extension"
 
 hivemqExtension {
-    name.set("HiveMQ Mqtt Message Log Extension")
-    author.set("HiveMQ")
-    priority.set(1000)
-    startPriority.set(1000)
-    sdkVersion.set(libs.versions.hivemq.extensionSdk)
+    name = "HiveMQ Mqtt Message Log Extension"
+    author = "HiveMQ"
+    priority = 1000
+    startPriority = 1000
+    sdkVersion = libs.versions.hivemq.extensionSdk
 
     resources {
         from("LICENSE")
