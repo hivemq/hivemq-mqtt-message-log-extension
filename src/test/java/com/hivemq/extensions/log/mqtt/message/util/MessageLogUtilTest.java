@@ -15,42 +15,41 @@
  */
 package com.hivemq.extensions.log.mqtt.message.util;
 
-import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.packets.general.DisconnectedReasonCode;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import util.LogbackTestAppender;
 
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.TestDisconnect;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.TestUserProperties;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyConnack;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyConnect;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyDisconnect;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyPuback;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyPubcomp;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyPublish;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyPubrec;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyPubrel;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptySuback;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptySubscribe;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyUnsuback;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyUnsubscribe;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullConnack;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullConnect;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullDisconnect;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPuback;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPubcomp;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPublish;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPubrec;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPubrel;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullSuback;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullSubsribe;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullUnsuback;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullUnsubsribe;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createLifeCycleCompareDisconnect;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createPingreq;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createPingresp;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static util.PacketUtil.TestDisconnect;
-import static util.PacketUtil.TestUserProperties;
-import static util.PacketUtil.createEmptyConnack;
-import static util.PacketUtil.createEmptyConnect;
-import static util.PacketUtil.createEmptyDisconnect;
-import static util.PacketUtil.createEmptyPuback;
-import static util.PacketUtil.createEmptyPubcomp;
-import static util.PacketUtil.createEmptyPublish;
-import static util.PacketUtil.createEmptyPubrec;
-import static util.PacketUtil.createEmptyPubrel;
-import static util.PacketUtil.createEmptySuback;
-import static util.PacketUtil.createEmptySubscribe;
-import static util.PacketUtil.createEmptyUnsuback;
-import static util.PacketUtil.createEmptyUnsubscribe;
-import static util.PacketUtil.createFullConnack;
-import static util.PacketUtil.createFullConnect;
-import static util.PacketUtil.createFullDisconnect;
-import static util.PacketUtil.createFullPuback;
-import static util.PacketUtil.createFullPubcomp;
-import static util.PacketUtil.createFullPublish;
-import static util.PacketUtil.createFullPubrec;
-import static util.PacketUtil.createFullPubrel;
-import static util.PacketUtil.createFullSuback;
-import static util.PacketUtil.createFullSubsribe;
-import static util.PacketUtil.createFullUnsuback;
-import static util.PacketUtil.createFullUnsubsribe;
-import static util.PacketUtil.createLifeCycleCompareDisconnect;
-import static util.PacketUtil.createPingreq;
-import static util.PacketUtil.createPingresp;
 
 /**
  * @author Florian Limpöck

@@ -15,13 +15,13 @@
  */
 package com.hivemq.extensions.log.mqtt.message.initializer;
 
-import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.ClientContext;
 import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig;
 import com.hivemq.extensions.log.mqtt.message.interceptor.InterceptorUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Creates a {@link ClientInitializer} that is usable since HiveMQ 4.3 Enterprise Version or Community Version 2020.1.

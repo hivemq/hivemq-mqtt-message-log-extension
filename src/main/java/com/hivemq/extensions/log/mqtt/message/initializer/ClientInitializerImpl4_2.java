@@ -15,7 +15,6 @@
  */
 package com.hivemq.extensions.log.mqtt.message.initializer;
 
-import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.ClientContext;
 import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
@@ -24,6 +23,7 @@ import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectDisconnectEventListener;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectInboundInterceptorImpl;
 import com.hivemq.extensions.log.mqtt.message.interceptor.InterceptorUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Creates a {@link ClientInitializer} that is usable for any HiveMQ 4.2 Enterprise Version.
