@@ -612,7 +612,7 @@ public class MessageLogUtil {
             return "User Properties: 'null'";
         }
         final List<UserProperty> userPropertyList = userProperties.asList();
-        if (userPropertyList.size() == 0) {
+        if (userPropertyList.isEmpty()) {
             return "User Properties: 'null'";
         }
         final StringBuilder stringBuilder = new StringBuilder();
