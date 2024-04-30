@@ -15,7 +15,6 @@
  */
 package com.hivemq.extensions.log.mqtt.message.interceptor;
 
-import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.events.client.ClientLifecycleEventListener;
 import com.hivemq.extension.sdk.api.events.client.parameters.AuthenticationFailedInput;
 import com.hivemq.extension.sdk.api.events.client.parameters.AuthenticationSuccessfulInput;
@@ -26,6 +25,7 @@ import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInpu
 import com.hivemq.extension.sdk.api.events.client.parameters.ServerInitiatedDisconnectInput;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

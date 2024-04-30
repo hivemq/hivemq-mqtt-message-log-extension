@@ -16,7 +16,6 @@
 package com.hivemq.extensions.log.mqtt.message;
 
 import com.hivemq.extension.sdk.api.ExtensionMain;
-import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.parameter.ServerInformation;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
@@ -29,6 +28,7 @@ import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig;
 import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfigReader;
 import com.hivemq.extensions.log.mqtt.message.initializer.ClientInitializerImpl;
 import com.hivemq.extensions.log.mqtt.message.initializer.ClientInitializerImpl4_2;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

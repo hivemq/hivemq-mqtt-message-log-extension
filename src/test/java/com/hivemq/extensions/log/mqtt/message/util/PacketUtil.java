@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package util;
+package com.hivemq.extensions.log.mqtt.message.util;
 
-import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.parameter.ClientInformation;
 import com.hivemq.extension.sdk.api.client.parameter.ConnectionInformation;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
@@ -54,6 +53,7 @@ import com.hivemq.extension.sdk.api.packets.subscribe.Subscription;
 import com.hivemq.extension.sdk.api.packets.unsuback.UnsubackPacket;
 import com.hivemq.extension.sdk.api.packets.unsuback.UnsubackReasonCode;
 import com.hivemq.extension.sdk.api.packets.unsubscribe.UnsubscribePacket;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

@@ -20,6 +20,8 @@ hivemqExtension {
 }
 
 dependencies {
+    compileOnly(libs.jetbrains.annotations)
+
     implementation(libs.commonsLang)
 }
 
@@ -31,6 +33,7 @@ testing {
         }
         "test"(JvmTestSuite::class) {
             dependencies {
+                compileOnly(libs.jetbrains.annotations)
                 implementation(libs.mockito)
                 implementation(libs.logback.classic)
             }

@@ -15,11 +15,11 @@
  */
 package com.hivemq.extensions.log.mqtt.message.interceptor;
 
-import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.pubrel.PubrelInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.pubrel.parameter.PubrelInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pubrel.parameter.PubrelInboundOutput;
 import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
