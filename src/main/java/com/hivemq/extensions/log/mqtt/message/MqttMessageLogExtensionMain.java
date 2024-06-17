@@ -16,7 +16,6 @@
 package com.hivemq.extensions.log.mqtt.message;
 
 import com.hivemq.extension.sdk.api.ExtensionMain;
-import com.hivemq.extension.sdk.api.client.parameter.ServerInformation;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
@@ -29,6 +28,7 @@ import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfigReader;
 import com.hivemq.extensions.log.mqtt.message.initializer.ClientInitializerImpl;
 import com.hivemq.extensions.log.mqtt.message.initializer.ClientInitializerImpl4_2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,9 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
             }
 
             final ClientInitializer initializer =
-                    getClientInitializerForEdition(extensionStartInput.getServerInformation(), config);
+                    getClientInitializerForEdition(Services.adminService().getLicenseInformation().getEdition(),
+                            extensionStartInput.getServerInformation().getVersion(),
+                            config);
 
             Services.initializerRegistry().setClientInitializer(initializer);
 
@@ -83,14 +85,15 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
             final @NotNull ExtensionStopOutput extensionStopOutput) {
     }
 
-    private @NotNull ClientInitializer getClientInitializerForEdition(
-            final @NotNull ServerInformation serverInformation, final @NotNull MqttMessageLogConfig config) {
-        final LicenseEdition edition = Services.adminService().getLicenseInformation().getEdition();
-        final String version = serverInformation.getVersion();
-
+    @VisibleForTesting
+    @NotNull
+    ClientInitializer getClientInitializerForEdition(
+            final @NotNull LicenseEdition edition,
+            final @NotNull String version,
+            final @NotNull MqttMessageLogConfig config) {
         if (LicenseEdition.COMMUNITY.equals(edition)) {
             return new ClientInitializerImpl(config);
-        } else if (version.startsWith("4.2")) {
+        } else if (version.startsWith("4.2.")) {
             return new ClientInitializerImpl4_2(config);
         } else {
             return new ClientInitializerImpl(config);
