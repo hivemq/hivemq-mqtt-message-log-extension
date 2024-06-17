@@ -24,5 +24,5 @@ import org.testcontainers.utility.DockerImageName;
  */
 public class DockerImageNames {
 
-    public static final @NotNull DockerImageName HIVEMQ = DockerImageName.parse("hivemq/hivemq-ce").withTag("latest");
+    public static final @NotNull DockerImageName HIVEMQ = DockerImageName.parse("hivemq/hivemq4").withTag("4.28.2");
 }
