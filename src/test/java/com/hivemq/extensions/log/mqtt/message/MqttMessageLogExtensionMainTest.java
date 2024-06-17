@@ -19,12 +19,17 @@ import com.hivemq.extension.sdk.api.client.parameter.ServerInformation;
 import com.hivemq.extension.sdk.api.parameter.ExtensionInformation;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
+import com.hivemq.extension.sdk.api.services.admin.LicenseEdition;
+import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
+import com.hivemq.extensions.log.mqtt.message.initializer.ClientInitializerImpl;
+import com.hivemq.extensions.log.mqtt.message.initializer.ClientInitializerImpl4_2;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,7 +58,7 @@ class MqttMessageLogExtensionMainTest {
 
         when(extensionStartInput.getExtensionInformation()).thenReturn(information);
         when(extensionStartInput.getServerInformation()).thenReturn(serverInformation);
-        when(serverInformation.getVersion()).thenReturn("4.2.1");
+        when(serverInformation.getVersion()).thenReturn("4");
         when(information.getExtensionHomeFolder()).thenReturn(new File("some/not/existing/folder"));
         when(information.getName()).thenReturn("My Extension");
 
@@ -68,5 +73,33 @@ class MqttMessageLogExtensionMainTest {
 
         extensionMain.extensionStart(extensionStartInput, extensionStartOutput);
         verify(extensionStartOutput).preventExtensionStartup("The HiveMQ version is not supported");
+    }
+
+    @Test
+    void getClientInitializerForEdition_4_2_0_oldImplReturned() {
+        final ClientInitializer clientInitializerForEdition =
+                extensionMain.getClientInitializerForEdition(LicenseEdition.ENTERPRISE, "4.2.0", mock());
+        assertInstanceOf(ClientInitializerImpl4_2.class, clientInitializerForEdition);
+    }
+
+    @Test
+    void getClientInitializerForEdition_4_3_0_newImplReturned() {
+        final ClientInitializer clientInitializerForEdition =
+                extensionMain.getClientInitializerForEdition(LicenseEdition.ENTERPRISE, "4.3.0", mock());
+        assertInstanceOf(ClientInitializerImpl.class, clientInitializerForEdition);
+    }
+
+    @Test
+    void getClientInitializerForEdition_4_20_0_newImplReturned() {
+        final ClientInitializer clientInitializerForEdition =
+                extensionMain.getClientInitializerForEdition(LicenseEdition.ENTERPRISE, "4.20.0", mock());
+        assertInstanceOf(ClientInitializerImpl.class, clientInitializerForEdition);
+    }
+
+    @Test
+    void getClientInitializerForEdition_COMMUNITY_newImplReturned() {
+        final ClientInitializer clientInitializerForEdition =
+                extensionMain.getClientInitializerForEdition(LicenseEdition.COMMUNITY, "2024.1", mock());
+        assertInstanceOf(ClientInitializerImpl.class, clientInitializerForEdition);
     }
 }
