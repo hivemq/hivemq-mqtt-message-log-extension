@@ -48,7 +48,7 @@ public class InterceptorUtil {
 
     public static @NotNull Optional<ConnectInboundInterceptor> createConnectOutboundInterceptor(final @NotNull MqttMessageLogConfig config) {
         if (config.isClientConnect()) {
-            return Optional.of(new ConnectInboundInterceptorImpl(config.isVerbose()));
+            return Optional.of(new ConnectInboundInterceptorImpl(config.isVerbose(), config.isPayload()));
         } else {
             return Optional.empty();
         }
@@ -96,7 +96,7 @@ public class InterceptorUtil {
 
     public static @NotNull Optional<PublishOutboundInterceptor> createPublishOutboundInterceptor(final @NotNull MqttMessageLogConfig config) {
         if (config.isPublishSend()) {
-            return Optional.of(new PublishOutboundInterceptorImpl(config.isVerbose()));
+            return Optional.of(new PublishOutboundInterceptorImpl(config.isVerbose(), config.isPayload()));
         } else {
             return Optional.empty();
         }
@@ -104,7 +104,7 @@ public class InterceptorUtil {
 
     public static @NotNull Optional<PublishInboundInterceptor> createPublishInboundInterceptor(final @NotNull MqttMessageLogConfig config) {
         if (config.isPublishReceived()) {
-            return Optional.of(new PublishInboundInterceptorImpl(config.isVerbose()));
+            return Optional.of(new PublishInboundInterceptorImpl(config.isVerbose(), config.isPayload()));
         } else {
             return Optional.empty();
         }

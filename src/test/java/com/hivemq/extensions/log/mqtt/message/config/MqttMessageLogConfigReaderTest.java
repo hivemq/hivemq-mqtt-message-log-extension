@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class MqttMessageLogConfigReaderTest {
 
-    private final int totalAvailableFlags = 20;
+    private final int totalAvailableFlags = 21;
 
     private final @NotNull List<String> defaultProperties = List.of(MqttMessageLogConfig.CLIENT_CONNECT,
             MqttMessageLogConfig.CONNACK_SEND,
@@ -55,7 +55,8 @@ class MqttMessageLogConfigReaderTest {
             MqttMessageLogConfig.PUBREL_SEND,
             MqttMessageLogConfig.PUBCOMP_RECEIVED,
             MqttMessageLogConfig.PUBCOMP_SEND,
-            MqttMessageLogConfig.VERBOSE);
+            MqttMessageLogConfig.VERBOSE,
+            MqttMessageLogConfig.PAYLOAD);
 
     @Test
     void defaultPropertiesWhenNoPropertyFileInConfigFolder(@TempDir final @NotNull Path tempDir) {

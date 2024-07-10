@@ -46,15 +46,15 @@ public class ClientInitializerImpl4_2 implements ClientInitializer {
     private void init() {
         if (config.isClientConnect() && config.isClientDisconnect()) {
             final ConnectDisconnectEventListener connectDisconnectEventListener =
-                    new ConnectDisconnectEventListener(true, config.isVerbose());
+                    new ConnectDisconnectEventListener(true, config.isVerbose(), config.isPayload());
             Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
         } else if (config.isClientDisconnect()) {
             final ConnectDisconnectEventListener connectDisconnectEventListener =
-                    new ConnectDisconnectEventListener(false, config.isVerbose());
+                    new ConnectDisconnectEventListener(false, config.isVerbose(), config.isPayload());
             Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
         } else if (config.isClientConnect()) {
             final ConnectInboundInterceptorImpl connectInboundInterceptor =
-                    new ConnectInboundInterceptorImpl(config.isVerbose());
+                    new ConnectInboundInterceptorImpl(config.isVerbose(), config.isPayload());
             Services.interceptorRegistry().setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor);
         }
     }

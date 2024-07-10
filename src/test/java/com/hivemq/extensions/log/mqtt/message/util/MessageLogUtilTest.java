@@ -178,7 +178,7 @@ class MessageLogUtilTest {
 
     @Test
     void test_log_connect_verbose_all_set() {
-        MessageLogUtil.logConnect(createFullConnect(), true);
+        MessageLogUtil.logConnect(createFullConnect(), true, true);
         assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
                         "Session Expiry Interval: '10000', Keep Alive: '20000', Maximum Packet Size: '40000', " +
                         "Receive Maximum: '30000', Topic Alias Maximum: '50000', Request Problem Information: 'true', " +
@@ -195,8 +195,26 @@ class MessageLogUtilTest {
     }
 
     @Test
+    void test_log_connect_verbose_no_payload_all_set() {
+        MessageLogUtil.logConnect(createFullConnect(), true, false);
+        assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
+                        "Session Expiry Interval: '10000', Keep Alive: '20000', Maximum Packet Size: '40000', " +
+                        "Receive Maximum: '30000', Topic Alias Maximum: '50000', Request Problem Information: 'true', " +
+                        "Request Response Information: 'false',  Username: 'the username', Password: 'the password', " +
+                        "Auth Method: 'auth method', Auth Data (Base64): 'YXV0aCBkYXRh', " +
+                        "User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], " +
+                        "Will: { Topic: 'willtopic', QoS: '1', Retained: 'false', " +
+                        "Message Expiry Interval: '1234', Duplicate Delivery: 'false', Correlation Data: 'data', " +
+                        "Response Topic: 'response topic', Content Type: 'content type', " +
+                        "Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1, 2, 3, 4]', " +
+                        "User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], " +
+                        "[Name: 'name2', Value: 'value2'], Will Delay: '100' }",
+                logbackTestAppender.getEvents().get(0).getFormattedMessage());
+    }
+
+    @Test
     void test_log_connect_verbose_none_set() {
-        MessageLogUtil.logConnect(createEmptyConnect(), true);
+        MessageLogUtil.logConnect(createEmptyConnect(), true, true);
         assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
                         "Session Expiry Interval: '10000', Keep Alive: '0', Maximum Packet Size: '0', Receive Maximum: '0', " +
                         "Topic Alias Maximum: '0', Request Problem Information: 'false', Request Response Information: 'false',  " +
@@ -206,7 +224,7 @@ class MessageLogUtilTest {
 
     @Test
     void test_log_connect_not_verbose_all_set() {
-        MessageLogUtil.logConnect(createFullConnect(), false);
+        MessageLogUtil.logConnect(createFullConnect(), false, true);
         assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
                 "Session Expiry Interval: '10000'", logbackTestAppender.getEvents().get(0).getFormattedMessage());
     }
@@ -254,7 +272,7 @@ class MessageLogUtilTest {
 
     @Test
     void test_log_publish_verbose_all_set() {
-        MessageLogUtil.logPublish("Sent PUBLISH to client 'clientid' on topic", createFullPublish(), true);
+        MessageLogUtil.logPublish("Sent PUBLISH to client 'clientid' on topic", createFullPublish(), true, true);
         assertEquals(
                 "Sent PUBLISH to client 'clientid' on topic 'topic': Payload: 'message', QoS: '1', Retained: 'false', " +
                         "Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'data', " +
@@ -265,18 +283,49 @@ class MessageLogUtilTest {
     }
 
     @Test
+    void test_log_publish_verbose_no_payload_all_set() {
+        MessageLogUtil.logPublish("Sent PUBLISH to client 'clientid' on topic", createFullPublish(), true, false);
+        assertEquals(
+                "Sent PUBLISH to client 'clientid' on topic 'topic': QoS: '1', Retained: 'false', " +
+                        "Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'data', " +
+                        "Response Topic: 'response topic', Content Type: 'content type', Payload Format Indicator: 'UTF_8', " +
+                        "Subscription Identifiers: '[1, 2, 3, 4]', " +
+                        "User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']",
+                logbackTestAppender.getEvents().get(0).getFormattedMessage());
+    }
+
+    @Test
     void test_log_publish_not_verbose_all_set() {
-        MessageLogUtil.logPublish("Sent PUBLISH to client 'clientid' on topic", createFullPublish(), false);
+        MessageLogUtil.logPublish("Sent PUBLISH to client 'clientid' on topic", createFullPublish(), false, true);
         assertEquals(
                 "Sent PUBLISH to client 'clientid' on topic 'topic': Payload: 'message', QoS: '1', Retained: 'false'",
                 logbackTestAppender.getEvents().get(0).getFormattedMessage());
     }
 
     @Test
+    void test_log_publish_not_verbose_no_payload_all_set() {
+        MessageLogUtil.logPublish("Sent PUBLISH to client 'clientid' on topic", createFullPublish(), false, false);
+        assertEquals(
+                "Sent PUBLISH to client 'clientid' on topic 'topic': QoS: '1', Retained: 'false'",
+                logbackTestAppender.getEvents().get(0).getFormattedMessage());
+    }
+
+    @Test
     void test_log_publish_verbose_none_set() {
-        MessageLogUtil.logPublish("Sent PUBLISH to client 'clientid' on topic", createEmptyPublish(), true);
+        MessageLogUtil.logPublish("Sent PUBLISH to client 'clientid' on topic", createEmptyPublish(), true, true);
         assertEquals(
                 "Sent PUBLISH to client 'clientid' on topic 'topic': Payload: 'message', QoS: '1', Retained: 'false'," +
+                        " Message Expiry Interval: 'null', Duplicate Delivery: 'false', Correlation Data: 'null'," +
+                        " Response Topic: 'null', Content Type: 'null', Payload Format Indicator: 'null'," +
+                        " Subscription Identifiers: '[]', User Properties: 'null'",
+                logbackTestAppender.getEvents().get(0).getFormattedMessage());
+    }
+
+    @Test
+    void test_log_publish_verbose_no_payload_none_set() {
+        MessageLogUtil.logPublish("Sent PUBLISH to client 'clientid' on topic", createEmptyPublish(), true, false);
+        assertEquals(
+                "Sent PUBLISH to client 'clientid' on topic 'topic': QoS: '1', Retained: 'false'," +
                         " Message Expiry Interval: 'null', Duplicate Delivery: 'false', Correlation Data: 'null'," +
                         " Response Topic: 'null', Content Type: 'null', Payload Format Indicator: 'null'," +
                         " Subscription Identifiers: '[]', User Properties: 'null'",

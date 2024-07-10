@@ -67,6 +67,8 @@ CAUTION: use verbose=true very carefully as it will flood your log immediately.
 
 Missing entries default to true. *verbose* defaults to false.
 
+To suppress logging the actual payload (for publish received/send, and will message), you can configure `payload` property to false.
+
 == First Steps
 
 Connect with an {hivemq-blog-tools}[MQTT client] of your choice.

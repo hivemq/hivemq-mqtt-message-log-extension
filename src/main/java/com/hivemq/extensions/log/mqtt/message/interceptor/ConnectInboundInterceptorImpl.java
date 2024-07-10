@@ -32,9 +32,11 @@ public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor 
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(ConnectInboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean payload;
 
-    public ConnectInboundInterceptorImpl(final boolean verbose) {
+    public ConnectInboundInterceptorImpl(final boolean verbose, final boolean payload) {
         this.verbose = verbose;
+        this.payload = payload;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor 
             final @NotNull ConnectInboundOutput connectInboundOutput) {
         try {
             final ConnectPacket connectPacket = connectInboundInput.getConnectPacket();
-            MessageLogUtil.logConnect(connectPacket, verbose);
+            MessageLogUtil.logConnect(connectPacket, verbose, payload);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound connect logging: ", e);
         }
