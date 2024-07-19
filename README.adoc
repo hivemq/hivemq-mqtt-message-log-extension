@@ -55,19 +55,28 @@ It provides the possibility to follow up on any clients communicating with the b
 
 == Configuration
 
-By default, all MQTT events are logged.
-It is possible to opt out of specific log event types by adding a *mqttMessageLog.properties* files to your `<HIVEMQ_HOME>/hivemq-mqtt-message-log-extension` folder.
-There is an example file available which removes the logging of publish messages.
-Just rename it to *mqttMessageLog.properties*.
+=== Event Configuration
 
-The events log only important information, if it is required that MQTT messages are logging all information available the `verbose` property can be set to true.
-You can see the difference of a normal log versus a verbose log in the <<example, examples>>.
+By default, all MQTT events are logged.
+It is possible to opt out of specific log event types by adding an *mqttMessageLog.properties* file to your `hivemq-mqtt-message-log-extension` home folder.
+There is an example file available which removes the logging of publish messages.
+
+=== General Configuration
+
+|===
+|Config Property | Description | Default
+
+|verbose |Log detailed information about an mqtt event | false
+|payload |Log the payload of a message  | true
+|===
+
+Normally, events only log important information.
+If it is required that MQTT events log all available information the `verbose` property can be set to true.
+You can see the difference between normal logging and verbose logging in the <<example, Examples>> section.
 
 CAUTION: use verbose=true very carefully as it will flood your log immediately.
 
-Missing entries default to true. *verbose* defaults to false.
-
-To suppress logging the actual payload (for publish received/send, and will message), you can configure `payload` property to false.
+To suppress the logging of sensitive payloads (i.e. for publish-received, publish-send, and will messages), you can configure the `payload` property to false.
 
 == First Steps
 
