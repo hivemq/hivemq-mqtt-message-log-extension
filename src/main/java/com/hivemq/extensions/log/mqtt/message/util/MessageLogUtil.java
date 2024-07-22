@@ -128,7 +128,8 @@ public class MessageLogUtil {
         }
     }
 
-    public static void logConnect(final @NotNull ConnectPacket connectPacket, final boolean verbose, final boolean payload) {
+    public static void logConnect(
+            final @NotNull ConnectPacket connectPacket, final boolean verbose, final boolean payload) {
         if (!verbose) {
             LOG.info(
                     "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'",
@@ -237,7 +238,8 @@ public class MessageLogUtil {
                 userPropertiesAsString);
     }
 
-    private static @NotNull String getWillAsString(final @NotNull WillPublishPacket willPublishPacket, final boolean payload) {
+    private static @NotNull String getWillAsString(
+            final @NotNull WillPublishPacket willPublishPacket, final boolean payload) {
         final String topic = willPublishPacket.getTopic();
         final String publishAsString = getPublishAsString(willPublishPacket, true, payload);
         final String willPublishAsString = publishAsString + ", Will Delay: '" + willPublishPacket.getWillDelay() + "'";
@@ -246,7 +248,10 @@ public class MessageLogUtil {
     }
 
     public static void logPublish(
-            final @NotNull String prefix, final @NotNull PublishPacket publishPacket, final boolean verbose, final boolean payload) {
+            final @NotNull String prefix,
+            final @NotNull PublishPacket publishPacket,
+            final boolean verbose,
+            final boolean payload) {
         final String topic = publishPacket.getTopic();
         final String publishString = getPublishAsString(publishPacket, verbose, payload);
 

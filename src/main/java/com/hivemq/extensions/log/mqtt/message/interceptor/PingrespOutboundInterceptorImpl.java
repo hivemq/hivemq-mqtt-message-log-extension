@@ -24,10 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Michael Walter
  * @since 1.1.0
  */
-class PingrespOutboundInterceptorImpl implements PingRespOutboundInterceptor {
+public class PingrespOutboundInterceptorImpl implements PingRespOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PingrespOutboundInterceptorImpl.class);
 

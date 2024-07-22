@@ -24,15 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Michael Walter
  * @since 1.1.0
  */
-class SubackOutboundInterceptorImpl implements SubackOutboundInterceptor {
+public class SubackOutboundInterceptorImpl implements SubackOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(SubackOutboundInterceptorImpl.class);
     private final boolean verbose;
 
-    SubackOutboundInterceptorImpl(final boolean verbose) {
+    public SubackOutboundInterceptorImpl(final boolean verbose) {
         this.verbose = verbose;
     }
 

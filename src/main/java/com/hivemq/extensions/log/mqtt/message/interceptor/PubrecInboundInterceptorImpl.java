@@ -24,15 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Michael Walter
  * @since 1.1.0
  */
-class PubrecInboundInterceptorImpl implements PubrecInboundInterceptor {
+public class PubrecInboundInterceptorImpl implements PubrecInboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubrecInboundInterceptorImpl.class);
     private final boolean verbose;
 
-    PubrecInboundInterceptorImpl(final boolean verbose) {
+    public PubrecInboundInterceptorImpl(final boolean verbose) {
         this.verbose = verbose;
     }
 

@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Florian Limpöck
  * @since 1.0.0
  */
 public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor {

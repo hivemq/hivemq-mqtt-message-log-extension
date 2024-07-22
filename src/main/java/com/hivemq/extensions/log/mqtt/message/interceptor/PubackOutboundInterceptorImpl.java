@@ -24,15 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Michael Walter
  * @since 1.1.0
  */
-class PubackOutboundInterceptorImpl implements PubackOutboundInterceptor {
+public class PubackOutboundInterceptorImpl implements PubackOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubackOutboundInterceptorImpl.class);
     private final boolean verbose;
 
-    PubackOutboundInterceptorImpl(final boolean verbose) {
+    public PubackOutboundInterceptorImpl(final boolean verbose) {
         this.verbose = verbose;
     }
 
