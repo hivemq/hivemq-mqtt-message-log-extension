@@ -52,7 +52,6 @@ import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createPingr
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * @author Florian Limpöck
  * @since 1.0.0
  */
 class MessageLogUtilTest {

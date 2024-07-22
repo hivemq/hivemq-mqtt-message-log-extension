@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a {@link ClientInitializer} that is usable for any HiveMQ 4.2 Enterprise Version.
  *
- * @author Michael Walter
  * @version 1.1.0
  */
 public class ClientInitializerImpl4_2 implements ClientInitializer {

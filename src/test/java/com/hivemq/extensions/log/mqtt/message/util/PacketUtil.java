@@ -63,8 +63,6 @@ import java.util.Optional;
 import static org.mockito.Mockito.mock;
 
 /**
- * @author Florian Limpöck
- * @author Michael Walter
  * @version 1.1.0
  */
 public class PacketUtil {

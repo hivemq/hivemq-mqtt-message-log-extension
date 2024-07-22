@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * @author Florian Limpöck
  * @since 1.0.0
  */
 class MqttMessageLogConfigReaderTest {
