@@ -33,7 +33,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * @since 1.1.3
+ * @since 1.1.6
  */
 @Testcontainers
 public class FullConfigNoPayloadIT {
