@@ -538,8 +538,12 @@ public class MessageLogUtil {
             final @NotNull PublishPacket publishPacket, final boolean verbose, final boolean payload) {
         final int qos = publishPacket.getQos().getQosNumber();
         final boolean retained = publishPacket.getRetain();
-        final Optional<ByteBuffer> publishPayload = publishPacket.getPayload();
-        final String payloadAsString = getStringFromByteBuffer(publishPayload.orElse(null));
+        final String payloadAsString;
+        if (payload && publishPacket.getPayload().isPresent()) {
+            payloadAsString = getStringFromByteBuffer(publishPacket.getPayload().get());
+        } else {
+            payloadAsString = null;
+        }
 
         if (!verbose && !payload) {
             return String.format("QoS: '%s'," + " Retained: '%s'", qos, retained);

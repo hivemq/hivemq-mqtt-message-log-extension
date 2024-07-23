@@ -76,8 +76,6 @@ public class ClientInitializerImpl implements ClientInitializer {
             final @NotNull InitializerInput initializerInput, final @NotNull ClientContext clientContext) {
         if (config.isClientDisconnect()) {
             clientContext.addDisconnectInboundInterceptor(new DisconnectInboundInterceptorImpl(config.isVerbose()));
-        }
-        if (config.isClientDisconnect()) {
             clientContext.addDisconnectOutboundInterceptor(new DisconnectOutboundInterceptorImpl(config.isVerbose()));
         }
 
