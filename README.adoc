@@ -2,7 +2,7 @@
 :hivemq-support: http://www.hivemq.com/support/
 :hivemq-extension-download: https://www.hivemq.com/extension/mqtt-message-log-extension/
 
-= HiveMQ Mqtt Message Log Extension
+= HiveMQ MQTT Message Log Extension
 
 image:https://img.shields.io/badge/Extension_Type-Logging-orange?style=for-the-badge[Extension Type]
 image:https://img.shields.io/github/v/release/hivemq/hivemq-mqtt-message-log-extension?style=for-the-badge[GitHub release (latest by date),link=https://github.com/hivemq/hivemq-mqtt-message-log-extension/releases/latest]
@@ -16,8 +16,8 @@ image:https://img.shields.io/github/actions/workflow/status/hivemq/hivemq-mqtt-m
 
 == Purpose
 
-The HiveMQ MQTT Message Log Extension is a very useful HiveMQ Extension for debugging and development purposes.
-It provides the possibility to follow up on any clients communicating with the broker on the terminal.
+The HiveMQ MQTT Message Log Extension provides custom logging events on clients communicating with the broker.
+This is useful for debugging and development purposes.
 
 *The extension logs the following events:*
 
@@ -27,66 +27,66 @@ It provides the possibility to follow up on any clients communicating with the b
 
 |A client connects to HiveMQ | client-connect | 4.2 EE or 2020.1 CE
 |A client disconnects from HiveMQ | client-disconnect | 4.2 EE or 2020.1 CE
-|A client sends a publish message | publish-received | 4.2 EE or 2020.1 CE
-|A client sends a subscribe message | subscribe-received |4.2 EE or 2020.1 CE
-|HiveMQ sends a publish message to a client | publish-send |4.2 EE or 2020.1 CE
-|A client sends a unsubscribe message | unsubscribe-received | 4.3 EE or 2020.1 CE
-|A client send a ping request | ping-request-received | 4.3 EE or 2020.1 CE
-|A client completes a received Qos1 publish with a puback message | puback-received | 4.3 EE or 2020.1 CE
-|A client acknowledges the reception of a Qos2 publish with a pubrec message | pubrec-received | 4.3 EE or 2020.1 CE
-|A client completes a sent Qos2 publish with a pubrel message | pubrel-received | 4.3 EE or 2020.1 CE
-|A client completes a received Qos2 publish with a pubcomp message | pubcomp-received | 4.3 EE or 2020.1 CE
-|HiveMQ sends a connack message to a client | connack-send | 4.3 EE or 2020.1 CE
-|HiveMQ disconnects a client with a disconnect message | client-disconnect | 4.3 EE or 2020.1 CE
-|HiveMQ sends a suback message to a client | suback-send | 4.3 EE or 2020.1 CE
-|HiveMQ sends a unsuback message to a client | unsuback-send | 4.3 EE or 2020.1 CE
-|HiveMQ sends a ping response to a client | ping-response-send | 4.3 EE or 2020.1 CE
-|HiveMQ completes a received Qos1 publish with a puback message | puback-send | 4.3 EE or 2020.1 CE
-|HiveMQ acknowledges the reception of a Qos2 publish with a pubrec message | pubrec-send | 4.3 EE or 2020.1 CE
-|HiveMQ completes a sent Qos2 publish with a pubrel message | pubrel-send | 4.3 EE or 2020.1 CE
-|HiveMQ completes a received Qos2 publish with a pubcomp message | pubcomp-send | 4.3 EE or 2020.1 CE
+|A client sends a PUBLISH message | publish-received | 4.2 EE or 2020.1 CE
+|A client sends a SUBSCRIBE message | subscribe-received |4.2 EE or 2020.1 CE
+|HiveMQ sends a PUBLISH message to a client | publish-send |4.2 EE or 2020.1 CE
+|A client sends an UNSUBSCRIBE message | unsubscribe-received | 4.3 EE or 2020.1 CE
+|A client send a PING request | ping-request-received | 4.3 EE or 2020.1 CE
+|A client completes a received QoS 1 PUBLISH with a PUBACK message | puback-received | 4.3 EE or 2020.1 CE
+|A client acknowledges the reception of a QoS 2 PUBLISH with a PUBREC message | pubrec-received | 4.3 EE or 2020.1 CE
+|A client completes a sent QoS 2 PUBLISH with a PUBREL message | pubrel-received | 4.3 EE or 2020.1 CE
+|A client completes a received QoS 2 PUBLISH with a PUBCOMP message | pubcomp-received | 4.3 EE or 2020.1 CE
+|HiveMQ sends a CONNACK message to a client | connack-send | 4.3 EE or 2020.1 CE
+|HiveMQ disconnects a client with a DISCONNECT message | client-disconnect | 4.3 EE or 2020.1 CE
+|HiveMQ sends a SUBACK message to a client | suback-send | 4.3 EE or 2020.1 CE
+|HiveMQ sends an UNSUBACK message to a client | unsuback-send | 4.3 EE or 2020.1 CE
+|HiveMQ sends a PING response to a client | ping-response-send | 4.3 EE or 2020.1 CE
+|HiveMQ completes a received QoS 1 PUBLISH with a PUBACK message | puback-send | 4.3 EE or 2020.1 CE
+|HiveMQ acknowledges the reception of a QoS 2 PUBLISH with a PUBREC message | pubrec-send | 4.3 EE or 2020.1 CE
+|HiveMQ completes a sent QoS 2 PUBLISH with a PUBREL message | pubrel-send | 4.3 EE or 2020.1 CE
+|HiveMQ completes a received QoS 2 PUBLISH with a PUBCOMP message | pubcomp-send | 4.3 EE or 2020.1 CE
 |===
 
 == Installation
 
 * Download the extension from the {hivemq-extension-download}[HiveMQ Marketplace^].
 * Copy the content of the zip file to the `extensions` folder of your HiveMQ nodes.
-* Modify the `mqttMessageLog.properties` file for your needs.
+* Modify the `mqttMessageLog.properties` file as needed.
 
 == Configuration
 
 === Event Configuration
 
 By default, all MQTT events are logged.
-It is possible to opt out of specific log event types by adding an *mqttMessageLog.properties* file to your `hivemq-mqtt-message-log-extension` home folder.
-There is an example file available which removes the logging of publish messages.
+It is possible to opt out of specific log event types by adding a *mqttMessageLog.properties* file to your `hivemq-mqtt-message-log-extension` home folder.
+There is an example file available which removes the logging of PUBLISH messages.
 
 === General Configuration
 
 |===
 |Config Property | Description | Default
 
-|verbose |Log detailed information about an mqtt event | false
+|verbose |Log detailed information about an MQTT event | false
 |payload |Log the payload of a message  | true
 |===
 
 Normally, events only log important information.
-If it is required that MQTT events log all available information the `verbose` property can be set to true.
+Set the `verbose` property to `true` to log all available information.
 You can see the difference between normal logging and verbose logging in the <<example, Examples>> section.
 
-CAUTION: use verbose=true very carefully as it will flood your log immediately.
+CAUTION: use `verbose=true` very carefully as it will flood your log immediately.
 
-To suppress the logging of sensitive payloads (i.e. for publish-received, publish-send, and will messages), you can configure the `payload` property to false.
+Set the `payload` property to `false` if you want to suppress logging payloads (i.e. for publish-received, publish-send, and will messages).
 
 == First Steps
 
-Connect with an {hivemq-blog-tools}[MQTT client] of your choice.
+Connect with a {hivemq-blog-tools}[MQTT client] of your choice.
 You should see a log message with its client identifier, MQTT version, clean start flag and session expiry interval.
 
 [[example]]
 == Examples
 
-=== Verbose CONNECT message
+=== Verbose CONNECT message with payload
 
 [source,bash]
 ----
@@ -117,9 +117,9 @@ The best place to get in contact is our {hivemq-support}[support^].
 
 == Contributing
 
-If you want to contribute to HiveMQ Mqtt Message Log Extension, see the link:CONTRIBUTING.md[contribution guidelines].
+If you want to contribute to HiveMQ MQTT Message Log Extension, see the link:CONTRIBUTING.md[contribution guidelines].
 
 == License
 
-HiveMQ Mqtt Message Log Extension is licensed under the `APACHE LICENSE, VERSION 2.0`.
+HiveMQ MQTT Message Log Extension is licensed under the `APACHE LICENSE, VERSION 2.0`.
 A copy of the license can be found link:LICENSE[here].
