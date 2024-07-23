@@ -58,7 +58,7 @@ This is useful for debugging and development purposes.
 === Event Configuration
 
 By default, all MQTT events are logged.
-It is possible to opt out of specific log event types by adding a *mqttMessageLog.properties* file to your `hivemq-mqtt-message-log-extension` home folder.
+It is possible to opt out of specific log event types by adding an *mqttMessageLog.properties* file to your `hivemq-mqtt-message-log-extension` home folder.
 There is an example file available which removes the logging of PUBLISH messages.
 
 === General Configuration
@@ -80,7 +80,7 @@ Set the `payload` property to `false` if you want to suppress logging payloads (
 
 == First Steps
 
-Connect with a {hivemq-blog-tools}[MQTT client] of your choice.
+Connect with an {hivemq-blog-tools}[MQTT client] of your choice.
 You should see a log message with its client identifier, MQTT version, clean start flag and session expiry interval.
 
 [[example]]
