@@ -20,13 +20,31 @@ import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig;
-import com.hivemq.extensions.log.mqtt.message.interceptor.InterceptorUtil;
+import com.hivemq.extensions.log.mqtt.message.interceptor.ConnackOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.DisconnectInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.DisconnectOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PingreqInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PingrespOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PubackInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PubackOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PubcompInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PubcompOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PublishInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PublishOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PubrecInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PubrecOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PubrelInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PubrelOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.SubackOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.SubscribeInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.UnsubackOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.UnsubscribeInboundInterceptorImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Creates a {@link ClientInitializer} that is usable since HiveMQ 4.3 Enterprise Version or Community Version 2020.1.
  *
- * @author Michael Walter
  * @version 1.1.0
  */
 public class ClientInitializerImpl implements ClientInitializer {
@@ -42,51 +60,81 @@ public class ClientInitializerImpl implements ClientInitializer {
      * Initialize any logging logic that can be done without a {@link ClientInitializer}.
      */
     private void init() {
-        InterceptorUtil.createConnectOutboundInterceptor(config)
-                .ifPresent(connectInboundInterceptor -> Services.interceptorRegistry()
-                        .setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor));
+        if (config.isClientConnect()) {
+            Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
+                    ignored -> new ConnectInboundInterceptorImpl(config.isVerbose(), config.isPayload()));
+        }
 
-        InterceptorUtil.createConnackOutboundInterceptor(config)
-                .ifPresent(connackOutboundInterceptor -> Services.interceptorRegistry()
-                        .setConnackOutboundInterceptorProvider(input -> connackOutboundInterceptor));
+        if (config.isConnackSend()) {
+            Services.interceptorRegistry().setConnackOutboundInterceptorProvider( //
+                    ignored -> new ConnackOutboundInterceptorImpl(config.isVerbose()));
+        }
     }
 
     @Override
     public void initialize(
             final @NotNull InitializerInput initializerInput, final @NotNull ClientContext clientContext) {
-        InterceptorUtil.createDisconnectInboundInterceptor(config)
-                .ifPresent(clientContext::addDisconnectInboundInterceptor);
-        InterceptorUtil.createDisconnectOutboundInterceptor(config)
-                .ifPresent(clientContext::addDisconnectOutboundInterceptor);
+        if (config.isClientDisconnect()) {
+            clientContext.addDisconnectInboundInterceptor(new DisconnectInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addDisconnectOutboundInterceptor(new DisconnectOutboundInterceptorImpl(config.isVerbose()));
+        }
 
-        InterceptorUtil.createSubscribeInboundInterceptor(config)
-                .ifPresent(clientContext::addSubscribeInboundInterceptor);
-        InterceptorUtil.createSubackOutboundInterceptor(config).ifPresent(clientContext::addSubackOutboundInterceptor);
+        if (config.isSubscribeReceived()) {
+            clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(config.isVerbose()));
+        }
+        if (config.isSubackSend()) {
+            clientContext.addSubackOutboundInterceptor(new SubackOutboundInterceptorImpl(config.isVerbose()));
+        }
 
-        InterceptorUtil.createPingreqInboundInterceptor(config).ifPresent(clientContext::addPingReqInboundInterceptor);
-        InterceptorUtil.createPingrespOutboundInterceptor(config)
-                .ifPresent(clientContext::addPingRespOutboundInterceptor);
+        if (config.isPingreqReceived()) {
+            clientContext.addPingReqInboundInterceptor(new PingreqInboundInterceptorImpl());
+        }
+        if (config.isPingrespSend()) {
+            clientContext.addPingRespOutboundInterceptor(new PingrespOutboundInterceptorImpl());
+        }
 
-        InterceptorUtil.createUnsubscribeInboundInterceptor(config)
-                .ifPresent(clientContext::addUnsubscribeInboundInterceptor);
-        InterceptorUtil.createUnsubackOutboundInterceptor(config)
-                .ifPresent(clientContext::addUnsubackOutboundInterceptor);
+        if (config.isUnsubscribeReceived()) {
+            clientContext.addUnsubscribeInboundInterceptor(new UnsubscribeInboundInterceptorImpl(config.isVerbose()));
+        }
+        if (config.isUnsubackSend()) {
+            clientContext.addUnsubackOutboundInterceptor(new UnsubackOutboundInterceptorImpl(config.isVerbose()));
+        }
 
-        InterceptorUtil.createPublishInboundInterceptor(config).ifPresent(clientContext::addPublishInboundInterceptor);
-        InterceptorUtil.createPublishOutboundInterceptor(config)
-                .ifPresent(clientContext::addPublishOutboundInterceptor);
+        if (config.isPublishReceived()) {
+            clientContext.addPublishInboundInterceptor(new PublishInboundInterceptorImpl(config.isVerbose(),
+                    config.isPayload()));
+        }
+        if (config.isPublishSend()) {
+            clientContext.addPublishOutboundInterceptor(new PublishOutboundInterceptorImpl(config.isVerbose(),
+                    config.isPayload()));
+        }
 
-        InterceptorUtil.createPubackInboundInterceptor(config).ifPresent(clientContext::addPubackInboundInterceptor);
-        InterceptorUtil.createPubackOutboundInterceptor(config).ifPresent(clientContext::addPubackOutboundInterceptor);
+        if (config.isPubackReceived()) {
+            clientContext.addPubackInboundInterceptor(new PubackInboundInterceptorImpl(config.isVerbose()));
+        }
+        if (config.isPubackSend()) {
+            clientContext.addPubackOutboundInterceptor(new PubackOutboundInterceptorImpl(config.isVerbose()));
+        }
 
-        InterceptorUtil.createPubrecInboundInterceptor(config).ifPresent(clientContext::addPubrecInboundInterceptor);
-        InterceptorUtil.createPubrecOutboundInterceptor(config).ifPresent(clientContext::addPubrecOutboundInterceptor);
+        if (config.isPubrecReceived()) {
+            clientContext.addPubrecInboundInterceptor(new PubrecInboundInterceptorImpl(config.isVerbose()));
+        }
+        if (config.isPubrecSend()) {
+            clientContext.addPubrecOutboundInterceptor(new PubrecOutboundInterceptorImpl(config.isVerbose()));
+        }
 
-        InterceptorUtil.createPubrelInboundInterceptor(config).ifPresent(clientContext::addPubrelInboundInterceptor);
-        InterceptorUtil.createPubrelOutboundInterceptor(config).ifPresent(clientContext::addPubrelOutboundInterceptor);
+        if (config.isPubrelReceived()) {
+            clientContext.addPubrelInboundInterceptor(new PubrelInboundInterceptorImpl(config.isVerbose()));
+        }
+        if (config.isPubrelSend()) {
+            clientContext.addPubrelOutboundInterceptor(new PubrelOutboundInterceptorImpl(config.isVerbose()));
+        }
 
-        InterceptorUtil.createPubcompInboundInterceptor(config).ifPresent(clientContext::addPubcompInboundInterceptor);
-        InterceptorUtil.createPubcompOutboundInterceptor(config)
-                .ifPresent(clientContext::addPubcompOutboundInterceptor);
+        if (config.isPubcompReceived()) {
+            clientContext.addPubcompInboundInterceptor(new PubcompInboundInterceptorImpl(config.isVerbose()));
+        }
+        if (config.isPubcompSend()) {
+            clientContext.addPubcompOutboundInterceptor(new PubcompOutboundInterceptorImpl(config.isVerbose()));
+        }
     }
 }

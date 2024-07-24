@@ -28,6 +28,7 @@ import static com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig
 import static com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig.CLIENT_DISCONNECT;
 import static com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig.CONNACK_SEND;
 import static com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig.FALSE;
+import static com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig.PAYLOAD;
 import static com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig.PING_REQ_RECEIVED;
 import static com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig.PING_RESP_SEND;
 import static com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig.PUBACK_RECEIVED;
@@ -94,6 +95,8 @@ public class MqttMessageLogConfigReader {
         properties.setProperty(PUBCOMP_SEND, TRUE);
 
         properties.setProperty(VERBOSE, FALSE);
+
+        properties.setProperty(PAYLOAD, TRUE);
     }
 
     public @NotNull Properties readProperties() {

@@ -60,7 +60,6 @@ import java.util.Optional;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * @author Florian Limpöck
  * @since 1.0.0
  */
 public class MessageLogUtil {
@@ -128,7 +127,8 @@ public class MessageLogUtil {
         }
     }
 
-    public static void logConnect(final @NotNull ConnectPacket connectPacket, final boolean verbose) {
+    public static void logConnect(
+            final @NotNull ConnectPacket connectPacket, final boolean verbose, final boolean payload) {
         if (!verbose) {
             LOG.info(
                     "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'",
@@ -159,7 +159,7 @@ public class MessageLogUtil {
 
         final String willString;
         if (connectPacket.getWillPublish().isPresent()) {
-            willString = getWillAsString(connectPacket.getWillPublish().get());
+            willString = getWillAsString(connectPacket.getWillPublish().get(), payload);
         } else {
             willString = "";
         }
@@ -237,18 +237,22 @@ public class MessageLogUtil {
                 userPropertiesAsString);
     }
 
-    private static @NotNull String getWillAsString(final @NotNull WillPublishPacket willPublishPacket) {
+    private static @NotNull String getWillAsString(
+            final @NotNull WillPublishPacket willPublishPacket, final boolean payload) {
         final String topic = willPublishPacket.getTopic();
-        final String publishAsString = getPublishAsString(willPublishPacket, true);
+        final String publishAsString = getPublishAsString(willPublishPacket, true, payload);
         final String willPublishAsString = publishAsString + ", Will Delay: '" + willPublishPacket.getWillDelay() + "'";
 
         return String.format(", Will: { Topic: '%s', %s }", topic, willPublishAsString);
     }
 
     public static void logPublish(
-            final @NotNull String prefix, final @NotNull PublishPacket publishPacket, final boolean verbose) {
+            final @NotNull String prefix,
+            final @NotNull PublishPacket publishPacket,
+            final boolean verbose,
+            final boolean payload) {
         final String topic = publishPacket.getTopic();
-        final String publishString = getPublishAsString(publishPacket, verbose);
+        final String publishString = getPublishAsString(publishPacket, verbose, payload);
 
         LOG.info("{} '{}': {}", prefix, topic, publishString);
     }
@@ -531,15 +535,22 @@ public class MessageLogUtil {
     }
 
     private static @NotNull String getPublishAsString(
-            final @NotNull PublishPacket publishPacket, final boolean verbose) {
+            final @NotNull PublishPacket publishPacket, final boolean verbose, final boolean payload) {
         final int qos = publishPacket.getQos().getQosNumber();
         final boolean retained = publishPacket.getRetain();
-        final Optional<ByteBuffer> payload = publishPacket.getPayload();
-        final String payloadAsString = getStringFromByteBuffer(payload.orElse(null));
+        final String payloadAsString;
+        if (payload && publishPacket.getPayload().isPresent()) {
+            payloadAsString = getStringFromByteBuffer(publishPacket.getPayload().get());
+        } else {
+            payloadAsString = null;
+        }
 
-        if (!verbose) {
+        if (!verbose && !payload) {
+            return String.format("QoS: '%s'," + " Retained: '%s'", qos, retained);
+        } else if (!verbose) {
             return String.format("Payload: '%s'," + " QoS: '%s'," + " Retained: '%s'", payloadAsString, qos, retained);
         }
+
         final Optional<String> contentType = publishPacket.getContentType();
         final String correlationDataString = getStringFromByteBuffer(publishPacket.getCorrelationData().orElse(null));
         final Optional<String> responseTopic = publishPacket.getResponseTopic();
@@ -549,6 +560,29 @@ public class MessageLogUtil {
         final List<Integer> subscriptionIdentifiers = publishPacket.getSubscriptionIdentifiers();
 
         final String userPropertiesAsString = getUserPropertiesAsString(publishPacket.getUserProperties());
+
+        if (!payload) {
+            return String.format("QoS: '%s'," +
+                            " Retained: '%s'," +
+                            " Message Expiry Interval: '%s'," +
+                            " Duplicate Delivery: '%s'," +
+                            " Correlation Data: '%s'," +
+                            " Response Topic: '%s'," +
+                            " Content Type: '%s'," +
+                            " Payload Format Indicator: '%s'," +
+                            " Subscription Identifiers: '%s'," +
+                            " %s",
+                    qos,
+                    retained,
+                    messageExpiryInterval.orElse(null),
+                    dupFlag,
+                    correlationDataString,
+                    responseTopic.orElse(null),
+                    contentType.orElse(null),
+                    payloadFormatIndicator.orElse(null),
+                    subscriptionIdentifiers,
+                    userPropertiesAsString);
+        }
 
         return String.format("Payload: '%s'," +
                         " QoS: '%s'," +

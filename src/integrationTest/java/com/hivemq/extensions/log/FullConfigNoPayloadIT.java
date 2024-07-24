@@ -30,18 +30,19 @@ import java.nio.charset.StandardCharsets;
 
 import static com.hivemq.extensions.log.DockerImageNames.HIVEMQ;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * @since 1.1.3
+ * @since 1.1.6
  */
 @Testcontainers
-public class FullConfigIT {
+public class FullConfigNoPayloadIT {
 
     @Container
     final @NotNull HiveMQContainer hivemq = new HiveMQContainer(HIVEMQ) //
             .withExtension(MountableFile.forClasspathResource("hivemq-mqtt-message-log-extension"))
             .waitForExtension("HiveMQ Mqtt Message Log Extension")
-            .withFileInExtensionHomeFolder(MountableFile.forClasspathResource("fullConfig.properties"),
+            .withFileInExtensionHomeFolder(MountableFile.forClasspathResource("fullConfigNoPayload.properties"),
                     "hivemq-mqtt-message-log-extension",
                     "/mqttMessageLog.properties")
             .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()));
@@ -73,7 +74,7 @@ public class FullConfigIT {
                 .send();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        "Received CONNECT from client 'test-client': Protocol version: 'V_5', Clean Start: 'true', Session Expiry Interval: '0', Keep Alive: '60', Maximum Packet Size: '268435460', Receive Maximum: '65535', Topic Alias Maximum: '0', Request Problem Information: 'true', Request Response Information: 'false',  Username: 'null', Password: 'null', Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null', Will: { Topic: 'will', Payload: 'willPayload', QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'willResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'willProperty', Value: 'willValue'], Will Delay: '50000' }"));
+                        "Received CONNECT from client 'test-client': Protocol version: 'V_5', Clean Start: 'true', Session Expiry Interval: '0', Keep Alive: '60', Maximum Packet Size: '268435460', Receive Maximum: '65535', Topic Alias Maximum: '0', Request Problem Information: 'true', Request Response Information: 'false',  Username: 'null', Password: 'null', Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null', Will: { Topic: 'will', QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'willResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'willProperty', Value: 'willValue'], Will Delay: '50000' }"));
         await().until(() -> hivemq.getLogs()
                 .contains(
                         "Sent CONNACK to client 'test-client': Reason Code: 'SUCCESS', Session Present: 'false', Session Expiry Interval: 'null', Assigned ClientId 'null', Maximum QoS: 'EXACTLY_ONCE', Maximum Packet Size: '268435460', Receive Maximum: '10', Topic Alias Maximum: '5', Reason String: 'null', Response Information: 'null', Server Keep Alive: 'null', Server Reference: 'null', Shared Subscription Available: 'true', Wildcards Available: 'true', Retain Available: 'true', Subscription Identifiers Available: 'true', Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null'"));
@@ -102,7 +103,7 @@ public class FullConfigIT {
                 .send();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        "Received PUBLISH from client 'test-client' for topic 'publish': Payload: 'payload1', QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
+                        "Received PUBLISH from client 'test-client' for topic 'publish': QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
         await().until(() -> hivemq.getLogs()
                 .contains(
                         "Sent PUBREC to client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
@@ -115,7 +116,7 @@ public class FullConfigIT {
 
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        "Sent PUBLISH to client 'test-client' on topic 'publish': Payload: 'payload1', QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
+                        "Sent PUBLISH to client 'test-client' on topic 'publish': QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
         await().until(() -> hivemq.getLogs()
                 .contains(
                         "Received PUBREC from client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
@@ -142,13 +143,13 @@ public class FullConfigIT {
                 .send();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        "Received PUBLISH from client 'test-client' for topic 'publish': Payload: 'payload2', QoS: '1', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
+                        "Received PUBLISH from client 'test-client' for topic 'publish': QoS: '1', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
         await().until(() -> hivemq.getLogs()
                 .contains(
                         "Sent PUBACK to client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        "Sent PUBLISH to client 'test-client' on topic 'publish': Payload: 'payload2', QoS: '1', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
+                        "Sent PUBLISH to client 'test-client' on topic 'publish': QoS: '1', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
         await().until(() -> hivemq.getLogs()
                 .contains(
                         "Received PUBACK from client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
@@ -165,5 +166,8 @@ public class FullConfigIT {
         await().until(() -> hivemq.getLogs()
                 .contains(
                         "Received DISCONNECT from client 'test-client': Reason Code: 'NORMAL_DISCONNECTION', Reason String: 'null', Server Reference: 'null', Session Expiry: 'null', User Properties: 'null'"));
+
+        assertFalse(hivemq.getLogs().contains("Payload: 'payload1'"));
+        assertFalse(hivemq.getLogs().contains("Payload: 'payload2'"));
     }
 }

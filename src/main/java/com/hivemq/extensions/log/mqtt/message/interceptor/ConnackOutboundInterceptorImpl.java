@@ -24,15 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Michael Walter
  * @since 1.1.0
  */
-class ConnackOutboundInterceptorImpl implements ConnackOutboundInterceptor {
+public class ConnackOutboundInterceptorImpl implements ConnackOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(ConnackOutboundInterceptorImpl.class);
     private final boolean verbose;
 
-    ConnackOutboundInterceptorImpl(final boolean verbose) {
+    public ConnackOutboundInterceptorImpl(final boolean verbose) {
         this.verbose = verbose;
     }
 

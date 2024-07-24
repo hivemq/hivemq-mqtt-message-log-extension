@@ -19,10 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import org.testcontainers.utility.DockerImageName;
 
 /**
- * @author Yannick Weber
  * @since 1.1.3
  */
 public class DockerImageNames {
 
-    public static final @NotNull DockerImageName HIVEMQ = DockerImageName.parse("hivemq/hivemq4").withTag("4.28.2");
+    public static final @NotNull DockerImageName HIVEMQ = DockerImageName.parse("hivemq/hivemq4").withTag("4.30.0");
 }

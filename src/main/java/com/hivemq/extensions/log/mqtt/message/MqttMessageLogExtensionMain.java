@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Florian Limpöck
  * @since 1.0.0
  */
 public class MqttMessageLogExtensionMain implements ExtensionMain {
@@ -74,8 +73,9 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
         } catch (final Exception e) {
             extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() +
                     " cannot be started");
-            LOG.error(extensionStartInput.getExtensionInformation().getName() +
-                    " could not be started. An exception was thrown!", e);
+            LOG.error("{} could not be started. An exception was thrown!",
+                    extensionStartInput.getExtensionInformation().getName(),
+                    e);
         }
     }
 

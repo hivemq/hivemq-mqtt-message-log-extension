@@ -22,13 +22,14 @@ import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
 import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectDisconnectEventListener;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectInboundInterceptorImpl;
-import com.hivemq.extensions.log.mqtt.message.interceptor.InterceptorUtil;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PublishInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.PublishOutboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.interceptor.SubscribeInboundInterceptorImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Creates a {@link ClientInitializer} that is usable for any HiveMQ 4.2 Enterprise Version.
  *
- * @author Michael Walter
  * @version 1.1.0
  */
 public class ClientInitializerImpl4_2 implements ClientInitializer {
@@ -45,27 +46,30 @@ public class ClientInitializerImpl4_2 implements ClientInitializer {
      */
     private void init() {
         if (config.isClientConnect() && config.isClientDisconnect()) {
-            final ConnectDisconnectEventListener connectDisconnectEventListener =
-                    new ConnectDisconnectEventListener(true, config.isVerbose());
-            Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
+            Services.eventRegistry().setClientLifecycleEventListener( //
+                    input -> new ConnectDisconnectEventListener(true, config.isVerbose(), config.isPayload()));
         } else if (config.isClientDisconnect()) {
-            final ConnectDisconnectEventListener connectDisconnectEventListener =
-                    new ConnectDisconnectEventListener(false, config.isVerbose());
-            Services.eventRegistry().setClientLifecycleEventListener((input) -> connectDisconnectEventListener);
+            Services.eventRegistry().setClientLifecycleEventListener( //
+                    input -> new ConnectDisconnectEventListener(false, config.isVerbose(), config.isPayload()));
         } else if (config.isClientConnect()) {
-            final ConnectInboundInterceptorImpl connectInboundInterceptor =
-                    new ConnectInboundInterceptorImpl(config.isVerbose());
-            Services.interceptorRegistry().setConnectInboundInterceptorProvider((input) -> connectInboundInterceptor);
+            Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
+                    input -> new ConnectInboundInterceptorImpl(config.isVerbose(), config.isPayload()));
         }
     }
 
     @Override
     public void initialize(
             final @NotNull InitializerInput initializerInput, final @NotNull ClientContext clientContext) {
-        InterceptorUtil.createSubscribeInboundInterceptor(config)
-                .ifPresent(clientContext::addSubscribeInboundInterceptor);
-        InterceptorUtil.createPublishInboundInterceptor(config).ifPresent(clientContext::addPublishInboundInterceptor);
-        InterceptorUtil.createPublishOutboundInterceptor(config)
-                .ifPresent(clientContext::addPublishOutboundInterceptor);
+        if (config.isSubscribeReceived()) {
+            clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(config.isVerbose()));
+        }
+        if (config.isPublishReceived()) {
+            clientContext.addPublishInboundInterceptor(new PublishInboundInterceptorImpl(config.isVerbose(),
+                    config.isPayload()));
+        }
+        if (config.isPublishSend()) {
+            clientContext.addPublishOutboundInterceptor(new PublishOutboundInterceptorImpl(config.isVerbose(),
+                    config.isPayload()));
+        }
     }
 }

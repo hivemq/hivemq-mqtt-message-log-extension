@@ -35,7 +35,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * @author Florian Limpöck
  * @since 1.0.0
  */
 class MqttMessageLogExtensionMainTest {

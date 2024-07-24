@@ -24,6 +24,7 @@ public class MqttMessageLogConfig {
     static final @NotNull String TRUE = "true";
     static final @NotNull String FALSE = "false";
     static final @NotNull String VERBOSE = "verbose";
+    static final @NotNull String PAYLOAD = "payload";
     static final @NotNull String CLIENT_CONNECT = "client-connect";
     static final @NotNull String CLIENT_DISCONNECT = "client-disconnect";
     static final @NotNull String CONNACK_SEND = "connack-send";
@@ -128,6 +129,10 @@ public class MqttMessageLogConfig {
 
     public boolean isVerbose() {
         return getForKey(VERBOSE);
+    }
+
+    public boolean isPayload() {
+        return getForKey(PAYLOAD);
     }
 
     public boolean allDisabled() {

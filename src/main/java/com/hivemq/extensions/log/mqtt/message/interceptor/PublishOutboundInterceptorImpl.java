@@ -24,16 +24,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Florian Limpöck
  * @since 1.0.0
  */
-class PublishOutboundInterceptorImpl implements PublishOutboundInterceptor {
+public class PublishOutboundInterceptorImpl implements PublishOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PublishOutboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean payload;
 
-    PublishOutboundInterceptorImpl(final boolean verbose) {
+    public PublishOutboundInterceptorImpl(final boolean verbose, final boolean payload) {
         this.verbose = verbose;
+        this.payload = payload;
     }
 
     @Override
@@ -44,7 +45,8 @@ class PublishOutboundInterceptorImpl implements PublishOutboundInterceptor {
             final String clientID = publishOutboundInput.getClientInformation().getClientId();
             MessageLogUtil.logPublish(String.format("Sent PUBLISH to client '%s' on topic", clientID),
                     publishOutboundInput.getPublishPacket(),
-                    verbose);
+                    verbose,
+                    payload);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound publish logging: ", e);
         }

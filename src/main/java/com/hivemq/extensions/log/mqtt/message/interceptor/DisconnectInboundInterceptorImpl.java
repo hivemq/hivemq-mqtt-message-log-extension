@@ -24,15 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Michael Walter
  * @since 1.1.0
  */
-class DisconnectInboundInterceptorImpl implements DisconnectInboundInterceptor {
+public class DisconnectInboundInterceptorImpl implements DisconnectInboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(DisconnectInboundInterceptorImpl.class);
     private final boolean verbose;
 
-    DisconnectInboundInterceptorImpl(final boolean verbose) {
+    public DisconnectInboundInterceptorImpl(final boolean verbose) {
         this.verbose = verbose;
     }
 
