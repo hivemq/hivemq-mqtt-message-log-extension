@@ -48,7 +48,6 @@ testing {
                 implementation(libs.hivemq.mqttClient)
                 implementation(libs.testcontainers.junitJupiter)
                 implementation(libs.testcontainers.hivemq)
-                implementation(libs.okhttp)
                 runtimeOnly(libs.logback.classic)
             }
         }
