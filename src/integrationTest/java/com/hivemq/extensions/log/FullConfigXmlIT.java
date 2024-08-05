@@ -19,9 +19,9 @@ import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PayloadFormatIndicator;
+import io.github.sgtsilvio.gradle.oci.junit.jupiter.OciImages;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import org.slf4j.event.Level;
 import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -29,7 +29,6 @@ import org.testcontainers.utility.MountableFile;
 
 import java.nio.charset.StandardCharsets;
 
-import static com.hivemq.extensions.log.DockerImageNames.HIVEMQ;
 import static org.awaitility.Awaitility.await;
 
 /**
@@ -39,7 +38,7 @@ import static org.awaitility.Awaitility.await;
 public class FullConfigXmlIT {
 
     @Container
-    final @NotNull HiveMQContainer hivemq = new HiveMQContainer(HIVEMQ) //
+    final @NotNull HiveMQContainer hivemq = new HiveMQContainer(OciImages.getImageName("hivemq/hivemq4")) //
             .withExtension(MountableFile.forClasspathResource("hivemq-mqtt-message-log-extension"))
             .waitForExtension("HiveMQ Mqtt Message Log Extension")
             .withFileInExtensionHomeFolder(MountableFile.forClasspathResource("fullConfig.xml"),
