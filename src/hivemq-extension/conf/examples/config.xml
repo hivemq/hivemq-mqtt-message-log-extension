@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<extension-configuration>
+    <!--
+    Example properties file that will prevent the logging of
+    both incoming and outgoing messages, but all other
+    events, such as connection and subscription events, will be logged.
+    -->
+
+    <!--General settings-->
+    <verbose>false</verbose>
+    <payload>true</payload>
+
+    <!--Event settings-->
+    <publish-received>false</publish-received>
+    <publish-send>false</publish-send>
+
+    <client-connect>true</client-connect>
+    <connack-send>true</connack-send>
+    <client-disconnect>true</client-disconnect>
+    <subscribe-received>true</subscribe-received>
+    <suback-send>true</suback-send>
+    <unsubscribe-received>true</unsubscribe-received>
+    <unsuback-send>true</unsuback-send>
+    <ping-request-received>true</ping-request-received>
+    <ping-response-send>true</ping-response-send>
+    <puback-received>true</puback-received>
+    <puback-send>true</puback-send>
+    <pubrec-received>true</pubrec-received>
+    <pubrec-send>true</pubrec-send>
+    <pubrel-received>true</pubrel-received>
+    <pubrel-send>true</pubrel-send>
+    <pubcomp-received>true</pubcomp-received>
+    <pubcomp-send>true</pubcomp-send>
+
+</extension-configuration>

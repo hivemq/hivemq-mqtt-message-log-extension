@@ -23,6 +23,8 @@ dependencies {
     compileOnly(libs.jetbrains.annotations)
 
     implementation(libs.commonsLang)
+    implementation(libs.jaxb.api)
+    runtimeOnly(libs.jaxb.impl)
 }
 
 @Suppress("UnstableApiUsage")

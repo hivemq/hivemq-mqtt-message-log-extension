@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Copyright 2019-present HiveMQ GmbH
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<extension-configuration>
+    <verbose>false</verbose>
+    <payload>false</payload>
+    <publish-received>true</publish-received>
+    <publish-send>true</publish-send>
+    <client-connect>true</client-connect>
+    <connack-send>true</connack-send>
+    <client-disconnect>true</client-disconnect>
+    <subscribe-received>true</subscribe-received>
+    <suback-send>true</suback-send>
+    <unsubscribe-received>true</unsubscribe-received>
+    <unsuback-send>true</unsuback-send>
+    <ping-request-received>true</ping-request-received>
+    <ping-response-send>true</ping-response-send>
+    <puback-received>true</puback-received>
+    <puback-send>true</puback-send>
+    <pubrec-received>true</pubrec-received>
+    <pubrec-send>true</pubrec-send>
+    <pubrel-received>true</pubrel-received>
+    <pubrel-send>true</pubrel-send>
+    <pubcomp-received>true</pubcomp-received>
+    <pubcomp-send>true</pubcomp-send>
+</extension-configuration>
