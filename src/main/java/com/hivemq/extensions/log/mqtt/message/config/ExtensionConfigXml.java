@@ -26,7 +26,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * @since 1.2.0
  */
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal", "unused"})
-@XmlRootElement(name = "extension-configuration")
+@XmlRootElement(name = "hivemq-mqtt-message-log-extension")
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
 public class ExtensionConfigXml implements ExtensionConfig {
@@ -38,7 +38,7 @@ public class ExtensionConfigXml implements ExtensionConfig {
     @XmlElement(name = "payload", defaultValue = "true")
     private boolean payload = true;
 
-    @XmlElement(name = "publish-received", defaultValue = "false")
+    @XmlElement(name = "publish-received", defaultValue = "true")
     private boolean publishReceived = true;
 
     @XmlElement(name = "publish-send", defaultValue = "true")

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<extension-configuration>
+<hivemq-mqtt-message-log-extension>
     <!--
     Example properties file that will prevent the logging of
     both incoming and outgoing messages, but all other
     events, such as connection and subscription events, will be logged.
     -->
-
     <!--General settings-->
     <verbose>false</verbose>
     <payload>true</payload>
@@ -32,4 +31,4 @@
     <pubcomp-received>true</pubcomp-received>
     <pubcomp-send>true</pubcomp-send>
 
-</extension-configuration>
+</hivemq-mqtt-message-log-extension>

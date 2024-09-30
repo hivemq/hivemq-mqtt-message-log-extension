@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<extension-configuration>
+<hivemq-mqtt-message-log-extension>
     <publish-received>false</publish-received>
     <publish-send>false</publish-send>
-</extension-configuration>
+</hivemq-mqtt-message-log-extension>

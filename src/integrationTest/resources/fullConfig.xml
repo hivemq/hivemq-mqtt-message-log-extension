@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<extension-configuration>
+<hivemq-mqtt-message-log-extension>
     <verbose>true</verbose>
     <payload>true</payload>
     <publish-received>true</publish-received>
@@ -38,4 +38,4 @@
     <pubrel-send>true</pubrel-send>
     <pubcomp-received>true</pubcomp-received>
     <pubcomp-send>true</pubcomp-send>
-</extension-configuration>
+</hivemq-mqtt-message-log-extension>
