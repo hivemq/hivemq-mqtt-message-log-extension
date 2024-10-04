@@ -15,7 +15,6 @@
  */
 package com.hivemq.extensions.log.mqtt.message.config;
 
-import com.hivemq.extensions.log.mqtt.message.ExtensionConstants;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,14 +87,15 @@ public class ExtensionConfigReader {
 
         if (propertiesFile.exists()) {
             final Path extensionHomePath = extensionHomeFolder.toPath();
-            final Path extensionXmlLegacyPath = extensionHomePath.resolve(EXTENSION_CONFIG_PROPERTIES_LOCATION);
-            final Path extensionXmlPath = extensionHomePath.resolve(EXTENSION_CONFIG_XML_LOCATION);
+            final Path extensionLegacyConfigPropertiesPath =
+                    extensionHomePath.resolve(EXTENSION_CONFIG_PROPERTIES_LOCATION);
+            final Path extensionConfigXmlPath = extensionHomePath.resolve(EXTENSION_CONFIG_XML_LOCATION);
             LOG.warn("{}: The configuration file is using the legacy location and format '{}'. " +
-                            "Please move the configuration file to the new location and format '{}'. " +
+                            "Please update the configuration file to the new location and format '{}'. " +
                             "Support for the legacy location and format will be removed in a future release.",
-                    ExtensionConstants.EXTENSION_NAME,
-                    extensionXmlLegacyPath,
-                    extensionXmlPath);
+                    EXTENSION_NAME,
+                    extensionLegacyConfigPropertiesPath,
+                    extensionConfigXmlPath);
         }
 
         if (!propertiesFile.canRead()) {
@@ -112,7 +112,7 @@ public class ExtensionConfigReader {
         return new ExtensionConfigProperties(properties);
     }
 
-    private static @NotNull ExtensionConfigXml readConfigXmlFile(final File configXmlFile) {
+    private static @NotNull ExtensionConfigXml readConfigXmlFile(final @NotNull File configXmlFile) {
         ExtensionConfigXml extensionConfigXml;
 
         LOG.debug("{}: Will try to read config properties from {}", EXTENSION_NAME, EXTENSION_CONFIG_XML_LOCATION);
