@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<hivemq-mqtt-message-log-extension>
+<hivemq-mqtt-message-log-extension xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                   xsi:noNamespaceSchemaLocation="config.xsd">
     <!--
     Example properties file that will prevent the logging of
     both incoming and outgoing messages, but all other

@@ -16,7 +16,8 @@
     limitations under the License.
 
 -->
-<hivemq-mqtt-message-log-extension>
+<hivemq-mqtt-message-log-extension xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                   xsi:noNamespaceSchemaLocation="../../main/resources/config.xsd">
     <verbose>true</verbose>
     <payload>true</payload>
     <publish-received>true</publish-received>

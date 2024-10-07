@@ -16,6 +16,7 @@ hivemqExtension {
 
     resources {
         from("LICENSE")
+        from("src/main/resources/config.xsd") { into("conf") }
     }
 }
 
