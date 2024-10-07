@@ -16,6 +16,7 @@ hivemqExtension {
 
     resources {
         from("LICENSE")
+        from("src/main/resources/config.xsd") { into("conf") }
     }
 }
 
@@ -23,6 +24,8 @@ dependencies {
     compileOnly(libs.jetbrains.annotations)
 
     implementation(libs.commonsLang)
+    implementation(libs.jaxb.api)
+    runtimeOnly(libs.jaxb.impl)
 }
 
 @Suppress("UnstableApiUsage")

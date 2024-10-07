@@ -19,7 +19,7 @@ import com.hivemq.extension.sdk.api.client.ClientContext;
 import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
-import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig;
+import com.hivemq.extensions.log.mqtt.message.config.ExtensionConfig;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnackOutboundInterceptorImpl;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectInboundInterceptorImpl;
 import com.hivemq.extensions.log.mqtt.message.interceptor.DisconnectInboundInterceptorImpl;
@@ -49,9 +49,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ClientInitializerImpl implements ClientInitializer {
 
-    private final @NotNull MqttMessageLogConfig config;
+    private final @NotNull ExtensionConfig config;
 
-    public ClientInitializerImpl(final @NotNull MqttMessageLogConfig config) {
+    public ClientInitializerImpl(final @NotNull ExtensionConfig config) {
         this.config = config;
         init();
     }
@@ -86,10 +86,10 @@ public class ClientInitializerImpl implements ClientInitializer {
             clientContext.addSubackOutboundInterceptor(new SubackOutboundInterceptorImpl(config.isVerbose()));
         }
 
-        if (config.isPingreqReceived()) {
+        if (config.isPingRequestReceived()) {
             clientContext.addPingReqInboundInterceptor(new PingreqInboundInterceptorImpl());
         }
-        if (config.isPingrespSend()) {
+        if (config.isPingResponseSend()) {
             clientContext.addPingRespOutboundInterceptor(new PingrespOutboundInterceptorImpl());
         }
 

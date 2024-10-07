@@ -19,7 +19,7 @@ import com.hivemq.extension.sdk.api.client.ClientContext;
 import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
-import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig;
+import com.hivemq.extensions.log.mqtt.message.config.ExtensionConfig;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectDisconnectEventListener;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectInboundInterceptorImpl;
 import com.hivemq.extensions.log.mqtt.message.interceptor.PublishInboundInterceptorImpl;
@@ -34,9 +34,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ClientInitializerImpl4_2 implements ClientInitializer {
 
-    private final @NotNull MqttMessageLogConfig config;
+    private final @NotNull ExtensionConfig config;
 
-    public ClientInitializerImpl4_2(final @NotNull MqttMessageLogConfig config) {
+    public ClientInitializerImpl4_2(final @NotNull ExtensionConfig config) {
         this.config = config;
         init();
     }

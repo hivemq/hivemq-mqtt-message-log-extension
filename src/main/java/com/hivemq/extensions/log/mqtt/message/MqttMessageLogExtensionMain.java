@@ -23,8 +23,8 @@ import com.hivemq.extension.sdk.api.parameter.ExtensionStopOutput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.admin.LicenseEdition;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
-import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfig;
-import com.hivemq.extensions.log.mqtt.message.config.MqttMessageLogConfigReader;
+import com.hivemq.extensions.log.mqtt.message.config.ExtensionConfig;
+import com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigReader;
 import com.hivemq.extensions.log.mqtt.message.initializer.ClientInitializerImpl;
 import com.hivemq.extensions.log.mqtt.message.initializer.ClientInitializerImpl4_2;
 import org.jetbrains.annotations.NotNull;
@@ -52,10 +52,8 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
         }
 
         try {
-            final MqttMessageLogConfigReader configReader =
-                    new MqttMessageLogConfigReader(extensionStartInput.getExtensionInformation()
-                            .getExtensionHomeFolder());
-            final MqttMessageLogConfig config = new MqttMessageLogConfig(configReader.readProperties());
+            final ExtensionConfig config =
+                    ExtensionConfigReader.read(extensionStartInput.getExtensionInformation().getExtensionHomeFolder());
 
             if (config.allDisabled()) {
                 extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() +
@@ -90,7 +88,7 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
     ClientInitializer getClientInitializerForEdition(
             final @NotNull LicenseEdition edition,
             final @NotNull String version,
-            final @NotNull MqttMessageLogConfig config) {
+            final @NotNull ExtensionConfig config) {
         if (LicenseEdition.COMMUNITY.equals(edition)) {
             return new ClientInitializerImpl(config);
         } else if (version.startsWith("4.2.")) {

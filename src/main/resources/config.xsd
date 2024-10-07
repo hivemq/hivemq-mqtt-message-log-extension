@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Copyright 2019-present HiveMQ GmbH
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="hivemq-mqtt-message-log-extension" type="PropertyEntity"/>
+    <xs:complexType name="PropertyEntity">
+        <xs:all>
+            <xs:element name="verbose" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="payload" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="publish-received" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="publish-send" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="client-connect" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="connack-send" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="client-disconnect" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="subscribe-received" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="suback-send" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="unsubscribe-received" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="unsuback-send" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="ping-request-received" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="ping-response-send" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="puback-received" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="puback-send" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="pubrec-received" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="pubrec-send" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="pubrel-received" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="pubrel-send" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="pubcomp-received" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="pubcomp-send" type="xs:boolean" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+</xs:schema>
