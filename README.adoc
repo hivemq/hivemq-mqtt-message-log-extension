@@ -51,15 +51,20 @@ This is useful for debugging and development purposes.
 
 * Download the extension from the {hivemq-extension-download}[HiveMQ Marketplace^].
 * Copy the content of the zip file to the `extensions` folder of your HiveMQ nodes.
-* Modify the `mqttMessageLog.properties` file as needed.
+* Configure the extension by adding a `config.xml` file in the extension's `conf` folder.
+** For your convenience, we provide an example configuration `conf/examples/config.xml` that you can copy and modify as desired.
+** The file must be located in `HIVEMQ_HOME/extensions/hivemq-mqtt-message-log-extension/conf/config.xml`.
+
+NOTE: Starting with release 1.2.0 of the extension, the legacy configuration file `mqttMessageLog.properties` is deprecated.
+Support for the legacy configuration will be removed in a future release.
 
 == Configuration
 
 === Event Configuration
 
 By default, all MQTT events are logged.
-It is possible to opt out of specific log event types by adding an *mqttMessageLog.properties* file to your `hivemq-mqtt-message-log-extension` home folder.
-There is an example file available which removes the logging of PUBLISH messages.
+It is possible to opt out of specific log event types by adding a `config.xml` file to your `hivemq-mqtt-message-log-extension/conf` folder.
+An example configuration file is available in `conf/examples/`, which removes the logging of PUBLISH messages.
 
 === General Configuration
 

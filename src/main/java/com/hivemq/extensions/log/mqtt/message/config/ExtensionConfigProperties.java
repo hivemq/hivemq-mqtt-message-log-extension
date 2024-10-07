@@ -16,10 +16,11 @@
 package com.hivemq.extensions.log.mqtt.message.config;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.Properties;
 
-public class MqttMessageLogConfig {
+public class ExtensionConfigProperties implements ExtensionConfig {
 
     static final @NotNull String TRUE = "true";
     static final @NotNull String FALSE = "false";
@@ -34,8 +35,8 @@ public class MqttMessageLogConfig {
     static final @NotNull String SUBACK_SEND = "suback-send";
     static final @NotNull String UNSUBSCRIBE_RECEIVED = "unsubscribe-received";
     static final @NotNull String UNSUBACK_SEND = "unsuback-send";
-    static final @NotNull String PING_REQ_RECEIVED = "ping-request-received";
-    static final @NotNull String PING_RESP_SEND = "ping-response-send";
+    static final @NotNull String PING_REQUEST_RECEIVED = "ping-request-received";
+    static final @NotNull String PING_RESPONSE_SEND = "ping-response-send";
     static final @NotNull String PUBACK_RECEIVED = "puback-received";
     static final @NotNull String PUBACK_SEND = "puback-send";
     static final @NotNull String PUBREC_RECEIVED = "pubrec-received";
@@ -47,7 +48,7 @@ public class MqttMessageLogConfig {
 
     private final @NotNull Properties properties;
 
-    public MqttMessageLogConfig(final @NotNull Properties properties) {
+    public ExtensionConfigProperties(final @NotNull Properties properties) {
         this.properties = properties;
     }
 
@@ -87,12 +88,12 @@ public class MqttMessageLogConfig {
         return getForKey(UNSUBACK_SEND);
     }
 
-    public boolean isPingreqReceived() {
-        return getForKey(PING_REQ_RECEIVED);
+    public boolean isPingRequestReceived() {
+        return getForKey(PING_REQUEST_RECEIVED);
     }
 
-    public boolean isPingrespSend() {
-        return getForKey(PING_RESP_SEND);
+    public boolean isPingResponseSend() {
+        return getForKey(PING_RESPONSE_SEND);
     }
 
     public boolean isPubackReceived() {
@@ -135,29 +136,12 @@ public class MqttMessageLogConfig {
         return getForKey(PAYLOAD);
     }
 
-    public boolean allDisabled() {
-        return !isClientConnect() &&
-                !isClientDisconnect() &&
-                !isConnackSend() &&
-                !isPublishSend() &&
-                !isPublishReceived() &&
-                !isSubscribeReceived() &&
-                !isSubackSend() &&
-                !isUnsubscribeReceived() &&
-                !isUnsubackSend() &&
-                !isPingreqReceived() &&
-                !isPingrespSend() &&
-                !isPubackReceived() &&
-                !isPubackSend() &&
-                !isPubrecReceived() &&
-                !isPubrecSend() &&
-                !isPubrelReceived() &&
-                !isPubrelSend() &&
-                !isPubcompReceived() &&
-                !isPubcompSend();
-    }
-
     private boolean getForKey(final @NotNull String key) {
         return properties.getProperty(key, TRUE).equalsIgnoreCase(TRUE);
+    }
+
+    @VisibleForTesting
+    @NotNull Properties getProperties() {
+        return properties;
     }
 }
