@@ -30,9 +30,11 @@ public class DisconnectOutboundInterceptorImpl implements DisconnectOutboundInte
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(DisconnectOutboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public DisconnectOutboundInterceptorImpl(final boolean verbose) {
+    public DisconnectOutboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class DisconnectOutboundInterceptorImpl implements DisconnectOutboundInte
             final @NotNull DisconnectOutboundOutput disconnectOutboundOutput) {
         try {
             final String clientId = disconnectOutboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logDisconnect(disconnectOutboundInput.getDisconnectPacket(), clientId, false, verbose);
+            MessageLogUtil.logDisconnect(disconnectOutboundInput.getDisconnectPacket(), clientId, false, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound disconnect logging: ", e);
         }

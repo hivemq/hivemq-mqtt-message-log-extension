@@ -30,9 +30,11 @@ public class SubscribeInboundInterceptorImpl implements SubscribeInboundIntercep
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(SubscribeInboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public SubscribeInboundInterceptorImpl(final boolean verbose) {
+    public SubscribeInboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class SubscribeInboundInterceptorImpl implements SubscribeInboundIntercep
             final @NotNull SubscribeInboundInput subscribeInboundInput,
             final @NotNull SubscribeInboundOutput subscribeInboundOutput) {
         try {
-            MessageLogUtil.logSubscribe(subscribeInboundInput, verbose);
+            MessageLogUtil.logSubscribe(subscribeInboundInput, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound subscribe logging: ", e);
         }

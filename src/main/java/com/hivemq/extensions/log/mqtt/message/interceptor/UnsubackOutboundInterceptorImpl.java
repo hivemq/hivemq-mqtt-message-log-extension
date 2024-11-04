@@ -30,9 +30,11 @@ public class UnsubackOutboundInterceptorImpl implements UnsubackOutboundIntercep
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(UnsubackOutboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public UnsubackOutboundInterceptorImpl(final boolean verbose) {
+    public UnsubackOutboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class UnsubackOutboundInterceptorImpl implements UnsubackOutboundIntercep
             final @NotNull UnsubackOutboundInput unsubackOutboundInput,
             final @NotNull UnsubackOutboundOutput unsubackOutboundOutput) {
         try {
-            MessageLogUtil.logUnsuback(unsubackOutboundInput, verbose);
+            MessageLogUtil.logUnsuback(unsubackOutboundInput, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound unsuback logging: ", e);
         }

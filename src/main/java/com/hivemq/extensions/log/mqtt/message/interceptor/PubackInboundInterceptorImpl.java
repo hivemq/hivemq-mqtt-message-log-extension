@@ -30,9 +30,11 @@ public class PubackInboundInterceptorImpl implements PubackInboundInterceptor {
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(PubackInboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public PubackInboundInterceptorImpl(final boolean verbose) {
+    public PubackInboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class PubackInboundInterceptorImpl implements PubackInboundInterceptor {
             final @NotNull PubackInboundOutput pubackInboundOutput) {
         try {
             @NotNull final String clientId = pubackInboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPuback(pubackInboundInput.getPubackPacket(), clientId, true, verbose);
+            MessageLogUtil.logPuback(pubackInboundInput.getPubackPacket(), clientId, true, verbose, json);
         } catch (final Exception e) {
             log.debug("Exception thrown at inbound puback logging: ", e);
         }

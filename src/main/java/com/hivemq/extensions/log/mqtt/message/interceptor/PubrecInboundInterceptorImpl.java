@@ -30,9 +30,11 @@ public class PubrecInboundInterceptorImpl implements PubrecInboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubrecInboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public PubrecInboundInterceptorImpl(final boolean verbose) {
+    public PubrecInboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class PubrecInboundInterceptorImpl implements PubrecInboundInterceptor {
             final @NotNull PubrecInboundOutput pubrecInboundOutput) {
         try {
             final String clientId = pubrecInboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPubrec(pubrecInboundInput.getPubrecPacket(), clientId, true, verbose);
+            MessageLogUtil.logPubrec(pubrecInboundInput.getPubrecPacket(), clientId, true, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound pubrec logging: ", e);
         }

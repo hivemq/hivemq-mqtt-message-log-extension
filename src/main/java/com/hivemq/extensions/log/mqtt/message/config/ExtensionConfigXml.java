@@ -38,6 +38,9 @@ public class ExtensionConfigXml implements ExtensionConfig {
     @XmlElement(name = "payload", defaultValue = "true")
     private boolean payload = true;
 
+    @XmlElement(name = "json", defaultValue = "false")
+    private boolean json = false;
+
     @XmlElement(name = "publish-received", defaultValue = "true")
     private boolean publishReceived = true;
 
@@ -101,6 +104,10 @@ public class ExtensionConfigXml implements ExtensionConfig {
 
     public boolean isPayload() {
         return payload;
+    }
+
+    public boolean isJson() {
+        return json;
     }
 
     public boolean isPublishReceived() {
@@ -186,6 +193,8 @@ public class ExtensionConfigXml implements ExtensionConfig {
                 verbose +
                 ", payload=" +
                 payload +
+                ", json=" +
+                json +
                 ", publishReceived=" +
                 publishReceived +
                 ", publishSend=" +

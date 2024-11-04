@@ -30,9 +30,11 @@ public class ConnackOutboundInterceptorImpl implements ConnackOutboundIntercepto
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(ConnackOutboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public ConnackOutboundInterceptorImpl(final boolean verbose) {
+    public ConnackOutboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class ConnackOutboundInterceptorImpl implements ConnackOutboundIntercepto
             final @NotNull ConnackOutboundInput connackOutboundInput,
             final @NotNull ConnackOutboundOutput connackOutboundOutput) {
         try {
-            MessageLogUtil.logConnack(connackOutboundInput, verbose);
+            MessageLogUtil.logConnack(connackOutboundInput, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound connack logging: ", e);
         }

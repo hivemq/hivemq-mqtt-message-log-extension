@@ -29,13 +29,18 @@ import org.slf4j.LoggerFactory;
 public class PingrespOutboundInterceptorImpl implements PingRespOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PingrespOutboundInterceptorImpl.class);
+    private final boolean json;
+
+    public PingrespOutboundInterceptorImpl(final boolean json) {
+        this.json = json;
+    }
 
     @Override
     public void onOutboundPingResp(
             final @NotNull PingRespOutboundInput pingRespOutboundInput,
             final @NotNull PingRespOutboundOutput pingRespOutboundOutput) {
         try {
-            MessageLogUtil.logPingresp(pingRespOutboundInput);
+            MessageLogUtil.logPingresp(pingRespOutboundInput, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound ping response logging: ", e);
         }

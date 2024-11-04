@@ -30,9 +30,11 @@ public class PubrelInboundInterceptorImpl implements PubrelInboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubrelInboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public PubrelInboundInterceptorImpl(final boolean verbose) {
+    public PubrelInboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class PubrelInboundInterceptorImpl implements PubrelInboundInterceptor {
             final @NotNull PubrelInboundOutput pubrelInboundOutput) {
         try {
             final String clientId = pubrelInboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPubrel(pubrelInboundInput.getPubrelPacket(), clientId, true, verbose);
+            MessageLogUtil.logPubrel(pubrelInboundInput.getPubrelPacket(), clientId, true, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound pubrel logging: ", e);
         }

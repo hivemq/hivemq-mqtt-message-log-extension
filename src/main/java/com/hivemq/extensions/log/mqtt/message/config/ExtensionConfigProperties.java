@@ -26,6 +26,7 @@ public class ExtensionConfigProperties implements ExtensionConfig {
     static final @NotNull String FALSE = "false";
     static final @NotNull String VERBOSE = "verbose";
     static final @NotNull String PAYLOAD = "payload";
+    static final @NotNull String JSON = "json";
     static final @NotNull String CLIENT_CONNECT = "client-connect";
     static final @NotNull String CLIENT_DISCONNECT = "client-disconnect";
     static final @NotNull String CONNACK_SEND = "connack-send";
@@ -134,6 +135,10 @@ public class ExtensionConfigProperties implements ExtensionConfig {
 
     public boolean isPayload() {
         return getForKey(PAYLOAD);
+    }
+
+    public boolean isJson() {
+        return getForKey(JSON);
     }
 
     private boolean getForKey(final @NotNull String key) {

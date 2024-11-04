@@ -33,6 +33,7 @@ import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigPrope
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.CLIENT_DISCONNECT;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.CONNACK_SEND;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.FALSE;
+import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.JSON;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.PAYLOAD;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.PING_REQUEST_RECEIVED;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.PING_RESPONSE_SEND;
@@ -172,6 +173,8 @@ public class ExtensionConfigReader {
         properties.setProperty(VERBOSE, FALSE);
 
         properties.setProperty(PAYLOAD, TRUE);
+        properties.setProperty(JSON, FALSE);
+
         return properties;
     }
 }
