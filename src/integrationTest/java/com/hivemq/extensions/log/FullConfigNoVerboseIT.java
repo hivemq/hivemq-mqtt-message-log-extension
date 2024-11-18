@@ -39,13 +39,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FullConfigNoVerboseIT {
 
     @Container
-    final @NotNull HiveMQContainer hivemq = new HiveMQContainer(OciImages.getImageName("hivemq/hivemq4")) //
-            .withExtension(MountableFile.forClasspathResource("hivemq-mqtt-message-log-extension"))
-            .waitForExtension("HiveMQ Mqtt Message Log Extension")
-            .withFileInExtensionHomeFolder(MountableFile.forClasspathResource("fullConfigNoVerbose.properties"),
-                    "hivemq-mqtt-message-log-extension",
-                    "/mqttMessageLog.properties")
-            .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()));
+    final @NotNull HiveMQContainer hivemq =
+            new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-mqtt-message-log-extension")
+                    .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                    .withCopyToContainer(MountableFile.forClasspathResource("fullConfigNoVerbose.properties"),
+                            "/opt/hivemq/extensions/hivemq-mqtt-message-log-extension/mqttMessageLog.properties")
+                    .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()));
 
     @Test
     void test() {

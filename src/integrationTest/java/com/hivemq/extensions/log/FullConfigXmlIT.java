@@ -38,13 +38,12 @@ import static org.awaitility.Awaitility.await;
 public class FullConfigXmlIT {
 
     @Container
-    final @NotNull HiveMQContainer hivemq = new HiveMQContainer(OciImages.getImageName("hivemq/hivemq4")) //
-            .withExtension(MountableFile.forClasspathResource("hivemq-mqtt-message-log-extension"))
-            .waitForExtension("HiveMQ Mqtt Message Log Extension")
-            .withFileInExtensionHomeFolder(MountableFile.forClasspathResource("fullConfig.xml"),
-                    "hivemq-mqtt-message-log-extension",
-                    "/conf/config.xml")
-            .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()));
+    final @NotNull HiveMQContainer hivemq =
+            new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-mqtt-message-log-extension")
+                    .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                    .withCopyToContainer(MountableFile.forClasspathResource("fullConfig.xml"),
+                            "/opt/hivemq/extensions/hivemq-mqtt-message-log-extension/conf/config.xml")
+                    .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()));
 
     @Test
     void test() {
