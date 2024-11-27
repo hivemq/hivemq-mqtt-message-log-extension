@@ -47,8 +47,8 @@ oci {
             layers {
                 layer("hivemqExtension") {
                     contents {
-                        permissions("opt/hivemq/", 0b111_111_000)
-                        permissions("opt/hivemq/extensions/", 0b111_111_000)
+                        permissions("opt/hivemq/", 0b111_111_101)
+                        permissions("opt/hivemq/extensions/", 0b111_111_101)
                         into("opt/hivemq/extensions") {
                             from(zipTree(tasks.hivemqExtensionZip.flatMap { it.archiveFile }))
                         }
