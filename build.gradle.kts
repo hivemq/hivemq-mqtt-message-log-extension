@@ -42,7 +42,7 @@ oci {
     imageDefinitions.register("main") {
         allPlatforms {
             dependencies {
-                runtime("com.hivemq:hivemq-enterprise:4.30.0")
+                runtime("com.hivemq:hivemq-enterprise:latest") { isChanging = true }
             }
             layers {
                 layer("hivemqExtension") {
