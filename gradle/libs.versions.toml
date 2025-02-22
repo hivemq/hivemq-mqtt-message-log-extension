@@ -1,5 +1,5 @@
 [versions]
-awaitility = "4.2.2"
+awaitility = "4.3.0"
 commonsLang = "3.17.0"
 gradleOci-junitJupiter = "0.6.0"
 hivemq-extensionSdk = "4.3.0"
