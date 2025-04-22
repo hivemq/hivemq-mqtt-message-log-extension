@@ -46,17 +46,17 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
         try {
             final String clientID = publishInboundInput.getClientInformation().getClientId();
             if(json) {
-                MessageLogUtil.logPublish(String.format("\"Received PUBLISH for topic\", \"Client\": \"%s\"", clientID),
+                MessageLogUtil.logPublish(String.format("\"Received PUBLISH\", \"Client\": \"%s\"", clientID),
                         publishInboundInput.getPublishPacket(),
                         verbose,
                         payload,
-                        json);
+                        true);
             } else {
                 MessageLogUtil.logPublish(String.format("Received PUBLISH from client '%s' for topic", clientID),
                         publishInboundInput.getPublishPacket(),
                         verbose,
                         payload,
-                        json);
+                        false);
             }
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound publish logging: ", e);

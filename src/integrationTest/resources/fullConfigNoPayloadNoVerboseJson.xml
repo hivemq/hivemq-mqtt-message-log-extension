@@ -18,9 +18,9 @@
 -->
 <hivemq-mqtt-message-log-extension xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:noNamespaceSchemaLocation="../../main/resources/config.xsd">
-    <verbose>true</verbose>
-    <payload>true</payload>
-    <json>false</json>
+    <verbose>false</verbose>
+    <payload>false</payload>
+    <json>true</json>
     <publish-received>true</publish-received>
     <publish-send>true</publish-send>
     <client-connect>true</client-connect>

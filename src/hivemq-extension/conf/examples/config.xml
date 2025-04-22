@@ -9,6 +9,7 @@
     <!--General settings-->
     <verbose>false</verbose>
     <payload>true</payload>
+    <json>false</json>
 
     <!--Event settings-->
     <publish-received>false</publish-received>

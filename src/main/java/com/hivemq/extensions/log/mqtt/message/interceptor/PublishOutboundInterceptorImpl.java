@@ -46,17 +46,17 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
         try {
             final String clientID = publishOutboundInput.getClientInformation().getClientId();
             if (json) {
-                MessageLogUtil.logPublish(String.format("\"Sent PUBLISH on topic\", \"Client\": \"%s\"", clientID),
+                MessageLogUtil.logPublish(String.format("\"Sent PUBLISH\", \"Client\": \"%s\"", clientID),
                         publishOutboundInput.getPublishPacket(),
                         verbose,
                         payload,
-                        json);
+                        true);
             } else {
                 MessageLogUtil.logPublish(String.format("Sent PUBLISH to client '%s' on topic", clientID),
                         publishOutboundInput.getPublishPacket(),
                         verbose,
                         payload,
-                        json);
+                        false);
             }
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound publish logging: ", e);

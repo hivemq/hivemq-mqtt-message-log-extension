@@ -266,8 +266,7 @@ public class MessageLogUtil {
                             " {}," +
                             " \"Auth Method\": \"{}\"," +
                             " \"Auth Data (Base64)\": \"{}\"," +
-                            " {} " +
-                            " {}}",
+                            " {}{}}",
                     connectPacket.getClientId(),
                     connectPacket.getMqttVersion().name(),
                     connectPacket.getCleanStart(),
@@ -635,7 +634,7 @@ public class MessageLogUtil {
         }
         for (final String unsub : unsubscribePacket.getTopicFilters()) {
             if (json) {
-                topics.append("{\"Topic\": \"").append(unsub).append("\"},");
+                topics.append(" {\"Topic\": \"").append(unsub).append("\"},");
             } else {
                 topics.append(" [Topic: '").append(unsub).append("'],");
             }
