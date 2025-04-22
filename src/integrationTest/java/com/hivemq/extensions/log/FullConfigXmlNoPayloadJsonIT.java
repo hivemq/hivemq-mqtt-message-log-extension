@@ -73,21 +73,17 @@ public class FullConfigXmlNoPayloadJsonIT {
                 .send();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received CONNECT from client 'test-client': Protocol version: 'V_5', Clean Start: 'true', Session Expiry Interval: '0', Keep Alive: '60', Maximum Packet Size: '268435460', Receive Maximum: '65535', Topic Alias Maximum: '0', Request Problem Information: 'true', Request Response Information: 'false',  Username: 'null', Password: 'null', Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null', Will: { Topic: 'will', QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'willResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'willProperty', Value: 'willValue'], Will Delay: '50000' }"));
                         "{\"Event\": \"Received CONNECT\", \"Client\": \"test-client\", \"Protocol version\": \"V_5\", \"Clean Start\": \"true\", \"Session Expiry Interval\": \"0\", \"Keep Alive\": \"60\", \"Maximum Packet Size\": \"268435460\", \"Receive Maximum\": \"65535\", \"Topic Alias Maximum\": \"0\", \"Request Problem Information\": \"true\", \"Request Response Information\": \"false\",  \"Username\": \"null\", \"Password\": \"null\", \"Auth Method\": \"null\", \"Auth Data (Base64)\": \"null\", \"User Properties\": \"null\", \"Will\": { \"Topic\": \"will\", \"QoS\": \"2\", \"Retained\": \"false\", \"Message Expiry Interval\": \"10000\", \"Duplicate Delivery\": \"false\", \"Correlation Data\": \"d2lsbENvcnJlbGF0aW9uRGF0YQ==\", \"Response Topic\": \"willResponse\", \"Content Type\": \"text/plain\", \"Payload Format Indicator\": \"UTF_8\", \"Subscription Identifiers\": \"[]\", \"User Properties (1)\": [{\"Name (0)\": \"willProperty\", \"Value (0)\": \"willValue\"}], \"Will Delay\": \"50000\" }}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Sent CONNACK to client 'test-client': Reason Code: 'SUCCESS', Session Present: 'false', Session Expiry Interval: 'null', Assigned ClientId 'null', Maximum QoS: 'EXACTLY_ONCE', Maximum Packet Size: '268435460', Receive Maximum: '10', Topic Alias Maximum: '5', Reason String: 'null', Response Information: 'null', Server Keep Alive: 'null', Server Reference: 'null', Shared Subscription Available: 'true', Wildcards Available: 'true', Retain Available: 'true', Subscription Identifiers Available: 'true', Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null'"));
                         "{\"Event\": \"Sent CONNACK\", \"Client\": \"test-client\", \"Reason Code\": \"SUCCESS\", \"Session Present\": \"false\", \"Session Expiry Interval\": \"null\", \"Assigned ClientId\": \"null\", \"Maximum QoS\": \"EXACTLY_ONCE\", \"Maximum Packet Size\": \"268435460\", \"Receive Maximum\": \"10\", \"Topic Alias Maximum\": \"5\", \"Reason String\": \"null\", \"Response Information\": \"null\", \"Server Keep Alive\": \"null\", \"Server Reference\": \"null\", \"Shared Subscription Available\": \"true\", \"Wildcards Available\": \"true\", \"Retain Available\": \"true\", \"Subscription Identifiers Available\": \"true\", \"Auth Method\": \"null\", \"Auth Data (Base64)\": \"null\", \"User Properties\": \"null\"}"));
 
         client.subscribeWith().topicFilter("#").send();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received SUBSCRIBE from client 'test-client': Topics: { [Topic: '#', QoS: '2', Retain As Published: 'false', No Local: 'false', Retain Handling: 'SEND'] }, Subscription Identifier: '1', User Properties: 'null'"));
                         "{\"Event\": \"Received SUBSCRIBE\", \"Client\": \"test-client\", \"Topics\": [{\"Topic\": \"#\", \"QoS\": \"2\", \"Retain As Published\": \"false\", \"No Local\": \"false\", \"Retain Handling\": \"SEND\"} ], \"Subscription Identifier\": \"1\", \"User Properties\": \"null\"}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Sent SUBACK to client 'test-client': Suback Reason Codes: { [Reason Code: 'GRANTED_QOS_2'] }, Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Sent SUBACK\", \"Client\": \"test-client\", \"Suback Reason Codes (1)\": [{\"Reason Code\": \"GRANTED_QOS_2\"} ], \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
 
         client.publishWith()
@@ -106,36 +102,28 @@ public class FullConfigXmlNoPayloadJsonIT {
                 .send();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received PUBLISH from client 'test-client' for topic 'publish': QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
                         "{\"Event\": \"Received PUBLISH\", \"Client\": \"test-client\", \"Topic\": \"publish\", \"QoS\": \"2\", \"Retained\": \"false\", \"Message Expiry Interval\": \"10000\", \"Duplicate Delivery\": \"false\", \"Correlation Data\": \"d2lsbENvcnJlbGF0aW9uRGF0YQ==\", \"Response Topic\": \"publishResponse\", \"Content Type\": \"text/plain\", \"Payload Format Indicator\": \"UTF_8\", \"Subscription Identifiers\": \"[]\", \"User Properties (1)\": [{\"Name (0)\": \"publishProperty\", \"Value (0)\": \"publishValue\"}]}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Sent PUBREC to client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Sent PUBREC\", \"Client\": \"test-client\", \"Reason Code\": \"SUCCESS\", \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received PUBREL from client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Received PUBREL\", \"Client\": \"test-client\", \"Reason Code\": \"SUCCESS\", \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Sent PUBCOMP to client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Sent PUBCOMP\", \"Client\": \"test-client\", \"Reason Code\": \"SUCCESS\", \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
 
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Sent PUBLISH to client 'test-client' on topic 'publish': QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
                         "{\"Event\": \"Sent PUBLISH\", \"Client\": \"test-client\", \"Topic\": \"publish\", \"QoS\": \"2\", \"Retained\": \"false\", \"Message Expiry Interval\": \"10000\", \"Duplicate Delivery\": \"false\", \"Correlation Data\": \"d2lsbENvcnJlbGF0aW9uRGF0YQ==\", \"Response Topic\": \"publishResponse\", \"Content Type\": \"text/plain\", \"Payload Format Indicator\": \"UTF_8\", \"Subscription Identifiers\": \"[1]\", \"User Properties (1)\": [{\"Name (0)\": \"publishProperty\", \"Value (0)\": \"publishValue\"}]}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received PUBREC from client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Received PUBREC\", \"Client\": \"test-client\", \"Reason Code\": \"SUCCESS\", \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Sent PUBREL to client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Sent PUBREL\", \"Client\": \"test-client\", \"Reason Code\": \"SUCCESS\", \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received PUBCOMP from client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Received PUBCOMP\", \"Client\": \"test-client\", \"Reason Code\": \"SUCCESS\", \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
 
         client.publishWith()
@@ -154,44 +142,35 @@ public class FullConfigXmlNoPayloadJsonIT {
                 .send();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received PUBLISH from client 'test-client' for topic 'publish': QoS: '1', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
                         "{\"Event\": \"Received PUBLISH\", \"Client\": \"test-client\", \"Topic\": \"publish\", \"QoS\": \"1\", \"Retained\": \"false\", \"Message Expiry Interval\": \"10000\", \"Duplicate Delivery\": \"false\", \"Correlation Data\": \"d2lsbENvcnJlbGF0aW9uRGF0YQ==\", \"Response Topic\": \"publishResponse\", \"Content Type\": \"text/plain\", \"Payload Format Indicator\": \"UTF_8\", \"Subscription Identifiers\": \"[]\", \"User Properties (1)\": [{\"Name (0)\": \"publishProperty\", \"Value (0)\": \"publishValue\"}]}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Sent PUBACK to client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Sent PUBACK\", \"Client\": \"test-client\", \"Reason Code\": \"SUCCESS\", \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Sent PUBLISH to client 'test-client' on topic 'publish': QoS: '1', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'publishResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1]', User Properties: [Name: 'publishProperty', Value: 'publishValue']"));
                         "{\"Event\": \"Sent PUBLISH\", \"Client\": \"test-client\", \"Topic\": \"publish\", \"QoS\": \"1\", \"Retained\": \"false\", \"Message Expiry Interval\": \"10000\", \"Duplicate Delivery\": \"false\", \"Correlation Data\": \"d2lsbENvcnJlbGF0aW9uRGF0YQ==\", \"Response Topic\": \"publishResponse\", \"Content Type\": \"text/plain\", \"Payload Format Indicator\": \"UTF_8\", \"Subscription Identifiers\": \"[1]\", \"User Properties (1)\": [{\"Name (0)\": \"publishProperty\", \"Value (0)\": \"publishValue\"}]}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received PUBACK from client 'test-client': Reason Code: 'SUCCESS', Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Received PUBACK\", \"Client\": \"test-client\", \"Reason Code\": \"SUCCESS\", \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
 
         client.unsubscribeWith().topicFilter("#").send();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received UNSUBSCRIBE from client 'test-client': Topics: { [Topic: '#'] }, User Properties: 'null'"));
                         "{\"Event\": \"Received UNSUBSCRIBE\", \"Client\": \"test-client\", \"Topics\": [ {\"Topic\": \"#\"} ],  \"User Properties\": \"null\"}"));
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Sent UNSUBACK to client 'test-client': Unsuback Reason Codes: { [Reason Code: 'SUCCESS'] }, Reason String: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Sent UNSUBACK\", \"Client\": \"test-client\", \"Unsuback Reason Codes (1)\": [ {\"Reason Code\": \"SUCCESS\"} ], \"Reason String\": \"null\", \"User Properties\": \"null\"}"));
 
         client.disconnect();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        //"Received DISCONNECT from client 'test-client': Reason Code: 'NORMAL_DISCONNECTION', Reason String: 'null', Server Reference: 'null', Session Expiry: 'null', User Properties: 'null'"));
                         "{\"Event\": \"Received DISCONNECT\", \"Client\": \"test-client\", \"Reason Code\": \"NORMAL_DISCONNECTION\", \"Reason String\": \"null\", \"Server Reference\": \"null\", \"Session Expiry\": \"null\", \"User Properties\": \"null\"}"));
 
         assertFalse(hivemq.getLogs()
                 .contains(
-                        //"Payload: 'payload1'"));
                         "\"Payload (Base64)\": \"cGF5bG9hZDE=\""));
         assertFalse(hivemq.getLogs()
                 .contains(
-                        //"Payload: 'payload2'"));
                         "\"Payload (Base64)\": \"cGF5bG9hZDI=\""));
     }
 }
