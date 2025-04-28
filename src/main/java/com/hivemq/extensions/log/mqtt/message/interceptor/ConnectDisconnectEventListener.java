@@ -39,11 +39,14 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
     private final boolean logConnect;
     private final boolean verbose;
     private final boolean payload;
+    private final boolean passwordInVerbose;
 
-    public ConnectDisconnectEventListener(final boolean logConnect, final boolean verbose, final boolean payload) {
+    public ConnectDisconnectEventListener(final boolean logConnect, final boolean verbose, final boolean payload,
+                                          final boolean passwordInVerbose) {
         this.logConnect = logConnect;
         this.verbose = verbose;
         this.payload = payload;
+        this.passwordInVerbose = passwordInVerbose;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
         }
         try {
             final ConnectPacket connectPacket = connectionStartInput.getConnectPacket();
-            MessageLogUtil.logConnect(connectPacket, verbose, payload);
+            MessageLogUtil.logConnect(connectPacket, verbose, payload, passwordInVerbose);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound connect logging: ", e);
         }

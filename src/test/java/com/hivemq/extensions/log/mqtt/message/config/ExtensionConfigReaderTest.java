@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ExtensionConfigReaderTest {
 
-    private final int totalAvailableFlags = 21;
+    private final int totalAvailableFlags = 22;
 
     private final @NotNull List<String> defaultProperties = List.of(ExtensionConfigProperties.CLIENT_CONNECT,
             ExtensionConfigProperties.CONNACK_SEND,
@@ -57,7 +57,8 @@ class ExtensionConfigReaderTest {
             ExtensionConfigProperties.PUBCOMP_RECEIVED,
             ExtensionConfigProperties.PUBCOMP_SEND,
             ExtensionConfigProperties.VERBOSE,
-            ExtensionConfigProperties.PAYLOAD);
+            ExtensionConfigProperties.PAYLOAD,
+            ExtensionConfigProperties.PASSWORDINVERBOSE);
 
     @Test
     void defaultPropertiesWhenNoPropertyFileInConfigFolder(@TempDir final @NotNull Path tempDir) {
@@ -92,6 +93,7 @@ class ExtensionConfigReaderTest {
         assertTrue(extensionConfigProperties.isPubcompSend());
         assertFalse(extensionConfigProperties.isVerbose());
         assertTrue(extensionConfigProperties.isPayload());
+        assertTrue(extensionConfigProperties.isPasswordInVerbose());
     }
 
     @Test
@@ -156,6 +158,7 @@ class ExtensionConfigReaderTest {
         assertTrue(extensionConfigXml.isPubcompSend());
         assertFalse(extensionConfigXml.isVerbose());
         assertTrue(extensionConfigXml.isPayload());
+        assertTrue(extensionConfigXml.isPasswordInVerbose());
     }
 
 }
