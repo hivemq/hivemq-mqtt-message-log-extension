@@ -20,6 +20,7 @@
                                    xsi:noNamespaceSchemaLocation="../../main/resources/config.xsd">
     <verbose>true</verbose>
     <payload>false</payload>
+    <json>false</json>
     <publish-received>true</publish-received>
     <publish-send>true</publish-send>
     <client-connect>true</client-connect>

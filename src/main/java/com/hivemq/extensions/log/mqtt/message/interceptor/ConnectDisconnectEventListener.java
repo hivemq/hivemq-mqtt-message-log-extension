@@ -39,11 +39,14 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
     private final boolean logConnect;
     private final boolean verbose;
     private final boolean payload;
+    private final boolean json;
 
-    public ConnectDisconnectEventListener(final boolean logConnect, final boolean verbose, final boolean payload) {
+    public ConnectDisconnectEventListener(final boolean logConnect, final boolean verbose, final boolean payload,
+                                          final boolean json) {
         this.logConnect = logConnect;
         this.verbose = verbose;
         this.payload = payload;
+        this.json = json;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
         }
         try {
             final ConnectPacket connectPacket = connectionStartInput.getConnectPacket();
-            MessageLogUtil.logConnect(connectPacket, verbose, payload);
+            MessageLogUtil.logConnect(connectPacket, verbose, payload, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound connect logging: ", e);
         }
@@ -72,7 +75,7 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
     @Override
     public void onAuthenticationFailedDisconnect(final @NotNull AuthenticationFailedInput authenticationFailedInput) {
         MessageLogUtil.logDisconnect(String.format("Sent DISCONNECT to client '%s' because authentication failed.",
-                authenticationFailedInput.getClientInformation().getClientId()), authenticationFailedInput, verbose);
+                authenticationFailedInput.getClientInformation().getClientId()), authenticationFailedInput, verbose, json);
     }
 
     @Override
@@ -85,7 +88,7 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
         MessageLogUtil.logDisconnect(String.format("Received DISCONNECT from client '%s':",
                         clientInitiatedDisconnectInput.getClientInformation().getClientId()),
                 clientInitiatedDisconnectInput,
-                verbose);
+                verbose, json);
     }
 
     @Override
@@ -93,6 +96,6 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
         MessageLogUtil.logDisconnect(String.format("Sent DISCONNECT to client '%s':",
                         serverInitiatedDisconnectInput.getClientInformation().getClientId()),
                 serverInitiatedDisconnectInput,
-                verbose);
+                verbose, json);
     }
 }
