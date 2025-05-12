@@ -22,6 +22,7 @@
         <xs:all>
             <xs:element name="verbose" type="xs:boolean" minOccurs="0"/>
             <xs:element name="payload" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="passwordinverbose" type="xs:boolean" minOccurs="0"/>
             <xs:element name="publish-received" type="xs:boolean" minOccurs="0"/>
             <xs:element name="publish-send" type="xs:boolean" minOccurs="0"/>
             <xs:element name="client-connect" type="xs:boolean" minOccurs="0"/>
