@@ -62,6 +62,8 @@ public interface ExtensionConfig {
 
     boolean isPayload();
 
+    boolean isJson();
+
     default boolean allDisabled() {
         return !isClientConnect() &&
                 !isClientDisconnect() &&

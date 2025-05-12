@@ -73,6 +73,7 @@ An example configuration file is available in `conf/examples/`, which removes th
 
 |verbose |Log detailed information about an MQTT event | false
 |payload |Log the payload of a message  | true
+|json |Log the MQTT events in JSON format | false
 |===
 
 Normally, events only log important information.
@@ -82,6 +83,8 @@ You can see the difference between normal logging and verbose logging in the <<e
 CAUTION: use `verbose=true` very carefully as it will flood your log immediately.
 
 Set the `payload` property to `false` if you want to suppress logging payloads (i.e. for publish-received, publish-send, and will messages).
+
+Set the `json` property to `true` if you want to log the MQTT events in a JSON format.
 
 == First Steps
 
@@ -108,11 +111,35 @@ User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value
 [Name: 'name2', Value: 'value2'], Will Delay: '100' }"
 ----
 
+=== Verbose CONNECT message with payload in JSON
+
+[source,bash]
+----
+2025-04-22 16:55:37,192 INFO  - {"Event": "Received CONNECT", "Client": "clientid", "Protocol version": "V_5", "Clean Start": "true",
+"Session Expiry Interval": "0", "Keep Alive": "60", "Maximum Packet Size": "268435460", 
+"Receive Maximum": "65535", "Topic Alias Maximum": "0", "Request Problem Information": "true",
+"Request Response Information": "false",  "Username": "username", "Password": "password",
+"Auth Method": "null", "Auth Data (Base64)": "null",
+"User Properties (2)": [{"Name (0)": "name0", "Value (0)": "value0"}, {"Name (1)": "name1", "Value (1)": "value1"}],
+"Will": { "Topic": "willtopic", "Payload (Base64)": "d2lsbGRhdGE=", "QoS": "0", "Retained": "false", "Message Expiry Interval": "1234",
+"Duplicate Delivery": "false", "Correlation Data": "ZGF0YQ==", "Response Topic": "responseTopic",
+"Content Type": "content-type", "Payload Format Indicator": "UTF_8", "Subscription Identifiers": "[]",
+"User Properties (2)": [{"Name (0)": "name0", "Value (0)": "value0"},
+{"Name (1)": "name1", "Value (1)": "value1"}], "Will Delay": "100" }}
+----
+
 === Basic CONNECT message
 
 [source,bash]
 ----
 "17:26:23.602 INFO - Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', Session Expiry Interval: '10000'"
+----
+
+=== Basic CONNECT message in JSON
+
+[source,bash]
+----
+2025-04-17 15:42:22,616 INFO - {"Event": "Received CONNECT", "Client": "test-client", "Protocol version": "V_5", "Clean Start": "true", "Session Expiry Interval": "0"}
 ----
 
 == Need Help?

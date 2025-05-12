@@ -29,13 +29,18 @@ import org.slf4j.LoggerFactory;
 public class PingreqInboundInterceptorImpl implements PingReqInboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PingreqInboundInterceptorImpl.class);
+    private final boolean json;
+
+    public PingreqInboundInterceptorImpl(final boolean json) {
+        this.json = json;
+    }
 
     @Override
     public void onInboundPingReq(
             final @NotNull PingReqInboundInput pingReqInboundInput,
             final @NotNull PingReqInboundOutput pingReqInboundOutput) {
         try {
-            MessageLogUtil.logPingreq(pingReqInboundInput);
+            MessageLogUtil.logPingreq(pingReqInboundInput, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound ping request logging: ", e);
         }

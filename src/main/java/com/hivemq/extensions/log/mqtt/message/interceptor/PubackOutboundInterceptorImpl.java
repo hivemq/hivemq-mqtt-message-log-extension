@@ -30,9 +30,11 @@ public class PubackOutboundInterceptorImpl implements PubackOutboundInterceptor 
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubackOutboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public PubackOutboundInterceptorImpl(final boolean verbose) {
+    public PubackOutboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class PubackOutboundInterceptorImpl implements PubackOutboundInterceptor 
             final @NotNull PubackOutboundOutput pubackOutboundOutput) {
         try {
             final String clientId = pubackOutboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPuback(pubackOutboundInput.getPubackPacket(), clientId, false, verbose);
+            MessageLogUtil.logPuback(pubackOutboundInput.getPubackPacket(), clientId, false, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound puback logging: ", e);
         }
