@@ -30,9 +30,11 @@ public class DisconnectInboundInterceptorImpl implements DisconnectInboundInterc
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(DisconnectInboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public DisconnectInboundInterceptorImpl(final boolean verbose) {
+    public DisconnectInboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class DisconnectInboundInterceptorImpl implements DisconnectInboundInterc
             final @NotNull DisconnectInboundOutput disconnectInboundOutput) {
         try {
             final String clientId = disconnectInboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logDisconnect(disconnectInboundInput.getDisconnectPacket(), clientId, true, verbose);
+            MessageLogUtil.logDisconnect(disconnectInboundInput.getDisconnectPacket(), clientId, true, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound disconnect logging: ", e);
         }

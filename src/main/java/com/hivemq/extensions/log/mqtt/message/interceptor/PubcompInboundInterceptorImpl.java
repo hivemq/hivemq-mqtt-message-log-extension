@@ -30,9 +30,11 @@ public class PubcompInboundInterceptorImpl implements PubcompInboundInterceptor 
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubcompInboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public PubcompInboundInterceptorImpl(final boolean verbose) {
+    public PubcompInboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class PubcompInboundInterceptorImpl implements PubcompInboundInterceptor 
             final @NotNull PubcompInboundOutput pubcompInboundOutput) {
         try {
             final String clientId = pubcompInboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPubcomp(pubcompInboundInput.getPubcompPacket(), clientId, true, verbose);
+            MessageLogUtil.logPubcomp(pubcompInboundInput.getPubcompPacket(), clientId, true, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound pubcomp logging: ", e);
         }
