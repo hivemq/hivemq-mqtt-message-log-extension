@@ -128,7 +128,8 @@ public class MessageLogUtil {
     }
 
     public static void logConnect(
-            final @NotNull ConnectPacket connectPacket, final boolean verbose, final boolean payload) {
+            final @NotNull ConnectPacket connectPacket, final boolean verbose, final boolean payload,
+            final boolean passwordInVerbose) {
         if (!verbose) {
             LOG.info(
                     "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'",
@@ -142,11 +143,16 @@ public class MessageLogUtil {
         final String userPropertiesAsString = getUserPropertiesAsString(connectPacket.getUserProperties());
         final String passwordAsString = getStringFromByteBuffer(connectPacket.getPassword().orElse(null));
         final String passwordProperty;
-        if (StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null) {
-            passwordProperty = "Password: '" + passwordAsString + "'";
+
+        if(passwordInVerbose == true) {
+            if (StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null) {
+                passwordProperty = "Password: '" + passwordAsString + "'";
+            } else {
+                passwordProperty =
+                        "Password (Hex): '" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
+            }
         } else {
-            passwordProperty =
-                    "Password (Hex): '" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
+            passwordProperty = "";
         }
 
         final String authDataAsString;
@@ -164,27 +170,50 @@ public class MessageLogUtil {
             willString = "";
         }
 
-        LOG.info(
-                "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
-                        " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
-                        " Request Problem Information: '{}', Request Response Information: '{}', " +
-                        " Username: '{}', {}, Auth Method: '{}', Auth Data (Base64): '{}', {}{}",
-                connectPacket.getClientId(),
-                connectPacket.getMqttVersion().name(),
-                connectPacket.getCleanStart(),
-                connectPacket.getSessionExpiryInterval(),
-                connectPacket.getKeepAlive(),
-                connectPacket.getMaximumPacketSize(),
-                connectPacket.getReceiveMaximum(),
-                connectPacket.getTopicAliasMaximum(),
-                connectPacket.getRequestProblemInformation(),
-                connectPacket.getRequestResponseInformation(),
-                connectPacket.getUserName().orElse(null),
-                passwordProperty,
-                connectPacket.getAuthenticationMethod().orElse(null),
-                authDataAsString,
-                userPropertiesAsString,
-                willString);
+        if(passwordInVerbose == true) {
+            LOG.info(
+                    "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
+                            " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
+                            " Request Problem Information: '{}', Request Response Information: '{}', " +
+                            " Username: '{}', {}, Auth Method: '{}', Auth Data (Base64): '{}', {}{}",
+                    connectPacket.getClientId(),
+                    connectPacket.getMqttVersion().name(),
+                    connectPacket.getCleanStart(),
+                    connectPacket.getSessionExpiryInterval(),
+                    connectPacket.getKeepAlive(),
+                    connectPacket.getMaximumPacketSize(),
+                    connectPacket.getReceiveMaximum(),
+                    connectPacket.getTopicAliasMaximum(),
+                    connectPacket.getRequestProblemInformation(),
+                    connectPacket.getRequestResponseInformation(),
+                    connectPacket.getUserName().orElse(null),
+                    passwordProperty,
+                    connectPacket.getAuthenticationMethod().orElse(null),
+                    authDataAsString,
+                    userPropertiesAsString,
+                    willString);
+        } else {
+            LOG.info(
+                    "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
+                            " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
+                            " Request Problem Information: '{}', Request Response Information: '{}', " +
+                            " Username: '{}', Auth Method: '{}', Auth Data (Base64): '{}', {}{}",
+                    connectPacket.getClientId(),
+                    connectPacket.getMqttVersion().name(),
+                    connectPacket.getCleanStart(),
+                    connectPacket.getSessionExpiryInterval(),
+                    connectPacket.getKeepAlive(),
+                    connectPacket.getMaximumPacketSize(),
+                    connectPacket.getReceiveMaximum(),
+                    connectPacket.getTopicAliasMaximum(),
+                    connectPacket.getRequestProblemInformation(),
+                    connectPacket.getRequestResponseInformation(),
+                    connectPacket.getUserName().orElse(null),
+                    connectPacket.getAuthenticationMethod().orElse(null),
+                    authDataAsString,
+                    userPropertiesAsString,
+                    willString);
+        }
     }
 
     public static void logConnack(final @NotNull ConnackOutboundInput connackOutboundInput, final boolean verbose) {
