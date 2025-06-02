@@ -177,7 +177,7 @@ class MessageLogUtilTest {
 
     @Test
     void test_log_connect_verbose_all_set() {
-        MessageLogUtil.logConnect(createFullConnect(), true, true);
+        MessageLogUtil.logConnect(createFullConnect(), true, true, true);
         assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
                         "Session Expiry Interval: '10000', Keep Alive: '20000', Maximum Packet Size: '40000', " +
                         "Receive Maximum: '30000', Topic Alias Maximum: '50000', Request Problem Information: 'true', " +
@@ -195,7 +195,7 @@ class MessageLogUtilTest {
 
     @Test
     void test_log_connect_verbose_no_payload_all_set() {
-        MessageLogUtil.logConnect(createFullConnect(), true, false);
+        MessageLogUtil.logConnect(createFullConnect(), true, false, true);
         assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
                         "Session Expiry Interval: '10000', Keep Alive: '20000', Maximum Packet Size: '40000', " +
                         "Receive Maximum: '30000', Topic Alias Maximum: '50000', Request Problem Information: 'true', " +
@@ -213,7 +213,7 @@ class MessageLogUtilTest {
 
     @Test
     void test_log_connect_verbose_none_set() {
-        MessageLogUtil.logConnect(createEmptyConnect(), true, true);
+        MessageLogUtil.logConnect(createEmptyConnect(), true, true, true);
         assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
                         "Session Expiry Interval: '10000', Keep Alive: '0', Maximum Packet Size: '0', Receive Maximum: '0', " +
                         "Topic Alias Maximum: '0', Request Problem Information: 'false', Request Response Information: 'false',  " +
@@ -223,9 +223,55 @@ class MessageLogUtilTest {
 
     @Test
     void test_log_connect_not_verbose_all_set() {
-        MessageLogUtil.logConnect(createFullConnect(), false, true);
+        MessageLogUtil.logConnect(createFullConnect(), false, true, true);
         assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
                 "Session Expiry Interval: '10000'", logbackTestAppender.getEvents().get(0).getFormattedMessage());
+    }
+
+    @Test
+    void test_log_connect_verbose_no_password_all_set() {
+        MessageLogUtil.logConnect(createFullConnect(), true, true, false);
+        assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
+                        "Session Expiry Interval: '10000', Keep Alive: '20000', Maximum Packet Size: '40000', " +
+                        "Receive Maximum: '30000', Topic Alias Maximum: '50000', Request Problem Information: 'true', " +
+                        "Request Response Information: 'false',  Username: 'the username', " +
+                        "Auth Method: 'auth method', Auth Data (Base64): 'YXV0aCBkYXRh', " +
+                        "User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], " +
+                        "Will: { Topic: 'willtopic', Payload: 'payload', QoS: '1', Retained: 'false', " +
+                        "Message Expiry Interval: '1234', Duplicate Delivery: 'false', Correlation Data: 'data', " +
+                        "Response Topic: 'response topic', Content Type: 'content type', " +
+                        "Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1, 2, 3, 4]', " +
+                        "User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], " +
+                        "[Name: 'name2', Value: 'value2'], Will Delay: '100' }",
+                logbackTestAppender.getEvents().get(0).getFormattedMessage());
+    }
+
+    @Test
+    void test_log_connect_verbose_no_payload_no_password_all_set() {
+        MessageLogUtil.logConnect(createFullConnect(), true, false, false);
+        assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
+                        "Session Expiry Interval: '10000', Keep Alive: '20000', Maximum Packet Size: '40000', " +
+                        "Receive Maximum: '30000', Topic Alias Maximum: '50000', Request Problem Information: 'true', " +
+                        "Request Response Information: 'false',  Username: 'the username', " +
+                        "Auth Method: 'auth method', Auth Data (Base64): 'YXV0aCBkYXRh', " +
+                        "User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], " +
+                        "Will: { Topic: 'willtopic', QoS: '1', Retained: 'false', " +
+                        "Message Expiry Interval: '1234', Duplicate Delivery: 'false', Correlation Data: 'data', " +
+                        "Response Topic: 'response topic', Content Type: 'content type', " +
+                        "Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[1, 2, 3, 4]', " +
+                        "User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], " +
+                        "[Name: 'name2', Value: 'value2'], Will Delay: '100' }",
+                logbackTestAppender.getEvents().get(0).getFormattedMessage());
+    }
+
+    @Test
+    void test_log_connect_verbose_no_password_none_set() {
+        MessageLogUtil.logConnect(createEmptyConnect(), true, true, false);
+        assertEquals("Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
+                        "Session Expiry Interval: '10000', Keep Alive: '0', Maximum Packet Size: '0', Receive Maximum: '0', " +
+                        "Topic Alias Maximum: '0', Request Problem Information: 'false', Request Response Information: 'false',  " +
+                        "Username: 'null', Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null'",
+                logbackTestAppender.getEvents().get(0).getFormattedMessage());
     }
 
     @Test
