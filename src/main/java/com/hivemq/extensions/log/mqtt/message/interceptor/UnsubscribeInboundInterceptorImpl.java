@@ -30,9 +30,11 @@ public class UnsubscribeInboundInterceptorImpl implements UnsubscribeInboundInte
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(UnsubscribeInboundInterceptorImpl.class);
     private final boolean verbose;
+    private final boolean json;
 
-    public UnsubscribeInboundInterceptorImpl(final boolean verbose) {
+    public UnsubscribeInboundInterceptorImpl(final boolean verbose, final boolean json) {
         this.verbose = verbose;
+        this.json = json;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class UnsubscribeInboundInterceptorImpl implements UnsubscribeInboundInte
             final @NotNull UnsubscribeInboundInput unsubscribeInboundInput,
             final @NotNull UnsubscribeInboundOutput unsubscribeInboundOutput) {
         try {
-            MessageLogUtil.logUnsubscribe(unsubscribeInboundInput, verbose);
+            MessageLogUtil.logUnsubscribe(unsubscribeInboundInput, verbose, json);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound unsubscribe logging: ", e);
         }

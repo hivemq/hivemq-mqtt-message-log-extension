@@ -72,363 +72,760 @@ public class MessageLogUtil {
     public static void logDisconnect(
             final @NotNull String message,
             final @NotNull DisconnectEventInput disconnectEventInput,
-            final boolean verbose) {
+            final boolean verbose,
+            final boolean json) {
         if (!verbose) {
-            LOG.info(message + " Reason Code: '{}'", disconnectEventInput.getReasonCode().orElse(null));
+            if (json) {
+                LOG.info("{\"Event\": " + message + "," +
+                            " \"Reason Code\": \"{}\"}", disconnectEventInput.getReasonCode().orElse(null));
+            } else {
+                LOG.info(message + " Reason Code: '{}'", disconnectEventInput.getReasonCode().orElse(null));
+            }
             return;
         }
         final String userPropertiesAsString =
-                getUserPropertiesAsString(disconnectEventInput.getUserProperties().orElse(null));
-        LOG.info(message + " Reason Code: '{}', Reason String: '{}', {}",
-                disconnectEventInput.getReasonCode().orElse(null),
-                disconnectEventInput.getReasonString().orElse(null),
-                userPropertiesAsString);
+                getUserPropertiesAsString(disconnectEventInput.getUserProperties().orElse(null), json);
+        if (json) {
+            LOG.info("{\"Event\":" + message + "," +
+                            " \"Reason Code\": \"{}\"," +
+                            " \"Reason String\": \"{}\"," +
+                            " {}}",
+                    disconnectEventInput.getReasonCode().orElse(null),
+                    disconnectEventInput.getReasonString().orElse(null),
+                    userPropertiesAsString);
+        } else {
+            LOG.info(message + " Reason Code: '{}', Reason String: '{}', {}",
+                    disconnectEventInput.getReasonCode().orElse(null),
+                    disconnectEventInput.getReasonString().orElse(null),
+                    userPropertiesAsString);
+        }
     }
 
     public static void logDisconnect(
             final @NotNull DisconnectPacket disconnectPacket,
             final @NotNull String clientId,
             final boolean inbound,
-            final boolean verbose) {
+            final boolean verbose,
+            final boolean json) {
         final DisconnectReasonCode reasonCode = disconnectPacket.getReasonCode();
 
         if (!verbose) {
             if (inbound) {
-                LOG.info("Received DISCONNECT from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Received DISCONNECT\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+                } else {
+                    LOG.info("Received DISCONNECT from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             } else {
-                LOG.info("Sent DISCONNECT to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Sent DISCONNECT\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+                } else {
+                    LOG.info("Sent DISCONNECT to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(disconnectPacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(disconnectPacket.getUserProperties(), json);
         final String reasonString = disconnectPacket.getReasonString().orElse(null);
         final String serverReference = disconnectPacket.getServerReference().orElse(null);
         final Long sessionExpiry = disconnectPacket.getSessionExpiryInterval().orElse(null);
 
         if (inbound) {
-            LOG.info(
-                    "Received DISCONNECT from client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    serverReference,
-                    sessionExpiry,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Received DISCONNECT\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " \"Server Reference\": \"{}\"," +
+                                " \"Session Expiry\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        serverReference,
+                        sessionExpiry,
+                        userPropertiesAsString);
+            } else {
+                LOG.info(
+                        "Received DISCONNECT from client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        serverReference,
+                        sessionExpiry,
+                        userPropertiesAsString);
+            }
         } else {
-            LOG.info(
-                    "Sent DISCONNECT to client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    serverReference,
-                    sessionExpiry,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Sent DISCONNECT\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " \"Server Reference\": \"{}\"," +
+                                " \"Session Expiry\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        serverReference,
+                        sessionExpiry,
+                        userPropertiesAsString);
+            } else {
+                LOG.info(
+                        "Sent DISCONNECT to client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        serverReference,
+                        sessionExpiry,
+                        userPropertiesAsString);
+            }
         }
     }
 
     public static void logConnect(
-            final @NotNull ConnectPacket connectPacket, final boolean verbose, final boolean payload) {
+            final @NotNull ConnectPacket connectPacket,
+            final boolean verbose,
+            final boolean payload,
+            final boolean json) {
         if (!verbose) {
-            LOG.info(
-                    "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'",
-                    connectPacket.getClientId(),
-                    connectPacket.getMqttVersion().name(),
-                    connectPacket.getCleanStart(),
-                    connectPacket.getSessionExpiryInterval());
+            if (json) {
+                LOG.info("{\"Event\": \"Received CONNECT\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Protocol version\": \"{}\"," +
+                                " \"Clean Start\": \"{}\"," +
+                                " \"Session Expiry Interval\": \"{}\"}",
+                        connectPacket.getClientId(),
+                        connectPacket.getMqttVersion().name(),
+                        connectPacket.getCleanStart(),
+                        connectPacket.getSessionExpiryInterval());
+            } else {
+                LOG.info(
+                        "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'",
+                        connectPacket.getClientId(),
+                        connectPacket.getMqttVersion().name(),
+                        connectPacket.getCleanStart(),
+                        connectPacket.getSessionExpiryInterval());
+            }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(connectPacket.getUserProperties());
-        final String passwordAsString = getStringFromByteBuffer(connectPacket.getPassword().orElse(null));
+        final String userPropertiesAsString = getUserPropertiesAsString(connectPacket.getUserProperties(), json);
+        final String passwordAsString = getStringFromByteBuffer(connectPacket.getPassword().orElse(null), false);
         final String passwordProperty;
         if (StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null) {
-            passwordProperty = "Password: '" + passwordAsString + "'";
+            if (json) {
+                passwordProperty = "\"Password\": \"" + passwordAsString + "\"";
+            } else {
+                passwordProperty = "Password: '" + passwordAsString + "'";
+            }
         } else {
-            passwordProperty =
-                    "Password (Hex): '" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
+            if (json) {
+                passwordProperty =
+                        "\"Password (Hex)\": \"" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "\"";
+            } else {
+                passwordProperty =
+                        "Password (Hex): '" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
+            }
         }
 
         final String authDataAsString;
         if (connectPacket.getAuthenticationData().isPresent()) {
             authDataAsString =
-                    getStringFromByteBuffer(Base64.getEncoder().encode(connectPacket.getAuthenticationData().get()));
+                    getStringFromByteBuffer(Base64.getEncoder().encode(connectPacket.getAuthenticationData().get()), false);
         } else {
             authDataAsString = null;
         }
 
         final String willString;
         if (connectPacket.getWillPublish().isPresent()) {
-            willString = getWillAsString(connectPacket.getWillPublish().get(), payload);
+            willString = getWillAsString(connectPacket.getWillPublish().get(), payload, json);
         } else {
             willString = "";
         }
 
-        LOG.info(
-                "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
-                        " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
-                        " Request Problem Information: '{}', Request Response Information: '{}', " +
-                        " Username: '{}', {}, Auth Method: '{}', Auth Data (Base64): '{}', {}{}",
-                connectPacket.getClientId(),
-                connectPacket.getMqttVersion().name(),
-                connectPacket.getCleanStart(),
-                connectPacket.getSessionExpiryInterval(),
-                connectPacket.getKeepAlive(),
-                connectPacket.getMaximumPacketSize(),
-                connectPacket.getReceiveMaximum(),
-                connectPacket.getTopicAliasMaximum(),
-                connectPacket.getRequestProblemInformation(),
-                connectPacket.getRequestResponseInformation(),
-                connectPacket.getUserName().orElse(null),
-                passwordProperty,
-                connectPacket.getAuthenticationMethod().orElse(null),
-                authDataAsString,
-                userPropertiesAsString,
-                willString);
+        if (json) {
+            LOG.info(
+                    "{\"Event\": \"Received CONNECT\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Protocol version\": \"{}\"," +
+                            " \"Clean Start\": \"{}\"," +
+                            " \"Session Expiry Interval\": \"{}\"," +
+                            " \"Keep Alive\": \"{}\"," +
+                            " \"Maximum Packet Size\": \"{}\"," +
+                            " \"Receive Maximum\": \"{}\"," +
+                            " \"Topic Alias Maximum\": \"{}\"," +
+                            " \"Request Problem Information\": \"{}\"," +
+                            " \"Request Response Information\": \"{}\", " +
+                            " \"Username\": \"{}\"," +
+                            " {}," +
+                            " \"Auth Method\": \"{}\"," +
+                            " \"Auth Data (Base64)\": \"{}\"," +
+                            " {}{}}",
+                    connectPacket.getClientId(),
+                    connectPacket.getMqttVersion().name(),
+                    connectPacket.getCleanStart(),
+                    connectPacket.getSessionExpiryInterval(),
+                    connectPacket.getKeepAlive(),
+                    connectPacket.getMaximumPacketSize(),
+                    connectPacket.getReceiveMaximum(),
+                    connectPacket.getTopicAliasMaximum(),
+                    connectPacket.getRequestProblemInformation(),
+                    connectPacket.getRequestResponseInformation(),
+                    connectPacket.getUserName().orElse(null),
+                    passwordProperty,
+                    connectPacket.getAuthenticationMethod().orElse(null),
+                    authDataAsString,
+                    userPropertiesAsString,
+                    willString);
+        } else {
+            LOG.info(
+                    "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
+                            " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
+                            " Request Problem Information: '{}', Request Response Information: '{}', " +
+                            " Username: '{}', {}, Auth Method: '{}', Auth Data (Base64): '{}', {}{}",
+                    connectPacket.getClientId(),
+                    connectPacket.getMqttVersion().name(),
+                    connectPacket.getCleanStart(),
+                    connectPacket.getSessionExpiryInterval(),
+                    connectPacket.getKeepAlive(),
+                    connectPacket.getMaximumPacketSize(),
+                    connectPacket.getReceiveMaximum(),
+                    connectPacket.getTopicAliasMaximum(),
+                    connectPacket.getRequestProblemInformation(),
+                    connectPacket.getRequestResponseInformation(),
+                    connectPacket.getUserName().orElse(null),
+                    passwordProperty,
+                    connectPacket.getAuthenticationMethod().orElse(null),
+                    authDataAsString,
+                    userPropertiesAsString,
+                    willString);
+        }
     }
 
-    public static void logConnack(final @NotNull ConnackOutboundInput connackOutboundInput, final boolean verbose) {
+    public static void logConnack(
+            final @NotNull ConnackOutboundInput connackOutboundInput,
+            final boolean verbose,
+            final boolean json) {
         final @NotNull String clientId = connackOutboundInput.getClientInformation().getClientId();
         final @NotNull ConnackPacket connackPacket = connackOutboundInput.getConnackPacket();
 
         if (!verbose) {
-            LOG.info("Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}'",
-                    clientId,
-                    connackPacket.getReasonCode(),
-                    connackPacket.getSessionPresent());
+            if (json) {
+                LOG.info("{\"Event\": \"Sent CONNACK\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Session Present\": \"{}\"}",
+                        clientId,
+                        connackPacket.getReasonCode(),
+                        connackPacket.getSessionPresent());
+            } else {
+                LOG.info("Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}'",
+                        clientId,
+                        connackPacket.getReasonCode(),
+                        connackPacket.getSessionPresent());
+            }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(connackPacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(connackPacket.getUserProperties(), json);
 
         final String authDataAsString;
         if (connackPacket.getAuthenticationData().isPresent()) {
             authDataAsString =
-                    getStringFromByteBuffer(Base64.getEncoder().encode(connackPacket.getAuthenticationData().get()));
+                    getStringFromByteBuffer(Base64.getEncoder().encode(connackPacket.getAuthenticationData().get()), false);
         } else {
             authDataAsString = null;
         }
 
-        LOG.info("Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}', Session Expiry Interval: '{}'," +
-                        " Assigned ClientId '{}', Maximum QoS: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}'," +
-                        " Topic Alias Maximum: '{}', Reason String: '{}', Response Information: '{}', Server Keep Alive: '{}'," +
-                        " Server Reference: '{}', Shared Subscription Available: '{}', Wildcards Available: '{}'," +
-                        " Retain Available: '{}', Subscription Identifiers Available: '{}'," +
-                        " Auth Method: '{}', Auth Data (Base64): '{}', {}",
-                clientId,
-                connackPacket.getReasonCode(),
-                connackPacket.getSessionPresent(),
-                connackPacket.getSessionExpiryInterval().orElse(null),
-                connackPacket.getAssignedClientIdentifier().orElse(null),
-                connackPacket.getMaximumQoS().orElse(null),
-                connackPacket.getMaximumPacketSize(),
-                connackPacket.getReceiveMaximum(),
-                connackPacket.getTopicAliasMaximum(),
-                connackPacket.getReasonString().orElse(null),
-                connackPacket.getResponseInformation().orElse(null),
-                connackPacket.getServerKeepAlive().orElse(null),
-                connackPacket.getServerReference().orElse(null),
-                connackPacket.getSharedSubscriptionsAvailable(),
-                connackPacket.getWildCardSubscriptionAvailable(),
-                connackPacket.getRetainAvailable(),
-                connackPacket.getSubscriptionIdentifiersAvailable(),
-                connackPacket.getAuthenticationMethod().orElse(null),
-                authDataAsString,
-                userPropertiesAsString);
+        if (json) {
+            LOG.info("{\"Event\": \"Sent CONNACK\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"," +
+                            " \"Session Present\": \"{}\"," +
+                            " \"Session Expiry Interval\": \"{}\"," +
+                            " \"Assigned ClientId\": \"{}\"," +
+                            " \"Maximum QoS\": \"{}\"," +
+                            " \"Maximum Packet Size\": \"{}\"," +
+                            " \"Receive Maximum\": \"{}\"," +
+                            " \"Topic Alias Maximum\": \"{}\"," +
+                            " \"Reason String\": \"{}\"," +
+                            " \"Response Information\": \"{}\"," +
+                            " \"Server Keep Alive\": \"{}\"," +
+                            " \"Server Reference\": \"{}\"," +
+                            " \"Shared Subscription Available\": \"{}\"," +
+                            " \"Wildcards Available\": \"{}\"," +
+                            " \"Retain Available\": \"{}\"," +
+                            " \"Subscription Identifiers Available\": \"{}\"," +
+                            " \"Auth Method\": \"{}\"," +
+                            " \"Auth Data (Base64)\": \"{}\"," +
+                            " {}}",
+                    clientId,
+                    connackPacket.getReasonCode(),
+                    connackPacket.getSessionPresent(),
+                    connackPacket.getSessionExpiryInterval().orElse(null),
+                    connackPacket.getAssignedClientIdentifier().orElse(null),
+                    connackPacket.getMaximumQoS().orElse(null),
+                    connackPacket.getMaximumPacketSize(),
+                    connackPacket.getReceiveMaximum(),
+                    connackPacket.getTopicAliasMaximum(),
+                    connackPacket.getReasonString().orElse(null),
+                    connackPacket.getResponseInformation().orElse(null),
+                    connackPacket.getServerKeepAlive().orElse(null),
+                    connackPacket.getServerReference().orElse(null),
+                    connackPacket.getSharedSubscriptionsAvailable(),
+                    connackPacket.getWildCardSubscriptionAvailable(),
+                    connackPacket.getRetainAvailable(),
+                    connackPacket.getSubscriptionIdentifiersAvailable(),
+                    connackPacket.getAuthenticationMethod().orElse(null),
+                    authDataAsString,
+                    userPropertiesAsString);
+        } else {
+            LOG.info("Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}', Session Expiry Interval: '{}'," +
+                            " Assigned ClientId '{}', Maximum QoS: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}'," +
+                            " Topic Alias Maximum: '{}', Reason String: '{}', Response Information: '{}', Server Keep Alive: '{}'," +
+                            " Server Reference: '{}', Shared Subscription Available: '{}', Wildcards Available: '{}'," +
+                            " Retain Available: '{}', Subscription Identifiers Available: '{}'," +
+                            " Auth Method: '{}', Auth Data (Base64): '{}', {}",
+                    clientId,
+                    connackPacket.getReasonCode(),
+                    connackPacket.getSessionPresent(),
+                    connackPacket.getSessionExpiryInterval().orElse(null),
+                    connackPacket.getAssignedClientIdentifier().orElse(null),
+                    connackPacket.getMaximumQoS().orElse(null),
+                    connackPacket.getMaximumPacketSize(),
+                    connackPacket.getReceiveMaximum(),
+                    connackPacket.getTopicAliasMaximum(),
+                    connackPacket.getReasonString().orElse(null),
+                    connackPacket.getResponseInformation().orElse(null),
+                    connackPacket.getServerKeepAlive().orElse(null),
+                    connackPacket.getServerReference().orElse(null),
+                    connackPacket.getSharedSubscriptionsAvailable(),
+                    connackPacket.getWildCardSubscriptionAvailable(),
+                    connackPacket.getRetainAvailable(),
+                    connackPacket.getSubscriptionIdentifiersAvailable(),
+                    connackPacket.getAuthenticationMethod().orElse(null),
+                    authDataAsString,
+                    userPropertiesAsString);
+        }
     }
 
     private static @NotNull String getWillAsString(
-            final @NotNull WillPublishPacket willPublishPacket, final boolean payload) {
+            final @NotNull WillPublishPacket willPublishPacket,
+            final boolean payload,
+            final boolean json) {
         final String topic = willPublishPacket.getTopic();
-        final String publishAsString = getPublishAsString(willPublishPacket, true, payload);
-        final String willPublishAsString = publishAsString + ", Will Delay: '" + willPublishPacket.getWillDelay() + "'";
+        final String publishAsString = getPublishAsString(willPublishPacket, true, payload, json);
+        final String willPublishAsString;
+        if (json) {
+            willPublishAsString = publishAsString + ", \"Will Delay\": \"" + willPublishPacket.getWillDelay() + "\"";
+        } else {
+            willPublishAsString = publishAsString + ", Will Delay: '" + willPublishPacket.getWillDelay() + "'";
+        }
 
-        return String.format(", Will: { Topic: '%s', %s }", topic, willPublishAsString);
+        if (json) {
+            return String.format(", \"Will\": { \"Topic\": \"%s\", %s }", topic, willPublishAsString);
+        } else {
+            return String.format(", Will: { Topic: '%s', %s }", topic, willPublishAsString);
+        }
     }
 
     public static void logPublish(
             final @NotNull String prefix,
             final @NotNull PublishPacket publishPacket,
             final boolean verbose,
-            final boolean payload) {
+            final boolean payload,
+            final boolean json) {
         final String topic = publishPacket.getTopic();
-        final String publishString = getPublishAsString(publishPacket, verbose, payload);
+        final String publishString = getPublishAsString(publishPacket, verbose, payload, json);
 
-        LOG.info("{} '{}': {}", prefix, topic, publishString);
+        if (json) {
+            LOG.info("{\"Event\": {}, \"Topic\": \"{}\", {}}", prefix, topic, publishString);
+        } else {
+            LOG.info("{} '{}': {}", prefix, topic, publishString);
+        }
     }
 
-    public static void logSubscribe(final @NotNull SubscribeInboundInput subscribeInboundInput, final boolean verbose) {
+    public static void logSubscribe(
+            final @NotNull SubscribeInboundInput subscribeInboundInput,
+            final boolean verbose,
+            final boolean json) {
         final StringBuilder topics = new StringBuilder();
         final String clientId = subscribeInboundInput.getClientInformation().getClientId();
         final SubscribePacket subscribePacket = subscribeInboundInput.getSubscribePacket();
 
         if (!verbose) {
-            topics.append("Topics: {");
+            if (json) {
+                topics.append("\"Topics\": [");
+            } else {
+                topics.append("Topics: {");
+            }
             for (final Subscription sub : subscribePacket.getSubscriptions()) {
+                if (json) {
+                    topics.append("{\"Topic\": \"")
+                        .append(sub.getTopicFilter())
+                        .append("\", \"QoS\": \"")
+                        .append(sub.getQos().getQosNumber())
+                        .append("\"},");
+                } else {
+                    topics.append(" [Topic: '")
+                            .append(sub.getTopicFilter())
+                            .append("', QoS: '")
+                            .append(sub.getQos().getQosNumber())
+                            .append("'],");
+                }
+            }
+            topics.deleteCharAt(topics.length() - 1); //delete last comma
+            if (json) {
+                topics.append(" ]");
+            } else {
+                topics.append(" }");
+            }
+            if (json) {
+                LOG.info("{\"Event\": \"Received SUBSCRIBE\"," +
+                        " \"Client\": \"{}\"," +
+                        " {}}", clientId, topics);
+            } else {
+                LOG.info("Received SUBSCRIBE from client '{}': {}", clientId, topics);
+            }
+            return;
+        }
+
+        if (json) {
+            topics.append("\"Topics\": [");
+        } else {
+            topics.append("Topics: {");
+        }
+        for (final Subscription sub : subscribePacket.getSubscriptions()) {
+            if (json) {
+                topics.append("{\"Topic\": \"")
+                        .append(sub.getTopicFilter())
+                        .append("\", \"QoS\": \"")
+                        .append(sub.getQos().getQosNumber())
+                        .append("\", \"Retain As Published\": \"")
+                        .append(sub.getRetainAsPublished())
+                        .append("\", \"No Local\": \"")
+                        .append(sub.getNoLocal())
+                        .append("\", \"Retain Handling\": \"")
+                        .append(sub.getRetainHandling().name())
+                        .append("\"},");
+            } else {
                 topics.append(" [Topic: '")
                         .append(sub.getTopicFilter())
                         .append("', QoS: '")
                         .append(sub.getQos().getQosNumber())
+                        .append("', Retain As Published: '")
+                        .append(sub.getRetainAsPublished())
+                        .append("', No Local: '")
+                        .append(sub.getNoLocal())
+                        .append("', Retain Handling: '")
+                        .append(sub.getRetainHandling().name())
                         .append("'],");
             }
-            topics.deleteCharAt(topics.length() - 1); //delete last comma
-            topics.append(" }");
-            LOG.info("Received SUBSCRIBE from client '{}': {}", clientId, topics);
-            return;
-        }
-
-        topics.append("Topics: {");
-        for (final Subscription sub : subscribePacket.getSubscriptions()) {
-            topics.append(" [Topic: '")
-                    .append(sub.getTopicFilter())
-                    .append("', QoS: '")
-                    .append(sub.getQos().getQosNumber())
-                    .append("', Retain As Published: '")
-                    .append(sub.getRetainAsPublished())
-                    .append("', No Local: '")
-                    .append(sub.getNoLocal())
-                    .append("', Retain Handling: '")
-                    .append(sub.getRetainHandling().name())
-                    .append("'],");
         }
 
         topics.deleteCharAt(topics.length() - 1); //delete last comma
-
-        topics.append(" }");
+        if (json) {
+            topics.append(" ]");
+        } else {
+            topics.append(" }");
+        }
 
         final Integer subscriptionIdentifier = subscribePacket.getSubscriptionIdentifier().orElse(null);
-        final String userPropertiesAsString = getUserPropertiesAsString(subscribePacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(subscribePacket.getUserProperties(), json);
 
-        LOG.info("Received SUBSCRIBE from client '{}': {}, Subscription Identifier: '{}', {}",
-                clientId,
-                topics,
-                subscriptionIdentifier,
-                userPropertiesAsString);
+        if (json) {
+            LOG.info("{\"Event\": \"Received SUBSCRIBE\"," +
+                            " \"Client\": \"{}\"," +
+                            " {}," +
+                            " \"Subscription Identifier\": \"{}\"," +
+                            " {}}",
+                    clientId,
+                    topics,
+                    subscriptionIdentifier,
+                    userPropertiesAsString);
+        } else {
+            LOG.info("Received SUBSCRIBE from client '{}': {}, Subscription Identifier: '{}', {}",
+                    clientId,
+                    topics,
+                    subscriptionIdentifier,
+                    userPropertiesAsString);
+        }
     }
 
-    public static void logSuback(final @NotNull SubackOutboundInput subackOutboundInput, final boolean verbose) {
+    public static void logSuback(
+            final @NotNull SubackOutboundInput subackOutboundInput,
+            final boolean verbose,
+            final boolean json) {
         final StringBuilder suback = new StringBuilder();
         final String clientId = subackOutboundInput.getClientInformation().getClientId();
         @NotNull final SubackPacket subackPacket = subackOutboundInput.getSubackPacket();
 
-        suback.append("Suback Reason Codes: {");
+        if (json) {
+            suback.append("\"Suback Reason Codes (" + subackPacket.getReasonCodes().size() + ")\": [");
+        } else {
+            suback.append("Suback Reason Codes: {");
+        }
         for (final SubackReasonCode sub : subackPacket.getReasonCodes()) {
-            suback.append(" [Reason Code: '").append(sub).append("'],");
+            if (json) {
+                suback.append("{\"Reason Code\": \"").append(sub).append("\"},");
+            } else {
+                suback.append(" [Reason Code: '").append(sub).append("'],");
+            }
         }
 
         suback.deleteCharAt(suback.length() - 1); //delete last comma
-        suback.append(" }");
+        if (json) {
+            suback.append(" ]");
+        } else {
+            suback.append(" }");
+        }
 
         if (!verbose) {
-            LOG.info("Sent SUBACK to client '{}': {}", clientId, suback);
+            if (json) {
+                LOG.info("{\"Event\": \"Sent SUBACK\"," +
+                        " \"Client\": \"{}\"," +
+                        " {}}", clientId, suback);
+            } else {
+                LOG.info("Sent SUBACK to client '{}': {}", clientId, suback);
+            }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(subackPacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(subackPacket.getUserProperties(), json);
         final String reasonString = subackPacket.getReasonString().orElse(null);
 
-        LOG.info("Sent SUBACK to client '{}': {}, Reason String: '{}', {}",
-                clientId,
-                suback,
-                reasonString,
-                userPropertiesAsString);
+        if (json) {
+            LOG.info("{\"Event\": \"Sent SUBACK\"," +
+                            " \"Client\": \"{}\"," +
+                            " {}," +
+                            " \"Reason String\": \"{}\"," +
+                            " {}}",
+                    clientId,
+                    suback,
+                    reasonString,
+                    userPropertiesAsString);
+        } else {
+            LOG.info("Sent SUBACK to client '{}': {}, Reason String: '{}', {}",
+                    clientId,
+                    suback,
+                    reasonString,
+                    userPropertiesAsString);
+        }
     }
 
     public static void logUnsubscribe(
-            final @NotNull UnsubscribeInboundInput unsubscribeInboundInput, final boolean verbose) {
+            final @NotNull UnsubscribeInboundInput unsubscribeInboundInput,
+            final boolean verbose,
+            final boolean json) {
         final StringBuilder topics = new StringBuilder();
         @NotNull final String clientId = unsubscribeInboundInput.getClientInformation().getClientId();
         @NotNull final UnsubscribePacket unsubscribePacket = unsubscribeInboundInput.getUnsubscribePacket();
 
-        topics.append("Topics: {");
+        if (json) {
+            topics.append("\"Topics\": [");
+        } else {
+            topics.append("Topics: {");
+        }
         for (final String unsub : unsubscribePacket.getTopicFilters()) {
-            topics.append(" [Topic: '").append(unsub).append("'],");
+            if (json) {
+                topics.append(" {\"Topic\": \"").append(unsub).append("\"},");
+            } else {
+                topics.append(" [Topic: '").append(unsub).append("'],");
+            }
         }
 
         topics.deleteCharAt(topics.length() - 1); //delete last comma
-        topics.append(" }");
+        if (json) {
+            topics.append(" ]");
+        } else {
+            topics.append(" }");
+        }
 
         if (!verbose) {
-            LOG.info("Received UNSUBSCRIBE from client '{}': {}", clientId, topics);
+            if (json) {
+                LOG.info("{\"Event\": \"Received UNSUBSCRIBE\"," +
+                            " \"Client\": \"{}\"," +
+                            " {}}", clientId, topics);
+            } else {
+                LOG.info("Received UNSUBSCRIBE from client '{}': {}", clientId, topics);
+            }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(unsubscribePacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(unsubscribePacket.getUserProperties(), json);
 
-        LOG.info("Received UNSUBSCRIBE from client '{}': {}, {}", clientId, topics, userPropertiesAsString);
+        if (json) {
+            LOG.info("{\"Event\": \"Received UNSUBSCRIBE\"," +
+                            " \"Client\": \"{}\"," +
+                            " {}, " +
+                            " {}}", clientId, topics, userPropertiesAsString);
+        } else {
+            LOG.info("Received UNSUBSCRIBE from client '{}': {}, {}", clientId, topics, userPropertiesAsString);
+        }
     }
 
-    public static void logUnsuback(final @NotNull UnsubackOutboundInput unsubackOutboundInput, final boolean verbose) {
+    public static void logUnsuback(
+            final @NotNull UnsubackOutboundInput unsubackOutboundInput,
+            final boolean verbose,
+            final boolean json) {
         final StringBuilder unsuback = new StringBuilder();
         final String clientId = unsubackOutboundInput.getClientInformation().getClientId();
         final UnsubackPacket unsubackPacket = unsubackOutboundInput.getUnsubackPacket();
 
-        unsuback.append("Unsuback Reason Codes: {");
+        if (json) {
+            unsuback.append("\"Unsuback Reason Codes (" + unsubackPacket.getReasonCodes().size() + ")\": [");
+        } else {
+            unsuback.append("Unsuback Reason Codes: {");
+        }
         for (final UnsubackReasonCode unsubackReasonCode : unsubackPacket.getReasonCodes()) {
-            unsuback.append(" [Reason Code: '").append(unsubackReasonCode).append("'],");
+            if (json) {
+                //TODO
+                unsuback.append(" {\"Reason Code\": \"").append(unsubackReasonCode).append("\"},");
+            } else {
+                unsuback.append(" [Reason Code: '").append(unsubackReasonCode).append("'],");
+            }
         }
 
         unsuback.deleteCharAt(unsuback.length() - 1); //delete last comma
-        unsuback.append(" }");
+        if (json) {
+            unsuback.append(" ]");
+        } else {
+            unsuback.append(" }");
+        }
 
         if (!verbose) {
-            LOG.info("Sent UNSUBACK to client '{}': {}", clientId, unsuback);
+            if (json) {
+                LOG.info("{\"Event\": \"Sent UNSUBACK\"," +
+                            " \"Client\": \"{}\"," +
+                            " {}}", clientId, unsuback);
+            } else {
+                LOG.info("Sent UNSUBACK to client '{}': {}", clientId, unsuback);
+            }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(unsubackPacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(unsubackPacket.getUserProperties(), json);
         final String reasonString = unsubackPacket.getReasonString().orElse(null);
 
-        LOG.info("Sent UNSUBACK to client '{}': {}, Reason String: '{}', {}",
-                clientId,
-                unsuback,
-                reasonString,
-                userPropertiesAsString);
+        if (json) {
+            LOG.info("{\"Event\": \"Sent UNSUBACK\"," +
+                            " \"Client\": \"{}\"," +
+                            " {}," +
+                            " \"Reason String\": \"{}\"," +
+                            " {}}",
+                    clientId,
+                    unsuback,
+                    reasonString,
+                    userPropertiesAsString);
+        } else {
+            LOG.info("Sent UNSUBACK to client '{}': {}, Reason String: '{}', {}",
+                    clientId,
+                    unsuback,
+                    reasonString,
+                    userPropertiesAsString);
+        }
     }
 
-    public static void logPingreq(final @NotNull PingReqInboundInput pingReqInboundInput) {
+    public static void logPingreq(
+            final @NotNull PingReqInboundInput pingReqInboundInput,
+            final boolean json) {
         final String clientId = pingReqInboundInput.getClientInformation().getClientId();
 
-        LOG.info("Received PING REQUEST from client '{}'", clientId);
+        if (json) {
+            LOG.info("{\"Event\": \"Received PING REQUEST\"," +
+                    " \"Client\": \"{}\"}", clientId);
+        } else {
+            LOG.info("Received PING REQUEST from client '{}'", clientId);
+        }
     }
 
-    public static void logPingresp(final @NotNull PingRespOutboundInput pingRespOutboundInput) {
+    public static void logPingresp(
+            final @NotNull PingRespOutboundInput pingRespOutboundInput,
+            final boolean json) {
         final String clientId = pingRespOutboundInput.getClientInformation().getClientId();
 
-        LOG.info("Sent PING RESPONSE to client '{}'", clientId);
+        if (json) {
+            LOG.info("{\"Event\": \"Sent PING RESPONSE\"," +
+                    " \"Client\": \"{}\"}", clientId);
+        } else {
+            LOG.info("Sent PING RESPONSE to client '{}'", clientId);
+        }
     }
 
     public static void logPuback(
             final @NotNull PubackPacket pubackPacket,
             final @NotNull String clientId,
             final boolean inbound,
-            final boolean verbose) {
+            final boolean verbose,
+            final boolean json) {
         final AckReasonCode reasonCode = pubackPacket.getReasonCode();
 
         if (!verbose) {
             if (inbound) {
-                LOG.info("Received PUBACK from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Received PUBACK\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+                } else {
+                    LOG.info("Received PUBACK from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             } else {
-                LOG.info("Sent PUBACK to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Sent PUBACK\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+                } else {
+                    LOG.info("Sent PUBACK to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(pubackPacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(pubackPacket.getUserProperties(), json);
         final String reasonString = pubackPacket.getReasonString().orElse(null);
 
         if (inbound) {
-            LOG.info("Received PUBACK from client '{}': Reason Code: '{}', Reason String: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Received PUBACK\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            } else {
+                LOG.info("Received PUBACK from client '{}': Reason Code: '{}', Reason String: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            }
         } else {
-            LOG.info("Sent PUBACK to client '{}': Reason Code: '{}', Reason String: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Sent PUBACK\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            } else {
+                LOG.info("Sent PUBACK to client '{}': Reason Code: '{}', Reason String: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            }
         }
     }
 
@@ -436,33 +833,70 @@ public class MessageLogUtil {
             final @NotNull PubrecPacket pubrecPacket,
             final @NotNull String clientId,
             final boolean inbound,
-            final boolean verbose) {
+            final boolean verbose,
+            final boolean json) {
         final AckReasonCode reasonCode = pubrecPacket.getReasonCode();
 
         if (!verbose) {
             if (inbound) {
-                LOG.info("Received PUBREC from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Received PUBREC\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+                } else {
+                    LOG.info("Received PUBREC from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             } else {
-                LOG.info("Sent PUBREC to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Sent PUBREC\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+                } else {
+                    LOG.info("Sent PUBREC to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(pubrecPacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(pubrecPacket.getUserProperties(), json);
         final String reasonString = pubrecPacket.getReasonString().orElse(null);
 
         if (inbound) {
-            LOG.info("Received PUBREC from client '{}': Reason Code: '{}', Reason String: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Received PUBREC\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            } else {
+                LOG.info("Received PUBREC from client '{}': Reason Code: '{}', Reason String: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            }
         } else {
-            LOG.info("Sent PUBREC to client '{}': Reason Code: '{}', Reason String: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Sent PUBREC\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            } else {
+                LOG.info("Sent PUBREC to client '{}': Reason Code: '{}', Reason String: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            }
         }
     }
 
@@ -470,33 +904,70 @@ public class MessageLogUtil {
             final @NotNull PubrelPacket pubrelPacket,
             final @NotNull String clientId,
             final boolean inbound,
-            final boolean verbose) {
+            final boolean verbose,
+            final boolean json) {
         final PubrelReasonCode reasonCode = pubrelPacket.getReasonCode();
 
         if (!verbose) {
             if (inbound) {
-                LOG.info("Received PUBREL from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Received PUBREL\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+                } else {
+                    LOG.info("Received PUBREL from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             } else {
-                LOG.info("Sent PUBREL to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Sent PUBREL\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+                } else {
+                    LOG.info("Sent PUBREL to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(pubrelPacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(pubrelPacket.getUserProperties(), json);
         final String reasonString = pubrelPacket.getReasonString().orElse(null);
 
         if (inbound) {
-            LOG.info("Received PUBREL from client '{}': Reason Code: '{}', Reason String: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Received PUBREL\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            } else {
+                LOG.info("Received PUBREL from client '{}': Reason Code: '{}', Reason String: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            }
         } else {
-            LOG.info("Sent PUBREL to client '{}': Reason Code: '{}', Reason String: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Sent PUBREL\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            } else {
+                LOG.info("Sent PUBREL to client '{}': Reason Code: '{}', Reason String: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            }
         }
     }
 
@@ -504,65 +975,188 @@ public class MessageLogUtil {
             final @NotNull PubcompPacket pubcompPacket,
             final @NotNull String clientId,
             final boolean inbound,
-            final boolean verbose) {
+            final boolean verbose,
+            final boolean json) {
         final PubcompReasonCode reasonCode = pubcompPacket.getReasonCode();
 
         if (!verbose) {
             if (inbound) {
-                LOG.info("Received PUBCOMP from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Received PUBCOMP\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+
+                } else {
+                    LOG.info("Received PUBCOMP from client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             } else {
-                LOG.info("Sent PUBCOMP to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                if (json) {
+                    LOG.info("{\"Event\": \"Sent PUBCOMP\"," +
+                            " \"Client\": \"{}\"," +
+                            " \"Reason Code\": \"{}\"}", clientId, reasonCode);
+
+                } else {
+                    LOG.info("Sent PUBCOMP to client '{}': Reason Code: '{}'", clientId, reasonCode);
+                }
             }
             return;
         }
 
-        final String userPropertiesAsString = getUserPropertiesAsString(pubcompPacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(pubcompPacket.getUserProperties(), json);
         final String reasonString = pubcompPacket.getReasonString().orElse(null);
 
         if (inbound) {
-            LOG.info("Received PUBCOMP from client '{}': Reason Code: '{}', Reason String: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Received PUBCOMP\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            } else {
+                LOG.info("Received PUBCOMP from client '{}': Reason Code: '{}', Reason String: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            }
         } else {
-            LOG.info("Sent PUBCOMP to client '{}': Reason Code: '{}', Reason String: '{}', {}",
-                    clientId,
-                    reasonCode,
-                    reasonString,
-                    userPropertiesAsString);
+            if (json) {
+                LOG.info("{\"Event\": \"Sent PUBCOMP\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Reason Code\": \"{}\"," +
+                                " \"Reason String\": \"{}\"," +
+                                " {}}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            } else {
+                LOG.info("Sent PUBCOMP to client '{}': Reason Code: '{}', Reason String: '{}', {}",
+                        clientId,
+                        reasonCode,
+                        reasonString,
+                        userPropertiesAsString);
+            }
         }
     }
 
     private static @NotNull String getPublishAsString(
-            final @NotNull PublishPacket publishPacket, final boolean verbose, final boolean payload) {
+            final @NotNull PublishPacket publishPacket,
+            final boolean verbose,
+            final boolean payload,
+            final boolean json) {
         final int qos = publishPacket.getQos().getQosNumber();
         final boolean retained = publishPacket.getRetain();
         final String payloadAsString;
         if (payload && publishPacket.getPayload().isPresent()) {
-            payloadAsString = getStringFromByteBuffer(publishPacket.getPayload().get());
+            payloadAsString = getStringFromByteBuffer(publishPacket.getPayload().get(), json);
         } else {
             payloadAsString = null;
         }
 
         if (!verbose && !payload) {
-            return String.format("QoS: '%s'," + " Retained: '%s'", qos, retained);
+            if (json) {
+                return String.format("\"QoS\": \"%s\"," +
+                        " \"Retained\": \"%s\"", qos, retained);
+            } else {
+                return String.format("QoS: '%s'," + " Retained: '%s'", qos, retained);
+            }
         } else if (!verbose) {
-            return String.format("Payload: '%s'," + " QoS: '%s'," + " Retained: '%s'", payloadAsString, qos, retained);
+            if (json) {
+                return String.format("\"Payload (Base64)\": \"%s\"," +
+                        " \"QoS\": \"%s\"," +
+                        " \"Retained\": \"%s\"", payloadAsString, qos, retained);
+            } else {
+                return String.format("Payload: '%s'," + " QoS: '%s'," + " Retained: '%s'", payloadAsString, qos, retained);
+            }
         }
 
         final Optional<String> contentType = publishPacket.getContentType();
-        final String correlationDataString = getStringFromByteBuffer(publishPacket.getCorrelationData().orElse(null));
+        final String correlationDataString = getStringFromByteBuffer(publishPacket.getCorrelationData().orElse(null), json);
         final Optional<String> responseTopic = publishPacket.getResponseTopic();
         final Optional<Long> messageExpiryInterval = publishPacket.getMessageExpiryInterval();
         final boolean dupFlag = publishPacket.getDupFlag();
         final Optional<PayloadFormatIndicator> payloadFormatIndicator = publishPacket.getPayloadFormatIndicator();
         final List<Integer> subscriptionIdentifiers = publishPacket.getSubscriptionIdentifiers();
 
-        final String userPropertiesAsString = getUserPropertiesAsString(publishPacket.getUserProperties());
+        final String userPropertiesAsString = getUserPropertiesAsString(publishPacket.getUserProperties(), json);
 
         if (!payload) {
-            return String.format("QoS: '%s'," +
+            if (json) {
+                return String.format("\"QoS\": \"%s\"," +
+                                " \"Retained\": \"%s\"," +
+                                " \"Message Expiry Interval\": \"%s\"," +
+                                " \"Duplicate Delivery\": \"%s\"," +
+                                " \"Correlation Data\": \"%s\"," +
+                                " \"Response Topic\": \"%s\"," +
+                                " \"Content Type\": \"%s\"," +
+                                " \"Payload Format Indicator\": \"%s\"," +
+                                " \"Subscription Identifiers\": \"%s\"," +
+                                " %s",
+                        qos,
+                        retained,
+                        messageExpiryInterval.orElse(null),
+                        dupFlag,
+                        correlationDataString,
+                        responseTopic.orElse(null),
+                        contentType.orElse(null),
+                        payloadFormatIndicator.orElse(null),
+                        subscriptionIdentifiers,
+                        userPropertiesAsString);
+            } else {
+                return String.format("QoS: '%s'," +
+                                " Retained: '%s'," +
+                                " Message Expiry Interval: '%s'," +
+                                " Duplicate Delivery: '%s'," +
+                                " Correlation Data: '%s'," +
+                                " Response Topic: '%s'," +
+                                " Content Type: '%s'," +
+                                " Payload Format Indicator: '%s'," +
+                                " Subscription Identifiers: '%s'," +
+                                " %s",
+                        qos,
+                        retained,
+                        messageExpiryInterval.orElse(null),
+                        dupFlag,
+                        correlationDataString,
+                        responseTopic.orElse(null),
+                        contentType.orElse(null),
+                        payloadFormatIndicator.orElse(null),
+                        subscriptionIdentifiers,
+                        userPropertiesAsString);
+            }
+        }
+
+        if (json) {
+            return String.format("\"Payload (Base64)\": \"%s\"," +
+                            " \"QoS\": \"%s\"," +
+                            " \"Retained\": \"%s\"," +
+                            " \"Message Expiry Interval\": \"%s\"," +
+                            " \"Duplicate Delivery\": \"%s\"," +
+                            " \"Correlation Data\": \"%s\"," +
+                            " \"Response Topic\": \"%s\"," +
+                            " \"Content Type\": \"%s\"," +
+                            " \"Payload Format Indicator\": \"%s\"," +
+                            " \"Subscription Identifiers\": \"%s\"," +
+                            " %s",
+                    payloadAsString,
+                    qos,
+                    retained,
+                    messageExpiryInterval.orElse(null),
+                    dupFlag,
+                    correlationDataString,
+                    responseTopic.orElse(null),
+                    contentType.orElse(null),
+                    payloadFormatIndicator.orElse(null),
+                    subscriptionIdentifiers,
+                    userPropertiesAsString);
+        } else {
+            return String.format("Payload: '%s'," +
+                            " QoS: '%s'," +
                             " Retained: '%s'," +
                             " Message Expiry Interval: '%s'," +
                             " Duplicate Delivery: '%s'," +
@@ -572,6 +1166,7 @@ public class MessageLogUtil {
                             " Payload Format Indicator: '%s'," +
                             " Subscription Identifiers: '%s'," +
                             " %s",
+                    payloadAsString,
                     qos,
                     retained,
                     messageExpiryInterval.orElse(null),
@@ -583,32 +1178,9 @@ public class MessageLogUtil {
                     subscriptionIdentifiers,
                     userPropertiesAsString);
         }
-
-        return String.format("Payload: '%s'," +
-                        " QoS: '%s'," +
-                        " Retained: '%s'," +
-                        " Message Expiry Interval: '%s'," +
-                        " Duplicate Delivery: '%s'," +
-                        " Correlation Data: '%s'," +
-                        " Response Topic: '%s'," +
-                        " Content Type: '%s'," +
-                        " Payload Format Indicator: '%s'," +
-                        " Subscription Identifiers: '%s'," +
-                        " %s",
-                payloadAsString,
-                qos,
-                retained,
-                messageExpiryInterval.orElse(null),
-                dupFlag,
-                correlationDataString,
-                responseTopic.orElse(null),
-                contentType.orElse(null),
-                payloadFormatIndicator.orElse(null),
-                subscriptionIdentifiers,
-                userPropertiesAsString);
     }
 
-    private static @Nullable String getStringFromByteBuffer(final @Nullable ByteBuffer buffer) {
+    private static @Nullable String getStringFromByteBuffer(final @Nullable ByteBuffer buffer, final boolean json) {
         if (buffer == null) {
             return null;
         }
@@ -616,7 +1188,11 @@ public class MessageLogUtil {
         for (int i = 0; i < buffer.remaining(); i++) {
             bytes[i] = buffer.get(i);
         }
-        return new String(bytes, UTF_8);
+        if (json) {
+            return Base64.getEncoder().encodeToString(bytes);
+        } else {
+            return new String(bytes, UTF_8);
+        }
     }
 
     private static @Nullable String getHexStringFromByteBuffer(final @Nullable ByteBuffer buffer) {
@@ -641,24 +1217,46 @@ public class MessageLogUtil {
         return new String(out);
     }
 
-    private static @NotNull String getUserPropertiesAsString(final @Nullable UserProperties userProperties) {
+    private static @NotNull String getUserPropertiesAsString(
+            final @Nullable UserProperties userProperties,
+            final boolean json) {
         if (userProperties == null) {
-            return "User Properties: 'null'";
+            if (json) {
+                return "\"User Properties\": \"null\"";
+            } else {
+                return "User Properties: 'null'";
+            }
         }
         final List<UserProperty> userPropertyList = userProperties.asList();
         if (userPropertyList.isEmpty()) {
-            return "User Properties: 'null'";
+            if (json) {
+                return "\"User Properties\": \"null\"";
+            } else {
+                return "User Properties: 'null'";
+            }
         }
         final StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < userPropertyList.size(); i++) {
             final UserProperty userProperty = userPropertyList.get(i);
             if (i == 0) {
-                stringBuilder.append("User Properties: ");
+                if (json) {
+                    stringBuilder.append("\"User Properties (" + userPropertyList.size() + ")\": [");
+                } else {
+                    stringBuilder.append("User Properties: ");
+                }
             } else {
                 stringBuilder.append(", ");
             }
-            stringBuilder.append("[Name: '").append(userProperty.getName());
-            stringBuilder.append("', Value: '").append(userProperty.getValue()).append("']");
+            if (json) {
+                stringBuilder.append("{\"Name (" + i + ")\": \"").append(userProperty.getName());
+                stringBuilder.append("\", \"Value (" + i + ")\": \"").append(userProperty.getValue()).append("\"}");
+                if (i == userPropertyList.size() - 1) {
+                    stringBuilder.append("]");
+                }
+            } else {
+                stringBuilder.append("[Name: '").append(userProperty.getName());
+                stringBuilder.append("', Value: '").append(userProperty.getValue()).append("']");
+            }
         }
         return stringBuilder.toString();
     }
