@@ -31,10 +31,12 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PublishOutboundInterceptorImpl.class);
     private final boolean verbose;
     private final boolean payload;
+    private final boolean json;
 
-    public PublishOutboundInterceptorImpl(final boolean verbose, final boolean payload) {
+    public PublishOutboundInterceptorImpl(final boolean verbose, final boolean payload, final boolean json) {
         this.verbose = verbose;
         this.payload = payload;
+        this.json = json;
     }
 
     @Override
@@ -43,10 +45,19 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
             final @NotNull PublishOutboundOutput publishOutboundOutput) {
         try {
             final String clientID = publishOutboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPublish(String.format("Sent PUBLISH to client '%s' on topic", clientID),
-                    publishOutboundInput.getPublishPacket(),
-                    verbose,
-                    payload);
+            if (json) {
+                MessageLogUtil.logPublish(String.format("\"Sent PUBLISH\", \"Client\": \"%s\"", clientID),
+                        publishOutboundInput.getPublishPacket(),
+                        verbose,
+                        payload,
+                        true);
+            } else {
+                MessageLogUtil.logPublish(String.format("Sent PUBLISH to client '%s' on topic", clientID),
+                        publishOutboundInput.getPublishPacket(),
+                        verbose,
+                        payload,
+                        false);
+            }
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound publish logging: ", e);
         }

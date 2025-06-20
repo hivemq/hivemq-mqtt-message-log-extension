@@ -31,10 +31,12 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PublishInboundInterceptorImpl.class);
     private final boolean verbose;
     private final boolean payload;
+    private final boolean json;
 
-    public PublishInboundInterceptorImpl(final boolean verbose, final boolean payload) {
+    public PublishInboundInterceptorImpl(final boolean verbose, final boolean payload, final boolean json) {
         this.verbose = verbose;
         this.payload = payload;
+        this.json = json;
     }
 
     @Override
@@ -43,10 +45,19 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
             final @NotNull PublishInboundOutput publishInboundOutput) {
         try {
             final String clientID = publishInboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPublish(String.format("Received PUBLISH from client '%s' for topic", clientID),
-                    publishInboundInput.getPublishPacket(),
-                    verbose,
-                    payload);
+            if(json) {
+                MessageLogUtil.logPublish(String.format("\"Received PUBLISH\", \"Client\": \"%s\"", clientID),
+                        publishInboundInput.getPublishPacket(),
+                        verbose,
+                        payload,
+                        true);
+            } else {
+                MessageLogUtil.logPublish(String.format("Received PUBLISH from client '%s' for topic", clientID),
+                        publishInboundInput.getPublishPacket(),
+                        verbose,
+                        payload,
+                        false);
+            }
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound publish logging: ", e);
         }

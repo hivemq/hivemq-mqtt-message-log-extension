@@ -62,12 +62,13 @@ public class ClientInitializerImpl implements ClientInitializer {
     private void init() {
         if (config.isClientConnect()) {
             Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
-                    ignored -> new ConnectInboundInterceptorImpl(config.isVerbose(), config.isPayload()));
+                    ignored -> new ConnectInboundInterceptorImpl(config.isVerbose(), config.isPayload(),
+                            config.isJson()));
         }
 
         if (config.isConnackSend()) {
             Services.interceptorRegistry().setConnackOutboundInterceptorProvider( //
-                    ignored -> new ConnackOutboundInterceptorImpl(config.isVerbose()));
+                    ignored -> new ConnackOutboundInterceptorImpl(config.isVerbose(), config.isJson()));
         }
     }
 
@@ -75,66 +76,80 @@ public class ClientInitializerImpl implements ClientInitializer {
     public void initialize(
             final @NotNull InitializerInput initializerInput, final @NotNull ClientContext clientContext) {
         if (config.isClientDisconnect()) {
-            clientContext.addDisconnectInboundInterceptor(new DisconnectInboundInterceptorImpl(config.isVerbose()));
-            clientContext.addDisconnectOutboundInterceptor(new DisconnectOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addDisconnectInboundInterceptor(new DisconnectInboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
+            clientContext.addDisconnectOutboundInterceptor(new DisconnectOutboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
 
         if (config.isSubscribeReceived()) {
-            clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
         if (config.isSubackSend()) {
-            clientContext.addSubackOutboundInterceptor(new SubackOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addSubackOutboundInterceptor(new SubackOutboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
 
         if (config.isPingRequestReceived()) {
-            clientContext.addPingReqInboundInterceptor(new PingreqInboundInterceptorImpl());
+            clientContext.addPingReqInboundInterceptor(new PingreqInboundInterceptorImpl(config.isJson()));
         }
         if (config.isPingResponseSend()) {
-            clientContext.addPingRespOutboundInterceptor(new PingrespOutboundInterceptorImpl());
+            clientContext.addPingRespOutboundInterceptor(new PingrespOutboundInterceptorImpl(config.isJson()));
         }
 
         if (config.isUnsubscribeReceived()) {
-            clientContext.addUnsubscribeInboundInterceptor(new UnsubscribeInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addUnsubscribeInboundInterceptor(new UnsubscribeInboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
         if (config.isUnsubackSend()) {
-            clientContext.addUnsubackOutboundInterceptor(new UnsubackOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addUnsubackOutboundInterceptor(new UnsubackOutboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
 
         if (config.isPublishReceived()) {
             clientContext.addPublishInboundInterceptor(new PublishInboundInterceptorImpl(config.isVerbose(),
-                    config.isPayload()));
+                    config.isPayload(), config.isJson()));
         }
         if (config.isPublishSend()) {
             clientContext.addPublishOutboundInterceptor(new PublishOutboundInterceptorImpl(config.isVerbose(),
-                    config.isPayload()));
+                    config.isPayload(), config.isJson()));
         }
 
         if (config.isPubackReceived()) {
-            clientContext.addPubackInboundInterceptor(new PubackInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubackInboundInterceptor(new PubackInboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
         if (config.isPubackSend()) {
-            clientContext.addPubackOutboundInterceptor(new PubackOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubackOutboundInterceptor(new PubackOutboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
 
         if (config.isPubrecReceived()) {
-            clientContext.addPubrecInboundInterceptor(new PubrecInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubrecInboundInterceptor(new PubrecInboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
         if (config.isPubrecSend()) {
-            clientContext.addPubrecOutboundInterceptor(new PubrecOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubrecOutboundInterceptor(new PubrecOutboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
 
         if (config.isPubrelReceived()) {
-            clientContext.addPubrelInboundInterceptor(new PubrelInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubrelInboundInterceptor(new PubrelInboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
         if (config.isPubrelSend()) {
-            clientContext.addPubrelOutboundInterceptor(new PubrelOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubrelOutboundInterceptor(new PubrelOutboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
 
         if (config.isPubcompReceived()) {
-            clientContext.addPubcompInboundInterceptor(new PubcompInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubcompInboundInterceptor(new PubcompInboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
         if (config.isPubcompSend()) {
-            clientContext.addPubcompOutboundInterceptor(new PubcompOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubcompOutboundInterceptor(new PubcompOutboundInterceptorImpl(config.isVerbose(),
+                    config.isJson()));
         }
     }
 }
