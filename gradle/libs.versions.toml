@@ -11,7 +11,7 @@ junit-jupiter = "5.10.3"
 logback = "1.5.18"
 mockito = "5.18.0"
 okhttp = "4.12.0"
-testcontainers = "1.21.2"
+testcontainers = "1.21.3"
 
 [libraries]
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
