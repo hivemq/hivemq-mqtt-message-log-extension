@@ -62,7 +62,8 @@ public class ClientInitializerImpl implements ClientInitializer {
     private void init() {
         if (config.isClientConnect()) {
             Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
-                    ignored -> new ConnectInboundInterceptorImpl(config.isVerbose(), config.isPayload()));
+                    ignored -> new ConnectInboundInterceptorImpl(config.isVerbose(),
+                            config.isPayload(), config.isPasswordInVerbose()));
         }
 
         if (config.isConnackSend()) {

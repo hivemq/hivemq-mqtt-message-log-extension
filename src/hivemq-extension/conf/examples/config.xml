@@ -9,6 +9,7 @@
     <!--General settings-->
     <verbose>false</verbose>
     <payload>true</payload>
+    <passwordinverbose>true</passwordinverbose>
 
     <!--Event settings-->
     <publish-received>false</publish-received>
