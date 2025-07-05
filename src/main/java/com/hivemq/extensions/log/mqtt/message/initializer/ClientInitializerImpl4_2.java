@@ -59,7 +59,8 @@ public class ClientInitializerImpl4_2 implements ClientInitializer {
 
     @Override
     public void initialize(
-            final @NotNull InitializerInput initializerInput, final @NotNull ClientContext clientContext) {
+            final @NotNull InitializerInput initializerInput,
+            final @NotNull ClientContext clientContext) {
         if (config.isSubscribeReceived()) {
             clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(config.isVerbose()));
         }

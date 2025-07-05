@@ -18,7 +18,6 @@ package com.hivemq.extensions.log.mqtt.message.config;
 import com.hivemq.extensions.log.mqtt.message.ExtensionConstants;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,20 +29,19 @@ import java.io.IOException;
  * @since 1.2.0
  */
 class XmlParser {
+
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(XmlParser.class);
 
     static @NotNull ExtensionConfigXml unmarshalExtensionConfig(final @NotNull File file) throws IOException {
-        final @NotNull JAXBContext jaxb;
-
+        final JAXBContext jaxb;
         try {
             jaxb = JAXBContext.newInstance(ExtensionConfigXml.class);
         } catch (final JAXBException e) {
             LOG.error("{}: Could not initialize XML parser", ExtensionConstants.EXTENSION_NAME, e);
             throw new RuntimeException(e);
         }
-
         try {
-            final Unmarshaller unmarshaller = jaxb.createUnmarshaller();
+            final var unmarshaller = jaxb.createUnmarshaller();
             return (ExtensionConfigXml) unmarshaller.unmarshal(file);
         } catch (final JAXBException e) {
             throw new IOException(e);

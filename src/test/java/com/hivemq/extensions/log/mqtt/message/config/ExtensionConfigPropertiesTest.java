@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,10 +39,10 @@ class ExtensionConfigPropertiesTest {
 
     @BeforeEach
     void setup() {
-        final Properties properties = new Properties();
+        final var properties = new Properties();
         emptyConfig = new ExtensionConfigProperties(properties);
 
-        final Properties allFalseProperties = new Properties();
+        final var allFalseProperties = new Properties();
         allFalseProperties.setProperty(ExtensionConfigProperties.CLIENT_CONNECT, FALSE);
         allFalseProperties.setProperty(ExtensionConfigProperties.CLIENT_DISCONNECT, FALSE);
         allFalseProperties.setProperty(ExtensionConfigProperties.PUBLISH_RECEIVED, FALSE);
@@ -62,7 +63,7 @@ class ExtensionConfigPropertiesTest {
         allFalseProperties.setProperty(ExtensionConfigProperties.PUBCOMP_SEND, FALSE);
         allFalseConfig = new ExtensionConfigProperties(allFalseProperties);
 
-        final Properties allTrueProperties = new Properties();
+        final var allTrueProperties = new Properties();
         allTrueProperties.setProperty(ExtensionConfigProperties.CLIENT_CONNECT, ExtensionConfigProperties.TRUE);
         allTrueProperties.setProperty(ExtensionConfigProperties.CLIENT_DISCONNECT, ExtensionConfigProperties.TRUE);
         allTrueProperties.setProperty(ExtensionConfigProperties.PUBLISH_RECEIVED, ExtensionConfigProperties.TRUE);
@@ -83,7 +84,7 @@ class ExtensionConfigPropertiesTest {
         allTrueProperties.setProperty(ExtensionConfigProperties.PUBCOMP_SEND, ExtensionConfigProperties.TRUE);
         allTrueConfig = new ExtensionConfigProperties(allTrueProperties);
 
-        final Properties mixedProperties = new Properties();
+        final var mixedProperties = new Properties();
         mixedProperties.setProperty(ExtensionConfigProperties.CLIENT_CONNECT, ExtensionConfigProperties.TRUE);
         mixedProperties.setProperty(ExtensionConfigProperties.CLIENT_DISCONNECT, FALSE);
         mixedProperties.setProperty(ExtensionConfigProperties.PUBLISH_RECEIVED, FALSE);
@@ -106,145 +107,145 @@ class ExtensionConfigPropertiesTest {
 
     @Test
     void isClientConnect() {
-        assertTrue(emptyConfig.isClientConnect());
-        assertFalse(allFalseConfig.isClientConnect());
-        assertTrue(allTrueConfig.isClientConnect());
-        assertTrue(mixedConfig.isClientConnect());
+        assertThat(emptyConfig.isClientConnect()).isTrue();
+        assertThat(allFalseConfig.isClientConnect()).isFalse();
+        assertThat(allTrueConfig.isClientConnect()).isTrue();
+        assertThat(mixedConfig.isClientConnect()).isTrue();
     }
 
     @Test
     void isClientDisconnect() {
-        assertTrue(emptyConfig.isClientDisconnect());
-        assertFalse(allFalseConfig.isClientDisconnect());
-        assertTrue(allTrueConfig.isClientDisconnect());
-        assertFalse(mixedConfig.isClientDisconnect());
+        assertThat(emptyConfig.isClientDisconnect()).isTrue();
+        assertThat(allFalseConfig.isClientDisconnect()).isFalse();
+        assertThat(allTrueConfig.isClientDisconnect()).isTrue();
+        assertThat(mixedConfig.isClientDisconnect()).isFalse();
     }
 
     @Test
     void isPublishReceived() {
-        assertTrue(emptyConfig.isPublishReceived());
-        assertFalse(allFalseConfig.isPublishReceived());
-        assertTrue(allTrueConfig.isPublishReceived());
-        assertFalse(mixedConfig.isPublishReceived());
+        assertThat(emptyConfig.isPublishReceived()).isTrue();
+        assertThat(allFalseConfig.isPublishReceived()).isFalse();
+        assertThat(allTrueConfig.isPublishReceived()).isTrue();
+        assertThat(mixedConfig.isPublishReceived()).isFalse();
     }
 
     @Test
     void isPublishSend() {
-        assertTrue(emptyConfig.isPublishSend());
-        assertFalse(allFalseConfig.isPublishSend());
-        assertTrue(allTrueConfig.isPublishSend());
-        assertTrue(mixedConfig.isPublishSend());
+        assertThat(emptyConfig.isPublishSend()).isTrue();
+        assertThat(allFalseConfig.isPublishSend()).isFalse();
+        assertThat(allTrueConfig.isPublishSend()).isTrue();
+        assertThat(mixedConfig.isPublishSend()).isTrue();
     }
 
     @Test
     void isSubscribeReceived() {
-        assertTrue(emptyConfig.isSubscribeReceived());
-        assertFalse(allFalseConfig.isSubscribeReceived());
-        assertTrue(allTrueConfig.isSubscribeReceived());
-        assertTrue(mixedConfig.isSubscribeReceived());
+        assertThat(emptyConfig.isSubscribeReceived()).isTrue();
+        assertThat(allFalseConfig.isSubscribeReceived()).isFalse();
+        assertThat(allTrueConfig.isSubscribeReceived()).isTrue();
+        assertThat(mixedConfig.isSubscribeReceived()).isTrue();
     }
 
     @Test
     void isSubackSend() {
-        assertTrue(emptyConfig.isSubackSend());
-        assertFalse(allFalseConfig.isSubackSend());
-        assertTrue(allTrueConfig.isSubackSend());
-        assertFalse(mixedConfig.isSubackSend());
+        assertThat(emptyConfig.isSubackSend()).isTrue();
+        assertThat(allFalseConfig.isSubackSend()).isFalse();
+        assertThat(allTrueConfig.isSubackSend()).isTrue();
+        assertThat(mixedConfig.isSubackSend()).isFalse();
     }
 
     @Test
     void isUnsubscribeReceived() {
-        assertTrue(emptyConfig.isUnsubscribeReceived());
-        assertFalse(allFalseConfig.isUnsubscribeReceived());
-        assertTrue(allTrueConfig.isUnsubscribeReceived());
-        assertFalse(mixedConfig.isUnsubscribeReceived());
+        assertThat(emptyConfig.isUnsubscribeReceived()).isTrue();
+        assertThat(allFalseConfig.isUnsubscribeReceived()).isFalse();
+        assertThat(allTrueConfig.isUnsubscribeReceived()).isTrue();
+        assertThat(mixedConfig.isUnsubscribeReceived()).isFalse();
     }
 
     @Test
     void isUnsubackSend() {
-        assertTrue(emptyConfig.isUnsubackSend());
-        assertFalse(allFalseConfig.isUnsubackSend());
-        assertTrue(allTrueConfig.isUnsubackSend());
-        assertTrue(mixedConfig.isUnsubackSend());
+        assertThat(emptyConfig.isUnsubackSend()).isTrue();
+        assertThat(allFalseConfig.isUnsubackSend()).isFalse();
+        assertThat(allTrueConfig.isUnsubackSend()).isTrue();
+        assertThat(mixedConfig.isUnsubackSend()).isTrue();
     }
 
     @Test
     void isPingRequestReceived() {
-        assertTrue(emptyConfig.isPingRequestReceived());
-        assertFalse(allFalseConfig.isPingRequestReceived());
-        assertTrue(allTrueConfig.isPingRequestReceived());
-        assertFalse(mixedConfig.isPingRequestReceived());
+        assertThat(emptyConfig.isPingRequestReceived()).isTrue();
+        assertThat(allFalseConfig.isPingRequestReceived()).isFalse();
+        assertThat(allTrueConfig.isPingRequestReceived()).isTrue();
+        assertThat(mixedConfig.isPingRequestReceived()).isFalse();
     }
 
     @Test
     void isPingResponseSend() {
-        assertTrue(emptyConfig.isPingResponseSend());
-        assertFalse(allFalseConfig.isPingResponseSend());
-        assertTrue(allTrueConfig.isPingResponseSend());
-        assertFalse(mixedConfig.isPingResponseSend());
+        assertThat(emptyConfig.isPingResponseSend()).isTrue();
+        assertThat(allFalseConfig.isPingResponseSend()).isFalse();
+        assertThat(allTrueConfig.isPingResponseSend()).isTrue();
+        assertThat(mixedConfig.isPingResponseSend()).isFalse();
     }
 
     @Test
     void isPubackReceived() {
-        assertTrue(emptyConfig.isPubackReceived());
-        assertFalse(allFalseConfig.isPubackReceived());
-        assertTrue(allTrueConfig.isPubackReceived());
-        assertFalse(mixedConfig.isPubackReceived());
+        assertThat(emptyConfig.isPubackReceived()).isTrue();
+        assertThat(allFalseConfig.isPubackReceived()).isFalse();
+        assertThat(allTrueConfig.isPubackReceived()).isTrue();
+        assertThat(mixedConfig.isPubackReceived()).isFalse();
     }
 
     @Test
     void isPubackSend() {
-        assertTrue(emptyConfig.isPubackSend());
-        assertFalse(allFalseConfig.isPubackSend());
-        assertTrue(allTrueConfig.isPubackSend());
-        assertTrue(mixedConfig.isPubackSend());
+        assertThat(emptyConfig.isPubackSend()).isTrue();
+        assertThat(allFalseConfig.isPubackSend()).isFalse();
+        assertThat(allTrueConfig.isPubackSend()).isTrue();
+        assertThat(mixedConfig.isPubackSend()).isTrue();
     }
 
     @Test
     void isPubrecReceived() {
-        assertTrue(emptyConfig.isPubrecReceived());
-        assertFalse(allFalseConfig.isPubrecReceived());
-        assertTrue(allTrueConfig.isPubrecReceived());
-        assertFalse(mixedConfig.isPubrecReceived());
+        assertThat(emptyConfig.isPubrecReceived()).isTrue();
+        assertThat(allFalseConfig.isPubrecReceived()).isFalse();
+        assertThat(allTrueConfig.isPubrecReceived()).isTrue();
+        assertThat(mixedConfig.isPubrecReceived()).isFalse();
     }
 
     @Test
     void isPubrecSend() {
-        assertTrue(emptyConfig.isPubrecSend());
-        assertFalse(allFalseConfig.isPubrecSend());
-        assertTrue(allTrueConfig.isPubrecSend());
-        assertFalse(mixedConfig.isPubrecSend());
+        assertThat(emptyConfig.isPubrecSend()).isTrue();
+        assertThat(allFalseConfig.isPubrecSend()).isFalse();
+        assertThat(allTrueConfig.isPubrecSend()).isTrue();
+        assertThat(mixedConfig.isPubrecSend()).isFalse();
     }
 
     @Test
     void isPubrelReceived() {
-        assertTrue(emptyConfig.isPubrelReceived());
-        assertFalse(allFalseConfig.isPubrelReceived());
-        assertTrue(allTrueConfig.isPubrelReceived());
-        assertTrue(mixedConfig.isPubrelReceived());
+        assertThat(emptyConfig.isPubrelReceived()).isTrue();
+        assertThat(allFalseConfig.isPubrelReceived()).isFalse();
+        assertThat(allTrueConfig.isPubrelReceived()).isTrue();
+        assertThat(mixedConfig.isPubrelReceived()).isTrue();
     }
 
     @Test
     void isPubrelSend() {
-        assertTrue(emptyConfig.isPubrelSend());
-        assertFalse(allFalseConfig.isPubrelSend());
-        assertTrue(allTrueConfig.isPubrelSend());
-        assertTrue(mixedConfig.isPubrelSend());
+        assertThat(emptyConfig.isPubrelSend()).isTrue();
+        assertThat(allFalseConfig.isPubrelSend()).isFalse();
+        assertThat(allTrueConfig.isPubrelSend()).isTrue();
+        assertThat(mixedConfig.isPubrelSend()).isTrue();
     }
 
     @Test
     void isPubcompReceived() {
-        assertTrue(emptyConfig.isPubcompReceived());
-        assertFalse(allFalseConfig.isPubcompReceived());
-        assertTrue(allTrueConfig.isPubcompReceived());
-        assertFalse(mixedConfig.isPubcompReceived());
+        assertThat(emptyConfig.isPubcompReceived()).isTrue();
+        assertThat(allFalseConfig.isPubcompReceived()).isFalse();
+        assertThat(allTrueConfig.isPubcompReceived()).isTrue();
+        assertThat(mixedConfig.isPubcompReceived()).isFalse();
     }
 
     @Test
     void isPubcompSend() {
-        assertTrue(emptyConfig.isPubcompSend());
-        assertFalse(allFalseConfig.isPubcompSend());
-        assertTrue(allTrueConfig.isPubcompSend());
-        assertFalse(mixedConfig.isPubcompSend());
+        assertThat(emptyConfig.isPubcompSend()).isTrue();
+        assertThat(allFalseConfig.isPubcompSend()).isFalse();
+        assertThat(allTrueConfig.isPubcompSend()).isTrue();
+        assertThat(mixedConfig.isPubcompSend()).isFalse();
     }
 }

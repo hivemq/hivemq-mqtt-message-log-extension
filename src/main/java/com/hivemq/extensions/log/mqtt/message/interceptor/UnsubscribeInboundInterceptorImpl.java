@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public class UnsubscribeInboundInterceptorImpl implements UnsubscribeInboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(UnsubscribeInboundInterceptorImpl.class);
+
     private final boolean verbose;
 
     public UnsubscribeInboundInterceptorImpl(final boolean verbose) {

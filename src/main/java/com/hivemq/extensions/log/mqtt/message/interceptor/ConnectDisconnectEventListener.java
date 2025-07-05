@@ -23,7 +23,6 @@ import com.hivemq.extension.sdk.api.events.client.parameters.ConnectionLostInput
 import com.hivemq.extension.sdk.api.events.client.parameters.ConnectionStartInput;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
 import com.hivemq.extension.sdk.api.events.client.parameters.ServerInitiatedDisconnectInput;
-import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -52,7 +51,7 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
             return;
         }
         try {
-            final ConnectPacket connectPacket = connectionStartInput.getConnectPacket();
+            final var connectPacket = connectionStartInput.getConnectPacket();
             MessageLogUtil.logConnect(connectPacket, verbose, payload);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound connect logging: ", e);

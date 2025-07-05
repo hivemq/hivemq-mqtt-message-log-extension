@@ -16,7 +16,6 @@
 package com.hivemq.extensions.log;
 
 import com.hivemq.client.mqtt.datatypes.MqttQos;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PayloadFormatIndicator;
 import io.github.sgtsilvio.gradle.oci.junit.jupiter.OciImages;
@@ -47,7 +46,7 @@ public class FullConfigIT {
 
     @Test
     void test() {
-        final Mqtt5BlockingClient client = Mqtt5Client.builder()
+        final var client = Mqtt5Client.builder()
                 .identifier("test-client")
                 .serverHost(hivemq.getHost())
                 .serverPort(hivemq.getMqttPort())

@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public class PubrecInboundInterceptorImpl implements PubrecInboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubrecInboundInterceptorImpl.class);
+
     private final boolean verbose;
 
     public PubrecInboundInterceptorImpl(final boolean verbose) {
@@ -40,7 +41,7 @@ public class PubrecInboundInterceptorImpl implements PubrecInboundInterceptor {
             final @NotNull PubrecInboundInput pubrecInboundInput,
             final @NotNull PubrecInboundOutput pubrecInboundOutput) {
         try {
-            final String clientId = pubrecInboundInput.getClientInformation().getClientId();
+            final var clientId = pubrecInboundInput.getClientInformation().getClientId();
             MessageLogUtil.logPubrec(pubrecInboundInput.getPubrecPacket(), clientId, true, verbose);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound pubrec logging: ", e);

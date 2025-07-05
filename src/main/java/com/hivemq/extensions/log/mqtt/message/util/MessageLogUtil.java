@@ -23,29 +23,16 @@ import com.hivemq.extension.sdk.api.interceptor.suback.parameter.SubackOutboundI
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsubscribe.parameter.UnsubscribeInboundInput;
-import com.hivemq.extension.sdk.api.packets.connack.ConnackPacket;
 import com.hivemq.extension.sdk.api.packets.connect.ConnectPacket;
 import com.hivemq.extension.sdk.api.packets.connect.WillPublishPacket;
 import com.hivemq.extension.sdk.api.packets.disconnect.DisconnectPacket;
-import com.hivemq.extension.sdk.api.packets.disconnect.DisconnectReasonCode;
 import com.hivemq.extension.sdk.api.packets.general.UserProperties;
-import com.hivemq.extension.sdk.api.packets.general.UserProperty;
 import com.hivemq.extension.sdk.api.packets.puback.PubackPacket;
 import com.hivemq.extension.sdk.api.packets.pubcomp.PubcompPacket;
-import com.hivemq.extension.sdk.api.packets.pubcomp.PubcompReasonCode;
-import com.hivemq.extension.sdk.api.packets.publish.AckReasonCode;
-import com.hivemq.extension.sdk.api.packets.publish.PayloadFormatIndicator;
 import com.hivemq.extension.sdk.api.packets.publish.PublishPacket;
 import com.hivemq.extension.sdk.api.packets.pubrec.PubrecPacket;
 import com.hivemq.extension.sdk.api.packets.pubrel.PubrelPacket;
-import com.hivemq.extension.sdk.api.packets.pubrel.PubrelReasonCode;
-import com.hivemq.extension.sdk.api.packets.suback.SubackPacket;
-import com.hivemq.extension.sdk.api.packets.subscribe.SubackReasonCode;
-import com.hivemq.extension.sdk.api.packets.subscribe.SubscribePacket;
 import com.hivemq.extension.sdk.api.packets.subscribe.Subscription;
-import com.hivemq.extension.sdk.api.packets.unsuback.UnsubackPacket;
-import com.hivemq.extension.sdk.api.packets.unsuback.UnsubackReasonCode;
-import com.hivemq.extension.sdk.api.packets.unsubscribe.UnsubscribePacket;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,8 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -77,7 +62,7 @@ public class MessageLogUtil {
             LOG.info(message + " Reason Code: '{}'", disconnectEventInput.getReasonCode().orElse(null));
             return;
         }
-        final String userPropertiesAsString =
+        final var userPropertiesAsString =
                 getUserPropertiesAsString(disconnectEventInput.getUserProperties().orElse(null));
         LOG.info(message + " Reason Code: '{}', Reason String: '{}', {}",
                 disconnectEventInput.getReasonCode().orElse(null),
@@ -90,8 +75,7 @@ public class MessageLogUtil {
             final @NotNull String clientId,
             final boolean inbound,
             final boolean verbose) {
-        final DisconnectReasonCode reasonCode = disconnectPacket.getReasonCode();
-
+        final var reasonCode = disconnectPacket.getReasonCode();
         if (!verbose) {
             if (inbound) {
                 LOG.info("Received DISCONNECT from client '{}': Reason Code: '{}'", clientId, reasonCode);
@@ -100,12 +84,10 @@ public class MessageLogUtil {
             }
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(disconnectPacket.getUserProperties());
-        final String reasonString = disconnectPacket.getReasonString().orElse(null);
-        final String serverReference = disconnectPacket.getServerReference().orElse(null);
-        final Long sessionExpiry = disconnectPacket.getSessionExpiryInterval().orElse(null);
-
+        final var userPropertiesAsString = getUserPropertiesAsString(disconnectPacket.getUserProperties());
+        final var reasonString = disconnectPacket.getReasonString().orElse(null);
+        final var serverReference = disconnectPacket.getServerReference().orElse(null);
+        final var sessionExpiry = disconnectPacket.getSessionExpiryInterval().orElse(null);
         if (inbound) {
             LOG.info(
                     "Received DISCONNECT from client '{}': Reason Code: '{}', Reason String: '{}', Server Reference: '{}', Session Expiry: '{}', {}",
@@ -128,7 +110,9 @@ public class MessageLogUtil {
     }
 
     public static void logConnect(
-            final @NotNull ConnectPacket connectPacket, final boolean verbose, final boolean payload) {
+            final @NotNull ConnectPacket connectPacket,
+            final boolean verbose,
+            final boolean payload) {
         if (!verbose) {
             LOG.info(
                     "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'",
@@ -138,9 +122,8 @@ public class MessageLogUtil {
                     connectPacket.getSessionExpiryInterval());
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(connectPacket.getUserProperties());
-        final String passwordAsString = getStringFromByteBuffer(connectPacket.getPassword().orElse(null));
+        final var userPropertiesAsString = getUserPropertiesAsString(connectPacket.getUserProperties());
+        final var passwordAsString = getStringFromByteBuffer(connectPacket.getPassword().orElse(null));
         final String passwordProperty;
         if (StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null) {
             passwordProperty = "Password: '" + passwordAsString + "'";
@@ -148,7 +131,6 @@ public class MessageLogUtil {
             passwordProperty =
                     "Password (Hex): '" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
         }
-
         final String authDataAsString;
         if (connectPacket.getAuthenticationData().isPresent()) {
             authDataAsString =
@@ -156,14 +138,12 @@ public class MessageLogUtil {
         } else {
             authDataAsString = null;
         }
-
         final String willString;
         if (connectPacket.getWillPublish().isPresent()) {
             willString = getWillAsString(connectPacket.getWillPublish().get(), payload);
         } else {
             willString = "";
         }
-
         LOG.info(
                 "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
                         " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
@@ -188,9 +168,8 @@ public class MessageLogUtil {
     }
 
     public static void logConnack(final @NotNull ConnackOutboundInput connackOutboundInput, final boolean verbose) {
-        final @NotNull String clientId = connackOutboundInput.getClientInformation().getClientId();
-        final @NotNull ConnackPacket connackPacket = connackOutboundInput.getConnackPacket();
-
+        final var clientId = connackOutboundInput.getClientInformation().getClientId();
+        final var connackPacket = connackOutboundInput.getConnackPacket();
         if (!verbose) {
             LOG.info("Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}'",
                     clientId,
@@ -198,9 +177,7 @@ public class MessageLogUtil {
                     connackPacket.getSessionPresent());
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(connackPacket.getUserProperties());
-
+        final var userPropertiesAsString = getUserPropertiesAsString(connackPacket.getUserProperties());
         final String authDataAsString;
         if (connackPacket.getAuthenticationData().isPresent()) {
             authDataAsString =
@@ -208,7 +185,6 @@ public class MessageLogUtil {
         } else {
             authDataAsString = null;
         }
-
         LOG.info("Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}', Session Expiry Interval: '{}'," +
                         " Assigned ClientId '{}', Maximum QoS: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}'," +
                         " Topic Alias Maximum: '{}', Reason String: '{}', Response Information: '{}', Server Keep Alive: '{}'," +
@@ -238,11 +214,11 @@ public class MessageLogUtil {
     }
 
     private static @NotNull String getWillAsString(
-            final @NotNull WillPublishPacket willPublishPacket, final boolean payload) {
-        final String topic = willPublishPacket.getTopic();
-        final String publishAsString = getPublishAsString(willPublishPacket, true, payload);
-        final String willPublishAsString = publishAsString + ", Will Delay: '" + willPublishPacket.getWillDelay() + "'";
-
+            final @NotNull WillPublishPacket willPublishPacket,
+            final boolean payload) {
+        final var topic = willPublishPacket.getTopic();
+        final var publishAsString = getPublishAsString(willPublishPacket, true, payload);
+        final var willPublishAsString = publishAsString + ", Will Delay: '" + willPublishPacket.getWillDelay() + "'";
         return String.format(", Will: { Topic: '%s', %s }", topic, willPublishAsString);
     }
 
@@ -251,17 +227,15 @@ public class MessageLogUtil {
             final @NotNull PublishPacket publishPacket,
             final boolean verbose,
             final boolean payload) {
-        final String topic = publishPacket.getTopic();
-        final String publishString = getPublishAsString(publishPacket, verbose, payload);
-
+        final var topic = publishPacket.getTopic();
+        final var publishString = getPublishAsString(publishPacket, verbose, payload);
         LOG.info("{} '{}': {}", prefix, topic, publishString);
     }
 
     public static void logSubscribe(final @NotNull SubscribeInboundInput subscribeInboundInput, final boolean verbose) {
-        final StringBuilder topics = new StringBuilder();
-        final String clientId = subscribeInboundInput.getClientInformation().getClientId();
-        final SubscribePacket subscribePacket = subscribeInboundInput.getSubscribePacket();
-
+        final var topics = new StringBuilder();
+        final var clientId = subscribeInboundInput.getClientInformation().getClientId();
+        final var subscribePacket = subscribeInboundInput.getSubscribePacket();
         if (!verbose) {
             topics.append("Topics: {");
             for (final Subscription sub : subscribePacket.getSubscriptions()) {
@@ -276,9 +250,8 @@ public class MessageLogUtil {
             LOG.info("Received SUBSCRIBE from client '{}': {}", clientId, topics);
             return;
         }
-
         topics.append("Topics: {");
-        for (final Subscription sub : subscribePacket.getSubscriptions()) {
+        for (final var sub : subscribePacket.getSubscriptions()) {
             topics.append(" [Topic: '")
                     .append(sub.getTopicFilter())
                     .append("', QoS: '")
@@ -291,14 +264,10 @@ public class MessageLogUtil {
                     .append(sub.getRetainHandling().name())
                     .append("'],");
         }
-
         topics.deleteCharAt(topics.length() - 1); //delete last comma
-
         topics.append(" }");
-
-        final Integer subscriptionIdentifier = subscribePacket.getSubscriptionIdentifier().orElse(null);
-        final String userPropertiesAsString = getUserPropertiesAsString(subscribePacket.getUserProperties());
-
+        final var subscriptionIdentifier = subscribePacket.getSubscriptionIdentifier().orElse(null);
+        final var userPropertiesAsString = getUserPropertiesAsString(subscribePacket.getUserProperties());
         LOG.info("Received SUBSCRIBE from client '{}': {}, Subscription Identifier: '{}', {}",
                 clientId,
                 topics,
@@ -307,26 +276,21 @@ public class MessageLogUtil {
     }
 
     public static void logSuback(final @NotNull SubackOutboundInput subackOutboundInput, final boolean verbose) {
-        final StringBuilder suback = new StringBuilder();
-        final String clientId = subackOutboundInput.getClientInformation().getClientId();
-        @NotNull final SubackPacket subackPacket = subackOutboundInput.getSubackPacket();
-
+        final var suback = new StringBuilder();
+        final var clientId = subackOutboundInput.getClientInformation().getClientId();
+        final var subackPacket = subackOutboundInput.getSubackPacket();
         suback.append("Suback Reason Codes: {");
-        for (final SubackReasonCode sub : subackPacket.getReasonCodes()) {
+        for (final var sub : subackPacket.getReasonCodes()) {
             suback.append(" [Reason Code: '").append(sub).append("'],");
         }
-
         suback.deleteCharAt(suback.length() - 1); //delete last comma
         suback.append(" }");
-
         if (!verbose) {
             LOG.info("Sent SUBACK to client '{}': {}", clientId, suback);
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(subackPacket.getUserProperties());
-        final String reasonString = subackPacket.getReasonString().orElse(null);
-
+        final var userPropertiesAsString = getUserPropertiesAsString(subackPacket.getUserProperties());
+        final var reasonString = subackPacket.getReasonString().orElse(null);
         LOG.info("Sent SUBACK to client '{}': {}, Reason String: '{}', {}",
                 clientId,
                 suback,
@@ -335,50 +299,41 @@ public class MessageLogUtil {
     }
 
     public static void logUnsubscribe(
-            final @NotNull UnsubscribeInboundInput unsubscribeInboundInput, final boolean verbose) {
-        final StringBuilder topics = new StringBuilder();
-        @NotNull final String clientId = unsubscribeInboundInput.getClientInformation().getClientId();
-        @NotNull final UnsubscribePacket unsubscribePacket = unsubscribeInboundInput.getUnsubscribePacket();
-
+            final @NotNull UnsubscribeInboundInput unsubscribeInboundInput,
+            final boolean verbose) {
+        final var topics = new StringBuilder();
+        final var clientId = unsubscribeInboundInput.getClientInformation().getClientId();
+        final var unsubscribePacket = unsubscribeInboundInput.getUnsubscribePacket();
         topics.append("Topics: {");
-        for (final String unsub : unsubscribePacket.getTopicFilters()) {
+        for (final var unsub : unsubscribePacket.getTopicFilters()) {
             topics.append(" [Topic: '").append(unsub).append("'],");
         }
-
         topics.deleteCharAt(topics.length() - 1); //delete last comma
         topics.append(" }");
-
         if (!verbose) {
             LOG.info("Received UNSUBSCRIBE from client '{}': {}", clientId, topics);
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(unsubscribePacket.getUserProperties());
-
+        final var userPropertiesAsString = getUserPropertiesAsString(unsubscribePacket.getUserProperties());
         LOG.info("Received UNSUBSCRIBE from client '{}': {}, {}", clientId, topics, userPropertiesAsString);
     }
 
     public static void logUnsuback(final @NotNull UnsubackOutboundInput unsubackOutboundInput, final boolean verbose) {
-        final StringBuilder unsuback = new StringBuilder();
-        final String clientId = unsubackOutboundInput.getClientInformation().getClientId();
-        final UnsubackPacket unsubackPacket = unsubackOutboundInput.getUnsubackPacket();
-
+        final var unsuback = new StringBuilder();
+        final var clientId = unsubackOutboundInput.getClientInformation().getClientId();
+        final var unsubackPacket = unsubackOutboundInput.getUnsubackPacket();
         unsuback.append("Unsuback Reason Codes: {");
-        for (final UnsubackReasonCode unsubackReasonCode : unsubackPacket.getReasonCodes()) {
+        for (final var unsubackReasonCode : unsubackPacket.getReasonCodes()) {
             unsuback.append(" [Reason Code: '").append(unsubackReasonCode).append("'],");
         }
-
         unsuback.deleteCharAt(unsuback.length() - 1); //delete last comma
         unsuback.append(" }");
-
         if (!verbose) {
             LOG.info("Sent UNSUBACK to client '{}': {}", clientId, unsuback);
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(unsubackPacket.getUserProperties());
-        final String reasonString = unsubackPacket.getReasonString().orElse(null);
-
+        final var userPropertiesAsString = getUserPropertiesAsString(unsubackPacket.getUserProperties());
+        final var reasonString = unsubackPacket.getReasonString().orElse(null);
         LOG.info("Sent UNSUBACK to client '{}': {}, Reason String: '{}', {}",
                 clientId,
                 unsuback,
@@ -387,14 +342,12 @@ public class MessageLogUtil {
     }
 
     public static void logPingreq(final @NotNull PingReqInboundInput pingReqInboundInput) {
-        final String clientId = pingReqInboundInput.getClientInformation().getClientId();
-
+        final var clientId = pingReqInboundInput.getClientInformation().getClientId();
         LOG.info("Received PING REQUEST from client '{}'", clientId);
     }
 
     public static void logPingresp(final @NotNull PingRespOutboundInput pingRespOutboundInput) {
-        final String clientId = pingRespOutboundInput.getClientInformation().getClientId();
-
+        final var clientId = pingRespOutboundInput.getClientInformation().getClientId();
         LOG.info("Sent PING RESPONSE to client '{}'", clientId);
     }
 
@@ -403,8 +356,7 @@ public class MessageLogUtil {
             final @NotNull String clientId,
             final boolean inbound,
             final boolean verbose) {
-        final AckReasonCode reasonCode = pubackPacket.getReasonCode();
-
+        final var reasonCode = pubackPacket.getReasonCode();
         if (!verbose) {
             if (inbound) {
                 LOG.info("Received PUBACK from client '{}': Reason Code: '{}'", clientId, reasonCode);
@@ -413,10 +365,8 @@ public class MessageLogUtil {
             }
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(pubackPacket.getUserProperties());
-        final String reasonString = pubackPacket.getReasonString().orElse(null);
-
+        final var userPropertiesAsString = getUserPropertiesAsString(pubackPacket.getUserProperties());
+        final var reasonString = pubackPacket.getReasonString().orElse(null);
         if (inbound) {
             LOG.info("Received PUBACK from client '{}': Reason Code: '{}', Reason String: '{}', {}",
                     clientId,
@@ -437,8 +387,7 @@ public class MessageLogUtil {
             final @NotNull String clientId,
             final boolean inbound,
             final boolean verbose) {
-        final AckReasonCode reasonCode = pubrecPacket.getReasonCode();
-
+        final var reasonCode = pubrecPacket.getReasonCode();
         if (!verbose) {
             if (inbound) {
                 LOG.info("Received PUBREC from client '{}': Reason Code: '{}'", clientId, reasonCode);
@@ -447,10 +396,8 @@ public class MessageLogUtil {
             }
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(pubrecPacket.getUserProperties());
-        final String reasonString = pubrecPacket.getReasonString().orElse(null);
-
+        final var userPropertiesAsString = getUserPropertiesAsString(pubrecPacket.getUserProperties());
+        final var reasonString = pubrecPacket.getReasonString().orElse(null);
         if (inbound) {
             LOG.info("Received PUBREC from client '{}': Reason Code: '{}', Reason String: '{}', {}",
                     clientId,
@@ -471,8 +418,7 @@ public class MessageLogUtil {
             final @NotNull String clientId,
             final boolean inbound,
             final boolean verbose) {
-        final PubrelReasonCode reasonCode = pubrelPacket.getReasonCode();
-
+        final var reasonCode = pubrelPacket.getReasonCode();
         if (!verbose) {
             if (inbound) {
                 LOG.info("Received PUBREL from client '{}': Reason Code: '{}'", clientId, reasonCode);
@@ -481,10 +427,8 @@ public class MessageLogUtil {
             }
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(pubrelPacket.getUserProperties());
-        final String reasonString = pubrelPacket.getReasonString().orElse(null);
-
+        final var userPropertiesAsString = getUserPropertiesAsString(pubrelPacket.getUserProperties());
+        final var reasonString = pubrelPacket.getReasonString().orElse(null);
         if (inbound) {
             LOG.info("Received PUBREL from client '{}': Reason Code: '{}', Reason String: '{}', {}",
                     clientId,
@@ -505,8 +449,7 @@ public class MessageLogUtil {
             final @NotNull String clientId,
             final boolean inbound,
             final boolean verbose) {
-        final PubcompReasonCode reasonCode = pubcompPacket.getReasonCode();
-
+        final var reasonCode = pubcompPacket.getReasonCode();
         if (!verbose) {
             if (inbound) {
                 LOG.info("Received PUBCOMP from client '{}': Reason Code: '{}'", clientId, reasonCode);
@@ -515,10 +458,8 @@ public class MessageLogUtil {
             }
             return;
         }
-
-        final String userPropertiesAsString = getUserPropertiesAsString(pubcompPacket.getUserProperties());
-        final String reasonString = pubcompPacket.getReasonString().orElse(null);
-
+        final var userPropertiesAsString = getUserPropertiesAsString(pubcompPacket.getUserProperties());
+        final var reasonString = pubcompPacket.getReasonString().orElse(null);
         if (inbound) {
             LOG.info("Received PUBCOMP from client '{}': Reason Code: '{}', Reason String: '{}', {}",
                     clientId,
@@ -535,32 +476,30 @@ public class MessageLogUtil {
     }
 
     private static @NotNull String getPublishAsString(
-            final @NotNull PublishPacket publishPacket, final boolean verbose, final boolean payload) {
-        final int qos = publishPacket.getQos().getQosNumber();
-        final boolean retained = publishPacket.getRetain();
+            final @NotNull PublishPacket publishPacket,
+            final boolean verbose,
+            final boolean payload) {
+        final var qos = publishPacket.getQos().getQosNumber();
+        final var retained = publishPacket.getRetain();
         final String payloadAsString;
         if (payload && publishPacket.getPayload().isPresent()) {
             payloadAsString = getStringFromByteBuffer(publishPacket.getPayload().get());
         } else {
             payloadAsString = null;
         }
-
         if (!verbose && !payload) {
             return String.format("QoS: '%s'," + " Retained: '%s'", qos, retained);
         } else if (!verbose) {
             return String.format("Payload: '%s'," + " QoS: '%s'," + " Retained: '%s'", payloadAsString, qos, retained);
         }
-
-        final Optional<String> contentType = publishPacket.getContentType();
-        final String correlationDataString = getStringFromByteBuffer(publishPacket.getCorrelationData().orElse(null));
-        final Optional<String> responseTopic = publishPacket.getResponseTopic();
-        final Optional<Long> messageExpiryInterval = publishPacket.getMessageExpiryInterval();
-        final boolean dupFlag = publishPacket.getDupFlag();
-        final Optional<PayloadFormatIndicator> payloadFormatIndicator = publishPacket.getPayloadFormatIndicator();
-        final List<Integer> subscriptionIdentifiers = publishPacket.getSubscriptionIdentifiers();
-
-        final String userPropertiesAsString = getUserPropertiesAsString(publishPacket.getUserProperties());
-
+        final var contentType = publishPacket.getContentType();
+        final var correlationDataString = getStringFromByteBuffer(publishPacket.getCorrelationData().orElse(null));
+        final var responseTopic = publishPacket.getResponseTopic();
+        final var messageExpiryInterval = publishPacket.getMessageExpiryInterval();
+        final var dupFlag = publishPacket.getDupFlag();
+        final var payloadFormatIndicator = publishPacket.getPayloadFormatIndicator();
+        final var subscriptionIdentifiers = publishPacket.getSubscriptionIdentifiers();
+        final var userPropertiesAsString = getUserPropertiesAsString(publishPacket.getUserProperties());
         if (!payload) {
             return String.format("QoS: '%s'," +
                             " Retained: '%s'," +
@@ -583,7 +522,6 @@ public class MessageLogUtil {
                     subscriptionIdentifiers,
                     userPropertiesAsString);
         }
-
         return String.format("Payload: '%s'," +
                         " QoS: '%s'," +
                         " Retained: '%s'," +
@@ -612,7 +550,7 @@ public class MessageLogUtil {
         if (buffer == null) {
             return null;
         }
-        final byte[] bytes = new byte[buffer.remaining()];
+        final var bytes = new byte[buffer.remaining()];
         for (int i = 0; i < buffer.remaining(); i++) {
             bytes[i] = buffer.get(i);
         }
@@ -623,18 +561,17 @@ public class MessageLogUtil {
         if (buffer == null) {
             return null;
         }
-        final byte[] bytes = new byte[buffer.remaining()];
-        for (int i = 0; i < buffer.remaining(); i++) {
+        final var bytes = new byte[buffer.remaining()];
+        for (var i = 0; i < buffer.remaining(); i++) {
             bytes[i] = buffer.get(i);
         }
-
         return asHexString(bytes);
     }
 
     private static @NotNull String asHexString(final byte @NotNull [] data) {
-        final int l = data.length;
-        final char[] out = new char[l << 1];
-        for (int i = 0, j = 0; i < l; i++) {
+        final var length = data.length;
+        final var out = new char[length << 1];
+        for (int i = 0, j = 0; i < length; i++) {
             out[j++] = DIGITS[(0xF0 & data[i]) >>> 4];
             out[j++] = DIGITS[0x0F & data[i]];
         }
@@ -645,13 +582,13 @@ public class MessageLogUtil {
         if (userProperties == null) {
             return "User Properties: 'null'";
         }
-        final List<UserProperty> userPropertyList = userProperties.asList();
+        final var userPropertyList = userProperties.asList();
         if (userPropertyList.isEmpty()) {
             return "User Properties: 'null'";
         }
-        final StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < userPropertyList.size(); i++) {
-            final UserProperty userProperty = userPropertyList.get(i);
+        final var stringBuilder = new StringBuilder();
+        for (var i = 0; i < userPropertyList.size(); i++) {
+            final var userProperty = userPropertyList.get(i);
             if (i == 0) {
                 stringBuilder.append("User Properties: ");
             } else {

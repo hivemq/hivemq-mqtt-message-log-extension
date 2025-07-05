@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public class PubcompOutboundInterceptorImpl implements PubcompOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubcompOutboundInterceptorImpl.class);
+
     private final boolean verbose;
 
     public PubcompOutboundInterceptorImpl(final boolean verbose) {
@@ -40,7 +41,7 @@ public class PubcompOutboundInterceptorImpl implements PubcompOutboundIntercepto
             final @NotNull PubcompOutboundInput pubcompOutboundInput,
             final @NotNull PubcompOutboundOutput pubcompOutboundOutput) {
         try {
-            final String clientId = pubcompOutboundInput.getClientInformation().getClientId();
+            final var clientId = pubcompOutboundInput.getClientInformation().getClientId();
             MessageLogUtil.logPubcomp(pubcompOutboundInput.getPubcompPacket(), clientId, false, verbose);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound pubcomp logging: ", e);

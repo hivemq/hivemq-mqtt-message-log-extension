@@ -43,7 +43,7 @@ public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor 
             final @NotNull ConnectInboundInput connectInboundInput,
             final @NotNull ConnectInboundOutput connectInboundOutput) {
         try {
-            final ConnectPacket connectPacket = connectInboundInput.getConnectPacket();
+            final var connectPacket = connectInboundInput.getConnectPacket();
             MessageLogUtil.logConnect(connectPacket, verbose, payload);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound connect logging: ", e);

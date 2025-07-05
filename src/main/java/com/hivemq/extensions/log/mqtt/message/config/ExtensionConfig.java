@@ -83,5 +83,4 @@ public interface ExtensionConfig {
                 !isPubcompReceived() &&
                 !isPubcompSend();
     }
-
 }

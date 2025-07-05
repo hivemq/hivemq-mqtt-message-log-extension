@@ -40,7 +40,7 @@ public class DisconnectOutboundInterceptorImpl implements DisconnectOutboundInte
             final @NotNull DisconnectOutboundInput disconnectOutboundInput,
             final @NotNull DisconnectOutboundOutput disconnectOutboundOutput) {
         try {
-            final String clientId = disconnectOutboundInput.getClientInformation().getClientId();
+            final var clientId = disconnectOutboundInput.getClientInformation().getClientId();
             MessageLogUtil.logDisconnect(disconnectOutboundInput.getDisconnectPacket(), clientId, false, verbose);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound disconnect logging: ", e);

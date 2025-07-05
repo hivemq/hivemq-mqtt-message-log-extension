@@ -23,19 +23,14 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @since 1.0.0
  */
 class ExtensionConfigReaderTest {
-
-    private final int totalAvailableFlags = 21;
 
     private final @NotNull List<String> defaultProperties = List.of(ExtensionConfigProperties.CLIENT_CONNECT,
             ExtensionConfigProperties.CONNACK_SEND,
@@ -61,101 +56,98 @@ class ExtensionConfigReaderTest {
 
     @Test
     void defaultPropertiesWhenNoPropertyFileInConfigFolder(@TempDir final @NotNull Path tempDir) {
-        final ExtensionConfig extensionConfig = ExtensionConfigReader.read(tempDir.toFile());
+        final var extensionConfig = ExtensionConfigReader.read(tempDir.toFile());
         assertInstanceOf(ExtensionConfigProperties.class, extensionConfig);
 
-        final ExtensionConfigProperties extensionConfigProperties = ((ExtensionConfigProperties) extensionConfig);
-        final Properties properties = extensionConfigProperties.getProperties();
+        final var extensionConfigProperties = ((ExtensionConfigProperties) extensionConfig);
+        final var properties = extensionConfigProperties.getProperties();
 
-        assertEquals(properties.size(), totalAvailableFlags);
-        assertTrue(properties.stringPropertyNames().containsAll(defaultProperties));
-        assertTrue(defaultProperties.containsAll(properties.stringPropertyNames()));
+        assertThat(properties).hasSize(defaultProperties.size());
+        assertThat(properties.stringPropertyNames()).containsAll(defaultProperties);
+        assertThat(defaultProperties).containsAll(properties.stringPropertyNames());
 
-        assertTrue(extensionConfigProperties.isClientConnect());
-        assertTrue(extensionConfigProperties.isClientDisconnect());
-        assertTrue(extensionConfigProperties.isConnackSend());
-        assertTrue(extensionConfigProperties.isPublishReceived());
-        assertTrue(extensionConfigProperties.isPublishSend());
-        assertTrue(extensionConfigProperties.isSubscribeReceived());
-        assertTrue(extensionConfigProperties.isSubackSend());
-        assertTrue(extensionConfigProperties.isUnsubscribeReceived());
-        assertTrue(extensionConfigProperties.isUnsubackSend());
-        assertTrue(extensionConfigProperties.isPingRequestReceived());
-        assertTrue(extensionConfigProperties.isPingResponseSend());
-        assertTrue(extensionConfigProperties.isPubackReceived());
-        assertTrue(extensionConfigProperties.isPubackSend());
-        assertTrue(extensionConfigProperties.isPubrelReceived());
-        assertTrue(extensionConfigProperties.isPubrelSend());
-        assertTrue(extensionConfigProperties.isPubrecReceived());
-        assertTrue(extensionConfigProperties.isPubrecSend());
-        assertTrue(extensionConfigProperties.isPubcompReceived());
-        assertTrue(extensionConfigProperties.isPubcompSend());
-        assertFalse(extensionConfigProperties.isVerbose());
-        assertTrue(extensionConfigProperties.isPayload());
+        assertThat(extensionConfigProperties.isClientConnect()).isTrue();
+        assertThat(extensionConfigProperties.isClientDisconnect()).isTrue();
+        assertThat(extensionConfigProperties.isConnackSend()).isTrue();
+        assertThat(extensionConfigProperties.isPublishReceived()).isTrue();
+        assertThat(extensionConfigProperties.isPublishSend()).isTrue();
+        assertThat(extensionConfigProperties.isSubscribeReceived()).isTrue();
+        assertThat(extensionConfigProperties.isSubackSend()).isTrue();
+        assertThat(extensionConfigProperties.isUnsubscribeReceived()).isTrue();
+        assertThat(extensionConfigProperties.isUnsubackSend()).isTrue();
+        assertThat(extensionConfigProperties.isPingRequestReceived()).isTrue();
+        assertThat(extensionConfigProperties.isPingResponseSend()).isTrue();
+        assertThat(extensionConfigProperties.isPubackReceived()).isTrue();
+        assertThat(extensionConfigProperties.isPubackSend()).isTrue();
+        assertThat(extensionConfigProperties.isPubrelReceived()).isTrue();
+        assertThat(extensionConfigProperties.isPubrelSend()).isTrue();
+        assertThat(extensionConfigProperties.isPubrecReceived()).isTrue();
+        assertThat(extensionConfigProperties.isPubrecSend()).isTrue();
+        assertThat(extensionConfigProperties.isPubcompReceived()).isTrue();
+        assertThat(extensionConfigProperties.isPubcompSend()).isTrue();
+        assertThat(extensionConfigProperties.isVerbose()).isFalse();
+        assertThat(extensionConfigProperties.isPayload()).isTrue();
     }
 
     @Test
     void nonEmptyPropertiesWhenPropertyFileInConfigFolder() {
-        final String path = Objects.requireNonNull(getClass().getResource("/test-conf")).getPath();
-        final ExtensionConfig extensionConfig = ExtensionConfigReader.read(new File(path));
+        final var path = Objects.requireNonNull(getClass().getResource("/test-conf")).getPath();
+        final var extensionConfig = ExtensionConfigReader.read(new File(path));
         assertInstanceOf(ExtensionConfigProperties.class, extensionConfig);
 
-        final ExtensionConfigProperties extensionConfigProperties = ((ExtensionConfigProperties) extensionConfig);
-        final Properties properties = extensionConfigProperties.getProperties();
+        final var extensionConfigProperties = ((ExtensionConfigProperties) extensionConfig);
+        final var properties = extensionConfigProperties.getProperties();
 
-        assertEquals(properties.size(), totalAvailableFlags);
-        assertTrue(properties.stringPropertyNames().containsAll(defaultProperties));
-        assertTrue(defaultProperties.containsAll(properties.stringPropertyNames()));
+        assertThat(properties).hasSize(defaultProperties.size());
+        assertThat(properties.stringPropertyNames()).containsAll(defaultProperties);
+        assertThat(defaultProperties).containsAll(properties.stringPropertyNames());
 
-        assertFalse(extensionConfigProperties.isVerbose());
-        assertTrue(extensionConfigProperties.isPayload());
-        assertFalse(extensionConfigProperties.isPublishReceived());
-        assertFalse(extensionConfigProperties.isPublishSend());
+        assertThat(extensionConfigProperties.isVerbose()).isFalse();
+        assertThat(extensionConfigProperties.isPayload()).isTrue();
+        assertThat(extensionConfigProperties.isPublishReceived()).isFalse();
+        assertThat(extensionConfigProperties.isPublishSend()).isFalse();
     }
 
     @Test
     void nonEmptyPropertiesWhenConfigFileInConfFolder() {
-        final String path = Objects.requireNonNull(getClass().getResource("/test-xml-conf")).getPath();
-        final ExtensionConfig extensionConfig = ExtensionConfigReader.read(new File(path));
+        final var path = Objects.requireNonNull(getClass().getResource("/test-xml-conf")).getPath();
+        final var extensionConfig = ExtensionConfigReader.read(new File(path));
         assertInstanceOf(ExtensionConfigXml.class, extensionConfig);
 
-        final ExtensionConfigXml extensionConfigXml = (ExtensionConfigXml) extensionConfig;
-
-        assertFalse(extensionConfigXml.isVerbose());
-        assertTrue(extensionConfigXml.isPayload());
-        assertFalse(extensionConfigXml.isPublishReceived());
-        assertFalse(extensionConfigXml.isPublishSend());
+        final var extensionConfigXml = (ExtensionConfigXml) extensionConfig;
+        assertThat(extensionConfigXml.isVerbose()).isFalse();
+        assertThat(extensionConfigXml.isPayload()).isTrue();
+        assertThat(extensionConfigXml.isPublishReceived()).isFalse();
+        assertThat(extensionConfigXml.isPublishSend()).isFalse();
     }
 
     @Test
     void defaultPropertiesWhenInvalidConfigFileInConfFolder() {
-        final String path = Objects.requireNonNull(getClass().getResource("/test-invalid-xml-conf")).getPath();
-        final ExtensionConfig extensionConfig = ExtensionConfigReader.read(new File(path));
+        final var path = Objects.requireNonNull(getClass().getResource("/test-invalid-xml-conf")).getPath();
+        final var extensionConfig = ExtensionConfigReader.read(new File(path));
         assertInstanceOf(ExtensionConfigXml.class, extensionConfig);
 
-        final ExtensionConfigXml extensionConfigXml = (ExtensionConfigXml) extensionConfig;
-
-        assertTrue(extensionConfigXml.isClientConnect());
-        assertTrue(extensionConfigXml.isClientDisconnect());
-        assertTrue(extensionConfigXml.isConnackSend());
-        assertTrue(extensionConfigXml.isPublishReceived());
-        assertTrue(extensionConfigXml.isPublishSend());
-        assertTrue(extensionConfigXml.isSubscribeReceived());
-        assertTrue(extensionConfigXml.isSubackSend());
-        assertTrue(extensionConfigXml.isUnsubscribeReceived());
-        assertTrue(extensionConfigXml.isUnsubackSend());
-        assertTrue(extensionConfigXml.isPingRequestReceived());
-        assertTrue(extensionConfigXml.isPingResponseSend());
-        assertTrue(extensionConfigXml.isPubackReceived());
-        assertTrue(extensionConfigXml.isPubackSend());
-        assertTrue(extensionConfigXml.isPubrelReceived());
-        assertTrue(extensionConfigXml.isPubrelSend());
-        assertTrue(extensionConfigXml.isPubrecReceived());
-        assertTrue(extensionConfigXml.isPubrecSend());
-        assertTrue(extensionConfigXml.isPubcompReceived());
-        assertTrue(extensionConfigXml.isPubcompSend());
-        assertFalse(extensionConfigXml.isVerbose());
-        assertTrue(extensionConfigXml.isPayload());
+        final var extensionConfigXml = (ExtensionConfigXml) extensionConfig;
+        assertThat(extensionConfigXml.isClientConnect()).isTrue();
+        assertThat(extensionConfigXml.isClientDisconnect()).isTrue();
+        assertThat(extensionConfigXml.isConnackSend()).isTrue();
+        assertThat(extensionConfigXml.isPublishReceived()).isTrue();
+        assertThat(extensionConfigXml.isPublishSend()).isTrue();
+        assertThat(extensionConfigXml.isSubscribeReceived()).isTrue();
+        assertThat(extensionConfigXml.isSubackSend()).isTrue();
+        assertThat(extensionConfigXml.isUnsubscribeReceived()).isTrue();
+        assertThat(extensionConfigXml.isUnsubackSend()).isTrue();
+        assertThat(extensionConfigXml.isPingRequestReceived()).isTrue();
+        assertThat(extensionConfigXml.isPingResponseSend()).isTrue();
+        assertThat(extensionConfigXml.isPubackReceived()).isTrue();
+        assertThat(extensionConfigXml.isPubackSend()).isTrue();
+        assertThat(extensionConfigXml.isPubrelReceived()).isTrue();
+        assertThat(extensionConfigXml.isPubrelSend()).isTrue();
+        assertThat(extensionConfigXml.isPubrecReceived()).isTrue();
+        assertThat(extensionConfigXml.isPubrecSend()).isTrue();
+        assertThat(extensionConfigXml.isPubcompReceived()).isTrue();
+        assertThat(extensionConfigXml.isPubcompSend()).isTrue();
+        assertThat(extensionConfigXml.isVerbose()).isFalse();
+        assertThat(extensionConfigXml.isPayload()).isTrue();
     }
-
 }

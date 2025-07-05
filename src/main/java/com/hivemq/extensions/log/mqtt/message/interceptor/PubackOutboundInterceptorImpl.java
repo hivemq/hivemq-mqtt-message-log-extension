@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public class PubackOutboundInterceptorImpl implements PubackOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubackOutboundInterceptorImpl.class);
+
     private final boolean verbose;
 
     public PubackOutboundInterceptorImpl(final boolean verbose) {
@@ -40,7 +41,7 @@ public class PubackOutboundInterceptorImpl implements PubackOutboundInterceptor 
             final @NotNull PubackOutboundInput pubackOutboundInput,
             final @NotNull PubackOutboundOutput pubackOutboundOutput) {
         try {
-            final String clientId = pubackOutboundInput.getClientInformation().getClientId();
+            final var clientId = pubackOutboundInput.getClientInformation().getClientId();
             MessageLogUtil.logPuback(pubackOutboundInput.getPubackPacket(), clientId, false, verbose);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound puback logging: ", e);

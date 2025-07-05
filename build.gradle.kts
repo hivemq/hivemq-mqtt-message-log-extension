@@ -72,6 +72,7 @@ testing {
         "test"(JvmTestSuite::class) {
             dependencies {
                 compileOnly(libs.jetbrains.annotations)
+                implementation(libs.assertj)
                 implementation(libs.mockito)
                 implementation(libs.logback.classic)
             }
@@ -79,6 +80,7 @@ testing {
         "integrationTest"(JvmTestSuite::class) {
             dependencies {
                 compileOnly(libs.jetbrains.annotations)
+                implementation(libs.assertj)
                 implementation(libs.awaitility)
                 implementation(libs.hivemq.mqttClient)
                 implementation(libs.testcontainers.junitJupiter)

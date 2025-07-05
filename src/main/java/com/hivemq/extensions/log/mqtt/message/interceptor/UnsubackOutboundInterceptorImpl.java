@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public class UnsubackOutboundInterceptorImpl implements UnsubackOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(UnsubackOutboundInterceptorImpl.class);
+
     private final boolean verbose;
 
     public UnsubackOutboundInterceptorImpl(final boolean verbose) {

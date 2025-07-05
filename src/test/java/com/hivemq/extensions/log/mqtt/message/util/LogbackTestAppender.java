@@ -39,7 +39,7 @@ public class LogbackTestAppender extends AppenderBase<ILoggingEvent> implements 
 
     private LogbackTestAppender(final @NotNull Logger logger) {
         this.logger = logger;
-        initialLevel = logger.getLevel();
+        this.initialLevel = logger.getLevel();
     }
 
     public void attach() {

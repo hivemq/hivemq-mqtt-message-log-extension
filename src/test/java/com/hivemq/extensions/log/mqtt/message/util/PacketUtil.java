@@ -54,6 +54,7 @@ import com.hivemq.extension.sdk.api.packets.unsuback.UnsubackPacket;
 import com.hivemq.extension.sdk.api.packets.unsuback.UnsubackReasonCode;
 import com.hivemq.extension.sdk.api.packets.unsubscribe.UnsubscribePacket;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -1358,15 +1359,14 @@ public class PacketUtil {
     @SuppressWarnings("NullabilityAnnotations")
     public static class TestDisconnect implements DisconnectEventInput {
 
-        private final DisconnectedReasonCode reasonCode;
-        private final String reasonString;
-        private final UserProperties userProperties;
+        private final @Nullable DisconnectedReasonCode reasonCode;
+        private final @Nullable String reasonString;
+        private final @Nullable UserProperties userProperties;
 
         public TestDisconnect(
-                final DisconnectedReasonCode reasonCode,
-                final String reasonString,
-                final UserProperties userProperties) {
-
+                final @Nullable DisconnectedReasonCode reasonCode,
+                final @Nullable String reasonString,
+                final @Nullable UserProperties userProperties) {
             this.reasonCode = reasonCode;
             this.reasonString = reasonString;
             this.userProperties = userProperties;
@@ -1403,8 +1403,8 @@ public class PacketUtil {
         private final @NotNull List<UserProperty> userProperties;
 
         public TestUserProperties(final int amount) {
-            final List<UserProperty> properties = new ArrayList<>();
-            for (int i = 0; i < amount; i++) {
+            final var properties = new ArrayList<UserProperty>();
+            for (var i = 0; i < amount; i++) {
                 properties.add(new PacketUtil.TestUserProperty("name" + i, "value" + i));
             }
             userProperties = properties;

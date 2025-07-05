@@ -52,22 +52,18 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
         }
 
         try {
-            final ExtensionConfig config =
+            final var config =
                     ExtensionConfigReader.read(extensionStartInput.getExtensionInformation().getExtensionHomeFolder());
-
             if (config.allDisabled()) {
                 extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() +
                         " start prevented because all properties set to false");
                 return;
             }
-
-            final ClientInitializer initializer =
+            final var initializer =
                     getClientInitializerForEdition(Services.adminService().getLicenseInformation().getEdition(),
                             extensionStartInput.getServerInformation().getVersion(),
                             config);
-
             Services.initializerRegistry().setClientInitializer(initializer);
-
         } catch (final Exception e) {
             extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() +
                     " cannot be started");
@@ -84,8 +80,7 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
     }
 
     @VisibleForTesting
-    @NotNull
-    ClientInitializer getClientInitializerForEdition(
+    @NotNull ClientInitializer getClientInitializerForEdition(
             final @NotNull LicenseEdition edition,
             final @NotNull String version,
             final @NotNull ExtensionConfig config) {

@@ -64,7 +64,6 @@ public class ClientInitializerImpl implements ClientInitializer {
             Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
                     ignored -> new ConnectInboundInterceptorImpl(config.isVerbose(), config.isPayload()));
         }
-
         if (config.isConnackSend()) {
             Services.interceptorRegistry().setConnackOutboundInterceptorProvider( //
                     ignored -> new ConnackOutboundInterceptorImpl(config.isVerbose()));
@@ -73,33 +72,30 @@ public class ClientInitializerImpl implements ClientInitializer {
 
     @Override
     public void initialize(
-            final @NotNull InitializerInput initializerInput, final @NotNull ClientContext clientContext) {
+            final @NotNull InitializerInput initializerInput,
+            final @NotNull ClientContext clientContext) {
         if (config.isClientDisconnect()) {
             clientContext.addDisconnectInboundInterceptor(new DisconnectInboundInterceptorImpl(config.isVerbose()));
             clientContext.addDisconnectOutboundInterceptor(new DisconnectOutboundInterceptorImpl(config.isVerbose()));
         }
-
         if (config.isSubscribeReceived()) {
             clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(config.isVerbose()));
         }
         if (config.isSubackSend()) {
             clientContext.addSubackOutboundInterceptor(new SubackOutboundInterceptorImpl(config.isVerbose()));
         }
-
         if (config.isPingRequestReceived()) {
             clientContext.addPingReqInboundInterceptor(new PingreqInboundInterceptorImpl());
         }
         if (config.isPingResponseSend()) {
             clientContext.addPingRespOutboundInterceptor(new PingrespOutboundInterceptorImpl());
         }
-
         if (config.isUnsubscribeReceived()) {
             clientContext.addUnsubscribeInboundInterceptor(new UnsubscribeInboundInterceptorImpl(config.isVerbose()));
         }
         if (config.isUnsubackSend()) {
             clientContext.addUnsubackOutboundInterceptor(new UnsubackOutboundInterceptorImpl(config.isVerbose()));
         }
-
         if (config.isPublishReceived()) {
             clientContext.addPublishInboundInterceptor(new PublishInboundInterceptorImpl(config.isVerbose(),
                     config.isPayload()));
@@ -108,28 +104,24 @@ public class ClientInitializerImpl implements ClientInitializer {
             clientContext.addPublishOutboundInterceptor(new PublishOutboundInterceptorImpl(config.isVerbose(),
                     config.isPayload()));
         }
-
         if (config.isPubackReceived()) {
             clientContext.addPubackInboundInterceptor(new PubackInboundInterceptorImpl(config.isVerbose()));
         }
         if (config.isPubackSend()) {
             clientContext.addPubackOutboundInterceptor(new PubackOutboundInterceptorImpl(config.isVerbose()));
         }
-
         if (config.isPubrecReceived()) {
             clientContext.addPubrecInboundInterceptor(new PubrecInboundInterceptorImpl(config.isVerbose()));
         }
         if (config.isPubrecSend()) {
             clientContext.addPubrecOutboundInterceptor(new PubrecOutboundInterceptorImpl(config.isVerbose()));
         }
-
         if (config.isPubrelReceived()) {
             clientContext.addPubrelInboundInterceptor(new PubrelInboundInterceptorImpl(config.isVerbose()));
         }
         if (config.isPubrelSend()) {
             clientContext.addPubrelOutboundInterceptor(new PubrelOutboundInterceptorImpl(config.isVerbose()));
         }
-
         if (config.isPubcompReceived()) {
             clientContext.addPubcompInboundInterceptor(new PubcompInboundInterceptorImpl(config.isVerbose()));
         }

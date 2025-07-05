@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
 
@@ -68,23 +67,19 @@ public class ExtensionConfigReader {
      * @return user defined extension configuration or default configuration
      */
     public static @NotNull ExtensionConfig read(final @NotNull File extensionHomeFolder) {
-        final File configXmlFile = extensionHomeFolder.toPath().resolve(EXTENSION_CONFIG_XML_LOCATION).toFile();
-
+        final var configXmlFile = extensionHomeFolder.toPath().resolve(EXTENSION_CONFIG_XML_LOCATION).toFile();
         if (!configXmlFile.exists()) {
             return readPropertiesFile(extensionHomeFolder);
         }
-
         return readConfigXmlFile(configXmlFile);
     }
 
     private static ExtensionConfig readPropertiesFile(final @NotNull File extensionHomeFolder) {
-        final Properties properties = setDefaults();
-        final File propertiesFile = new File(extensionHomeFolder, EXTENSION_CONFIG_PROPERTIES_LOCATION);
-
+        final var properties = setDefaults();
+        final var propertiesFile = new File(extensionHomeFolder, EXTENSION_CONFIG_PROPERTIES_LOCATION);
         LOG.debug("{}: Will try to read config properties from {}",
                 EXTENSION_NAME,
                 EXTENSION_CONFIG_PROPERTIES_LOCATION);
-
         if (propertiesFile.exists()) {
             final Path extensionHomePath = extensionHomeFolder.toPath();
             final Path extensionLegacyConfigPropertiesPath =
@@ -97,26 +92,22 @@ public class ExtensionConfigReader {
                     extensionLegacyConfigPropertiesPath,
                     extensionConfigXmlPath);
         }
-
         if (!propertiesFile.canRead()) {
             LOG.info("{}: Cannot read properties file {}", EXTENSION_NAME, propertiesFile.getAbsolutePath());
         } else {
-            try (final InputStream is = new FileInputStream(propertiesFile)) {
+            try (final var is = new FileInputStream(propertiesFile)) {
                 properties.load(is);
             } catch (final Exception e) {
                 LOG.warn("{}: Could not load properties file, reason {}", EXTENSION_NAME, e.getMessage());
             }
         }
-
         LOG.info("{}: Properties initialized to: {}", EXTENSION_NAME, properties);
         return new ExtensionConfigProperties(properties);
     }
 
     private static @NotNull ExtensionConfigXml readConfigXmlFile(final @NotNull File configXmlFile) {
-        ExtensionConfigXml extensionConfigXml;
-
         LOG.debug("{}: Will try to read config properties from {}", EXTENSION_NAME, EXTENSION_CONFIG_XML_LOCATION);
-
+        ExtensionConfigXml extensionConfigXml;
         if (!configXmlFile.canRead()) {
             LOG.warn("{}: Unable to read configuration file {}, using defaults",
                     EXTENSION_NAME,
@@ -132,14 +123,13 @@ public class ExtensionConfigReader {
                         e.getMessage());
             }
         }
-
         LOG.info("{}: Properties initialized to: {}", EXTENSION_NAME, extensionConfigXml);
         return extensionConfigXml;
     }
 
     private static @NotNull Properties setDefaults() {
         // these defaults must be kept in sync with those in ExtensionConfigXml
-        final Properties properties = new Properties();
+        final var properties = new Properties();
         properties.setProperty(CLIENT_CONNECT, TRUE);
         properties.setProperty(CONNACK_SEND, TRUE);
 

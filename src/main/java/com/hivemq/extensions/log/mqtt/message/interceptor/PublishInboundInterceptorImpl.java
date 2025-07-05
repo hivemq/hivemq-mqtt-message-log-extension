@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public class PublishInboundInterceptorImpl implements PublishInboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PublishInboundInterceptorImpl.class);
+
     private final boolean verbose;
     private final boolean payload;
 
@@ -42,7 +43,7 @@ public class PublishInboundInterceptorImpl implements PublishInboundInterceptor 
             final @NotNull PublishInboundInput publishInboundInput,
             final @NotNull PublishInboundOutput publishInboundOutput) {
         try {
-            final String clientID = publishInboundInput.getClientInformation().getClientId();
+            final var clientID = publishInboundInput.getClientInformation().getClientId();
             MessageLogUtil.logPublish(String.format("Received PUBLISH from client '%s' for topic", clientID),
                     publishInboundInput.getPublishPacket(),
                     verbose,

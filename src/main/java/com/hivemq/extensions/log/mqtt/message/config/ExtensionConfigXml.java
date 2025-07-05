@@ -21,6 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @since 1.2.0
@@ -180,7 +181,7 @@ public class ExtensionConfigXml implements ExtensionConfig {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "{" +
                 "verbose=" +
                 verbose +

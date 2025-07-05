@@ -16,7 +16,6 @@
 package com.hivemq.extensions.log;
 
 import com.hivemq.client.mqtt.datatypes.MqttQos;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PayloadFormatIndicator;
 import io.github.sgtsilvio.gradle.oci.junit.jupiter.OciImages;
@@ -29,8 +28,8 @@ import org.testcontainers.utility.MountableFile;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @since 1.1.6
@@ -48,7 +47,7 @@ public class FullConfigNoPayloadIT {
 
     @Test
     void test() {
-        final Mqtt5BlockingClient client = Mqtt5Client.builder()
+        final var client = Mqtt5Client.builder()
                 .identifier("test-client")
                 .serverHost(hivemq.getHost())
                 .serverPort(hivemq.getMqttPort())
@@ -166,7 +165,7 @@ public class FullConfigNoPayloadIT {
                 .contains(
                         "Received DISCONNECT from client 'test-client': Reason Code: 'NORMAL_DISCONNECTION', Reason String: 'null', Server Reference: 'null', Session Expiry: 'null', User Properties: 'null'"));
 
-        assertFalse(hivemq.getLogs().contains("Payload: 'payload1'"));
-        assertFalse(hivemq.getLogs().contains("Payload: 'payload2'"));
+        assertThat(hivemq.getLogs()).doesNotContain("Payload: 'payload1'");
+        assertThat(hivemq.getLogs()).doesNotContain("Payload: 'payload2'");
     }
 }

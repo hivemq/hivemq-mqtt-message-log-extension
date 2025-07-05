@@ -47,7 +47,7 @@ public class FullConfigXmlIT {
 
     @Test
     void test() {
-        final Mqtt5BlockingClient client = Mqtt5Client.builder()
+        final var client = Mqtt5Client.builder()
                 .identifier("test-client")
                 .serverHost(hivemq.getHost())
                 .serverPort(hivemq.getMqttPort())
