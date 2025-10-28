@@ -45,6 +45,7 @@ import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigPrope
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.PUBREC_SEND;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.PUBREL_RECEIVED;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.PUBREL_SEND;
+import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.REDACT_PASSWORD;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.SUBACK_SEND;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.SUBSCRIBE_RECEIVED;
 import static com.hivemq.extensions.log.mqtt.message.config.ExtensionConfigProperties.TRUE;
@@ -162,6 +163,9 @@ public class ExtensionConfigReader {
         properties.setProperty(VERBOSE, FALSE);
 
         properties.setProperty(PAYLOAD, TRUE);
+
+        properties.setProperty(REDACT_PASSWORD, FALSE);
+
         return properties;
     }
 }

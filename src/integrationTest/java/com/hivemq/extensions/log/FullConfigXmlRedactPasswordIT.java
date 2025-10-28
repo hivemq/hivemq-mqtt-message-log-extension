@@ -16,6 +16,7 @@
 package com.hivemq.extensions.log;
 
 import com.hivemq.client.mqtt.datatypes.MqttQos;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PayloadFormatIndicator;
 import io.github.sgtsilvio.gradle.oci.junit.jupiter.OciImages;
@@ -31,22 +32,22 @@ import java.nio.charset.StandardCharsets;
 import static org.awaitility.Awaitility.await;
 
 /**
- * @since 1.1.3
+ * @since 1.3.0
  */
 @Testcontainers
-public class FullConfigIT {
+public class FullConfigXmlRedactPasswordIT {
 
     @Container
     final @NotNull HiveMQContainer hivemq =
             new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-mqtt-message-log-extension")
                     .asCompatibleSubstituteFor("hivemq/hivemq4")) //
-                    .withCopyToContainer(MountableFile.forClasspathResource("fullConfig.properties"),
-                            "/opt/hivemq/extensions/hivemq-mqtt-message-log-extension/mqttMessageLog.properties")
+                    .withCopyToContainer(MountableFile.forClasspathResource("fullConfigRedactPassword.xml"),
+                            "/opt/hivemq/extensions/hivemq-mqtt-message-log-extension/conf/config.xml")
                     .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()));
 
     @Test
     void test() {
-        final var client = Mqtt5Client.builder()
+        final Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier("test-client")
                 .serverHost(hivemq.getHost())
                 .serverPort(hivemq.getMqttPort())
@@ -71,7 +72,7 @@ public class FullConfigIT {
                 .send();
         await().until(() -> hivemq.getLogs()
                 .contains(
-                        "Received CONNECT from client 'test-client': Protocol version: 'V_5', Clean Start: 'true', Session Expiry Interval: '0', Keep Alive: '60', Maximum Packet Size: '268435460', Receive Maximum: '65535', Topic Alias Maximum: '0', Request Problem Information: 'true', Request Response Information: 'false', Username: 'null', Password: 'null', Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null', Will: { Topic: 'will', Payload: 'willPayload', QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'willResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'willProperty', Value: 'willValue'], Will Delay: '50000' }"));
+                        "Received CONNECT from client 'test-client': Protocol version: 'V_5', Clean Start: 'true', Session Expiry Interval: '0', Keep Alive: '60', Maximum Packet Size: '268435460', Receive Maximum: '65535', Topic Alias Maximum: '0', Request Problem Information: 'true', Request Response Information: 'false', Username: 'null', Password: <redacted>, Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null', Will: { Topic: 'will', Payload: 'willPayload', QoS: '2', Retained: 'false', Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'willCorrelationData', Response Topic: 'willResponse', Content Type: 'text/plain', Payload Format Indicator: 'UTF_8', Subscription Identifiers: '[]', User Properties: [Name: 'willProperty', Value: 'willValue'], Will Delay: '50000' }"));
         await().until(() -> hivemq.getLogs()
                 .contains(
                         "Sent CONNACK to client 'test-client': Reason Code: 'SUCCESS', Session Present: 'false', Session Expiry Interval: 'null', Assigned ClientId 'null', Maximum QoS: 'EXACTLY_ONCE', Maximum Packet Size: '268435460', Receive Maximum: '10', Topic Alias Maximum: '5', Reason String: 'null', Response Information: 'null', Server Keep Alive: 'null', Server Reference: 'null', Shared Subscription Available: 'true', Wildcards Available: 'true', Retain Available: 'true', Subscription Identifiers Available: 'true', Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null'"));

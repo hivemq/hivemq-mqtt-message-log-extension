@@ -52,7 +52,8 @@ class ExtensionConfigReaderTest {
             ExtensionConfigProperties.PUBCOMP_RECEIVED,
             ExtensionConfigProperties.PUBCOMP_SEND,
             ExtensionConfigProperties.VERBOSE,
-            ExtensionConfigProperties.PAYLOAD);
+            ExtensionConfigProperties.PAYLOAD,
+            ExtensionConfigProperties.REDACT_PASSWORD);
 
     @Test
     void defaultPropertiesWhenNoPropertyFileInConfigFolder(@TempDir final @NotNull Path tempDir) {
@@ -87,6 +88,7 @@ class ExtensionConfigReaderTest {
         assertThat(extensionConfigProperties.isPubcompSend()).isTrue();
         assertThat(extensionConfigProperties.isVerbose()).isFalse();
         assertThat(extensionConfigProperties.isPayload()).isTrue();
+        assertThat(extensionConfigProperties.isRedactPassword()).isFalse();
     }
 
     @Test
@@ -149,5 +151,6 @@ class ExtensionConfigReaderTest {
         assertThat(extensionConfigXml.isPubcompSend()).isTrue();
         assertThat(extensionConfigXml.isVerbose()).isFalse();
         assertThat(extensionConfigXml.isPayload()).isTrue();
+        assertThat(extensionConfigXml.isRedactPassword()).isFalse();
     }
 }

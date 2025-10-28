@@ -39,6 +39,9 @@ public class ExtensionConfigXml implements ExtensionConfig {
     @XmlElement(name = "payload", defaultValue = "true")
     private boolean payload = true;
 
+    @XmlElement(name = "redact-password", defaultValue = "false")
+    private boolean redactPassword = false;
+
     @XmlElement(name = "publish-received", defaultValue = "true")
     private boolean publishReceived = true;
 
@@ -102,6 +105,10 @@ public class ExtensionConfigXml implements ExtensionConfig {
 
     public boolean isPayload() {
         return payload;
+    }
+
+    public boolean isRedactPassword() {
+        return redactPassword;
     }
 
     public boolean isPublishReceived() {
@@ -187,6 +194,7 @@ public class ExtensionConfigXml implements ExtensionConfig {
                 verbose +
                 ", payload=" +
                 payload +
+                ", passwordInVerbose=" + redactPassword +
                 ", publishReceived=" +
                 publishReceived +
                 ", publishSend=" +
