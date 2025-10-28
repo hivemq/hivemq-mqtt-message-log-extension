@@ -112,7 +112,8 @@ public class MessageLogUtil {
     public static void logConnect(
             final @NotNull ConnectPacket connectPacket,
             final boolean verbose,
-            final boolean payload) {
+            final boolean payload,
+            final boolean redactPassword) {
         if (!verbose) {
             LOG.info(
                     "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'",
@@ -125,11 +126,17 @@ public class MessageLogUtil {
         final var userPropertiesAsString = getUserPropertiesAsString(connectPacket.getUserProperties());
         final var passwordAsString = getStringFromByteBuffer(connectPacket.getPassword().orElse(null));
         final String passwordProperty;
-        if (StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null) {
-            passwordProperty = "Password: '" + passwordAsString + "'";
+
+        if (redactPassword) {
+            passwordProperty = "Password: <redacted>";
         } else {
-            passwordProperty =
-                    "Password (Hex): '" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
+            if (StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null) {
+                passwordProperty = "Password: '" + passwordAsString + "'";
+            } else {
+                passwordProperty = "Password (Hex): '" +
+                        getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) +
+                        "'";
+            }
         }
         final String authDataAsString;
         if (connectPacket.getAuthenticationData().isPresent()) {
@@ -147,7 +154,7 @@ public class MessageLogUtil {
         LOG.info(
                 "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
                         " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
-                        " Request Problem Information: '{}', Request Response Information: '{}', " +
+                        " Request Problem Information: '{}', Request Response Information: '{}'," +
                         " Username: '{}', {}, Auth Method: '{}', Auth Data (Base64): '{}', {}{}",
                 connectPacket.getClientId(),
                 connectPacket.getMqttVersion().name(),

@@ -62,6 +62,8 @@ public interface ExtensionConfig {
 
     boolean isPayload();
 
+    boolean isRedactPassword();
+
     default boolean allDisabled() {
         return !isClientConnect() &&
                 !isClientDisconnect() &&

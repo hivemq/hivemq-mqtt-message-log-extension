@@ -72,7 +72,8 @@ An example configuration file is available in `conf/examples/`, which removes th
 |Config Property | Description | Default
 
 |verbose |Log detailed information about an MQTT event | false
-|payload |Log the payload of a message  | true
+|payload |Log the payload of a message | true
+|redact-password |Redact the logged password | false
 |===
 
 Normally, events only log important information.
@@ -82,6 +83,8 @@ You can see the difference between normal logging and verbose logging in the <<e
 CAUTION: use `verbose=true` very carefully as it will flood your log immediately.
 
 Set the `payload` property to `false` if you want to suppress logging payloads (i.e. for publish-received, publish-send, and will messages).
+
+Set the `redact-password` property to `true` if you want to redact the logged password.
 
 == First Steps
 
