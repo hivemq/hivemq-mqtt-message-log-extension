@@ -1,9 +1,6 @@
 name: CI Check
-
 on:
-  push:
-    branches: [ "**" ]
-
+  pull_request:
 jobs:
   check:
     runs-on: ubuntu-latest
