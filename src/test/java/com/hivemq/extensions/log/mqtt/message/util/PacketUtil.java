@@ -1513,21 +1513,8 @@ public class PacketUtil {
         };
     }
 
-    @SuppressWarnings("NullabilityAnnotations")
-    public static class TestDisconnect implements DisconnectEventInput {
-
-        private final @Nullable DisconnectedReasonCode reasonCode;
-        private final @Nullable String reasonString;
-        private final @Nullable UserProperties userProperties;
-
-        public TestDisconnect(
-                final @Nullable DisconnectedReasonCode reasonCode,
-                final @Nullable String reasonString,
-                final @Nullable UserProperties userProperties) {
-            this.reasonCode = reasonCode;
-            this.reasonString = reasonString;
-            this.userProperties = userProperties;
-        }
+    public record TestDisconnect(@Nullable DisconnectedReasonCode reasonCode, @Nullable String reasonString,
+                                 @Nullable UserProperties userProperties) implements DisconnectEventInput {
 
         @Override
         public @NotNull Optional<DisconnectedReasonCode> getReasonCode() {
@@ -1588,15 +1575,7 @@ public class PacketUtil {
         }
     }
 
-    public static class TestUserProperty implements UserProperty {
-
-        private final @NotNull String name;
-        private final @NotNull String value;
-
-        public TestUserProperty(final @NotNull String name, final @NotNull String value) {
-            this.name = name;
-            this.value = value;
-        }
+    public record TestUserProperty(@NotNull String name, @NotNull String value) implements UserProperty {
 
         @Override
         public @NotNull String getName() {

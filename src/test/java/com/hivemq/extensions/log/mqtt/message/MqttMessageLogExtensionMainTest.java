@@ -27,10 +27,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @since 1.0.0
