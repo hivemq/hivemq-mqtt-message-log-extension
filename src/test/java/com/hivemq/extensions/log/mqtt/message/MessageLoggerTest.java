@@ -23,6 +23,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.TestDisconnect;
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.TestUserProperties;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createConnectWithBinaryPassword;
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyConnack;
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyConnect;
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createEmptyDisconnect;
@@ -280,6 +281,17 @@ class MessageLoggerTest {
                         "Session Expiry Interval: '10000', Keep Alive: '0', Maximum Packet Size: '0', Receive Maximum: '0', " +
                         "Topic Alias Maximum: '0', Request Problem Information: 'false', Request Response Information: 'false', " +
                         "Username: 'null', Password: <redacted>, Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null'");
+    }
+
+    @Test
+    void test_log_connect_verbose_binary_password_shows_hex() {
+        final var logger = new MessageLogger(true, false, false);
+        logger.logConnect(createConnectWithBinaryPassword());
+        assertThat(logbackTestAppender.getEvents().get(0).getFormattedMessage()).isEqualTo(
+                "Received CONNECT from client 'clientid': Protocol version: 'V_5', Clean Start: 'false', " +
+                        "Session Expiry Interval: '10000', Keep Alive: '0', Maximum Packet Size: '0', Receive Maximum: '0', " +
+                        "Topic Alias Maximum: '0', Request Problem Information: 'false', Request Response Information: 'false', " +
+                        "Username: 'testuser', Password (Hex): '000102fffe7f', Auth Method: 'null', Auth Data (Base64): 'null', User Properties: 'null'");
     }
 
     @Test
