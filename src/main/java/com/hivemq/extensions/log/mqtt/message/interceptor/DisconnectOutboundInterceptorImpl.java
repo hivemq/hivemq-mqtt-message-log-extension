@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.disconnect.DisconnectOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.disconnect.parameter.DisconnectOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.disconnect.parameter.DisconnectOutboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +29,11 @@ import org.slf4j.LoggerFactory;
 public class DisconnectOutboundInterceptorImpl implements DisconnectOutboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(DisconnectOutboundInterceptorImpl.class);
-    private final boolean verbose;
 
-    public DisconnectOutboundInterceptorImpl(final boolean verbose) {
-        this.verbose = verbose;
+    private final @NotNull MessageLogger messageLogger;
+
+    public DisconnectOutboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class DisconnectOutboundInterceptorImpl implements DisconnectOutboundInte
             final @NotNull DisconnectOutboundOutput disconnectOutboundOutput) {
         try {
             final var clientId = disconnectOutboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logDisconnect(disconnectOutboundInput.getDisconnectPacket(), clientId, false, verbose);
+            messageLogger.logDisconnect(disconnectOutboundInput.getDisconnectPacket(), clientId, false);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound disconnect logging: ", e);
         }

@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.unsubscribe.UnsubscribeInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.unsubscribe.parameter.UnsubscribeInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsubscribe.parameter.UnsubscribeInboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,10 @@ public class UnsubscribeInboundInterceptorImpl implements UnsubscribeInboundInte
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(UnsubscribeInboundInterceptorImpl.class);
 
-    private final boolean verbose;
+    private final @NotNull MessageLogger messageLogger;
 
-    public UnsubscribeInboundInterceptorImpl(final boolean verbose) {
-        this.verbose = verbose;
+    public UnsubscribeInboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class UnsubscribeInboundInterceptorImpl implements UnsubscribeInboundInte
             final @NotNull UnsubscribeInboundInput unsubscribeInboundInput,
             final @NotNull UnsubscribeInboundOutput unsubscribeInboundOutput) {
         try {
-            MessageLogUtil.logUnsubscribe(unsubscribeInboundInput, verbose);
+            messageLogger.logUnsubscribe(unsubscribeInboundInput);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound unsubscribe logging: ", e);
         }

@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.connack.ConnackOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.connack.parameter.ConnackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.connack.parameter.ConnackOutboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,10 @@ public class ConnackOutboundInterceptorImpl implements ConnackOutboundIntercepto
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(ConnackOutboundInterceptorImpl.class);
 
-    private final boolean verbose;
+    private final @NotNull MessageLogger messageLogger;
 
-    public ConnackOutboundInterceptorImpl(final boolean verbose) {
-        this.verbose = verbose;
+    public ConnackOutboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ConnackOutboundInterceptorImpl implements ConnackOutboundIntercepto
             final @NotNull ConnackOutboundInput connackOutboundInput,
             final @NotNull ConnackOutboundOutput connackOutboundOutput) {
         try {
-            MessageLogUtil.logConnack(connackOutboundInput, verbose);
+            messageLogger.logConnack(connackOutboundInput);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound connack logging: ", e);
         }

@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.SubscribeInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.subscribe.parameter.SubscribeInboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,10 @@ public class SubscribeInboundInterceptorImpl implements SubscribeInboundIntercep
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(SubscribeInboundInterceptorImpl.class);
 
-    private final boolean verbose;
+    private final @NotNull MessageLogger messageLogger;
 
-    public SubscribeInboundInterceptorImpl(final boolean verbose) {
-        this.verbose = verbose;
+    public SubscribeInboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SubscribeInboundInterceptorImpl implements SubscribeInboundIntercep
             final @NotNull SubscribeInboundInput subscribeInboundInput,
             final @NotNull SubscribeInboundOutput subscribeInboundOutput) {
         try {
-            MessageLogUtil.logSubscribe(subscribeInboundInput, verbose);
+            messageLogger.logSubscribe(subscribeInboundInput);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound subscribe logging: ", e);
         }

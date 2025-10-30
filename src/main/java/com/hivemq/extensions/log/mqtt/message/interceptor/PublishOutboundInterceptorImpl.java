@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishOutboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +30,10 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PublishOutboundInterceptorImpl.class);
 
-    private final boolean verbose;
-    private final boolean payload;
+    private final @NotNull MessageLogger messageLogger;
 
-    public PublishOutboundInterceptorImpl(final boolean verbose, final boolean payload) {
-        this.verbose = verbose;
-        this.payload = payload;
+    public PublishOutboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -44,10 +42,8 @@ public class PublishOutboundInterceptorImpl implements PublishOutboundIntercepto
             final @NotNull PublishOutboundOutput publishOutboundOutput) {
         try {
             final var clientID = publishOutboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPublish(String.format("Sent PUBLISH to client '%s' on topic", clientID),
-                    publishOutboundInput.getPublishPacket(),
-                    verbose,
-                    payload);
+            messageLogger.logPublish(String.format("Sent PUBLISH to client '%s' on topic", clientID),
+                    publishOutboundInput.getPublishPacket());
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound publish logging: ", e);
         }

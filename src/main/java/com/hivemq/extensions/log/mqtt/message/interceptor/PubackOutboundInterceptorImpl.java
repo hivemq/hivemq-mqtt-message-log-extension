@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.puback.PubackOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.puback.parameter.PubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.puback.parameter.PubackOutboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,10 @@ public class PubackOutboundInterceptorImpl implements PubackOutboundInterceptor 
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubackOutboundInterceptorImpl.class);
 
-    private final boolean verbose;
+    private final @NotNull MessageLogger messageLogger;
 
-    public PubackOutboundInterceptorImpl(final boolean verbose) {
-        this.verbose = verbose;
+    public PubackOutboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class PubackOutboundInterceptorImpl implements PubackOutboundInterceptor 
             final @NotNull PubackOutboundOutput pubackOutboundOutput) {
         try {
             final var clientId = pubackOutboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPuback(pubackOutboundInput.getPubackPacket(), clientId, false, verbose);
+            messageLogger.logPuback(pubackOutboundInput.getPubackPacket(), clientId, false);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound puback logging: ", e);
         }

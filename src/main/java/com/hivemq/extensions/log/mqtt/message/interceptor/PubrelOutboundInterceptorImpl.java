@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.pubrel.PubrelOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.pubrel.parameter.PubrelOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pubrel.parameter.PubrelOutboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,10 @@ public class PubrelOutboundInterceptorImpl implements PubrelOutboundInterceptor 
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubrelOutboundInterceptorImpl.class);
 
-    private final boolean verbose;
+    private final @NotNull MessageLogger messageLogger;
 
-    public PubrelOutboundInterceptorImpl(final boolean verbose) {
-        this.verbose = verbose;
+    public PubrelOutboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class PubrelOutboundInterceptorImpl implements PubrelOutboundInterceptor 
             final @NotNull PubrelOutboundOutput pubrelOutboundOutput) {
         try {
             final var clientId = pubrelOutboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPubrel(pubrelOutboundInput.getPubrelPacket(), clientId, false, verbose);
+            messageLogger.logPubrel(pubrelOutboundInput.getPubrelPacket(), clientId, false);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound pubrel logging: ", e);
         }

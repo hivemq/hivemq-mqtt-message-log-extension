@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.pingreq.PingReqInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.pingreq.parameter.PingReqInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pingreq.parameter.PingReqInboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +30,18 @@ public class PingreqInboundInterceptorImpl implements PingReqInboundInterceptor 
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PingreqInboundInterceptorImpl.class);
 
+    private final @NotNull MessageLogger messageLogger;
+
+    public PingreqInboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
+    }
+
     @Override
     public void onInboundPingReq(
             final @NotNull PingReqInboundInput pingReqInboundInput,
             final @NotNull PingReqInboundOutput pingReqInboundOutput) {
         try {
-            MessageLogUtil.logPingreq(pingReqInboundInput);
+            messageLogger.logPingreq(pingReqInboundInput);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound ping request logging: ", e);
         }

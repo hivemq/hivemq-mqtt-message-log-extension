@@ -23,7 +23,7 @@ import com.hivemq.extension.sdk.api.events.client.parameters.ConnectionLostInput
 import com.hivemq.extension.sdk.api.events.client.parameters.ConnectionStartInput;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
 import com.hivemq.extension.sdk.api.events.client.parameters.ServerInitiatedDisconnectInput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,20 +35,12 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(ConnectDisconnectEventListener.class);
 
+    private final @NotNull MessageLogger messageLogger;
     private final boolean logConnect;
-    private final boolean verbose;
-    private final boolean payload;
-    private final boolean redactPassword;
 
-    public ConnectDisconnectEventListener(
-            final boolean logConnect,
-            final boolean verbose,
-            final boolean payload,
-            final boolean redactPassword) {
+    public ConnectDisconnectEventListener(final @NotNull MessageLogger messageLogger, final boolean logConnect) {
+        this.messageLogger = messageLogger;
         this.logConnect = logConnect;
-        this.verbose = verbose;
-        this.payload = payload;
-        this.redactPassword = redactPassword;
     }
 
     @Override
@@ -58,7 +50,7 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
         }
         try {
             final var connectPacket = connectionStartInput.getConnectPacket();
-            MessageLogUtil.logConnect(connectPacket, verbose, payload, redactPassword);
+            messageLogger.logConnect(connectPacket);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound connect logging: ", e);
         }
@@ -76,8 +68,8 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
 
     @Override
     public void onAuthenticationFailedDisconnect(final @NotNull AuthenticationFailedInput authenticationFailedInput) {
-        MessageLogUtil.logDisconnect(String.format("Sent DISCONNECT to client '%s' because authentication failed.",
-                authenticationFailedInput.getClientInformation().getClientId()), authenticationFailedInput, verbose);
+        messageLogger.logDisconnect(String.format("Sent DISCONNECT to client '%s' because authentication failed.",
+                authenticationFailedInput.getClientInformation().getClientId()), authenticationFailedInput);
     }
 
     @Override
@@ -87,17 +79,13 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
 
     @Override
     public void onClientInitiatedDisconnect(final @NotNull ClientInitiatedDisconnectInput clientInitiatedDisconnectInput) {
-        MessageLogUtil.logDisconnect(String.format("Received DISCONNECT from client '%s':",
-                        clientInitiatedDisconnectInput.getClientInformation().getClientId()),
-                clientInitiatedDisconnectInput,
-                verbose);
+        messageLogger.logDisconnect(String.format("Received DISCONNECT from client '%s':",
+                clientInitiatedDisconnectInput.getClientInformation().getClientId()), clientInitiatedDisconnectInput);
     }
 
     @Override
     public void onServerInitiatedDisconnect(final @NotNull ServerInitiatedDisconnectInput serverInitiatedDisconnectInput) {
-        MessageLogUtil.logDisconnect(String.format("Sent DISCONNECT to client '%s':",
-                        serverInitiatedDisconnectInput.getClientInformation().getClientId()),
-                serverInitiatedDisconnectInput,
-                verbose);
+        messageLogger.logDisconnect(String.format("Sent DISCONNECT to client '%s':",
+                serverInitiatedDisconnectInput.getClientInformation().getClientId()), serverInitiatedDisconnectInput);
     }
 }
