@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.UnsubackOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.unsuback.parameter.UnsubackOutboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,10 @@ public class UnsubackOutboundInterceptorImpl implements UnsubackOutboundIntercep
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(UnsubackOutboundInterceptorImpl.class);
 
-    private final boolean verbose;
+    private final @NotNull MessageLogger messageLogger;
 
-    public UnsubackOutboundInterceptorImpl(final boolean verbose) {
-        this.verbose = verbose;
+    public UnsubackOutboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class UnsubackOutboundInterceptorImpl implements UnsubackOutboundIntercep
             final @NotNull UnsubackOutboundInput unsubackOutboundInput,
             final @NotNull UnsubackOutboundOutput unsubackOutboundOutput) {
         try {
-            MessageLogUtil.logUnsuback(unsubackOutboundInput, verbose);
+            messageLogger.logUnsuback(unsubackOutboundInput);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound unsuback logging: ", e);
         }

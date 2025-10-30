@@ -19,6 +19,7 @@ import com.hivemq.extension.sdk.api.client.ClientContext;
 import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import com.hivemq.extensions.log.mqtt.message.config.ExtensionConfig;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectDisconnectEventListener;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectInboundInterceptorImpl;
@@ -35,9 +36,11 @@ import org.jetbrains.annotations.NotNull;
 public class ClientInitializerImpl4_2 implements ClientInitializer {
 
     private final @NotNull ExtensionConfig config;
+    private final @NotNull MessageLogger messageLogger;
 
     public ClientInitializerImpl4_2(final @NotNull ExtensionConfig config) {
         this.config = config;
+        this.messageLogger = new MessageLogger(config.isVerbose(), config.isPayload(), config.isRedactPassword());
         init();
     }
 
@@ -47,21 +50,13 @@ public class ClientInitializerImpl4_2 implements ClientInitializer {
     private void init() {
         if (config.isClientConnect() && config.isClientDisconnect()) {
             Services.eventRegistry().setClientLifecycleEventListener( //
-                    input -> new ConnectDisconnectEventListener(true,
-                            config.isVerbose(),
-                            config.isPayload(),
-                            config.isRedactPassword()));
+                    input -> new ConnectDisconnectEventListener(messageLogger, true));
         } else if (config.isClientDisconnect()) {
             Services.eventRegistry().setClientLifecycleEventListener( //
-                    input -> new ConnectDisconnectEventListener(false,
-                            config.isVerbose(),
-                            config.isPayload(),
-                            config.isRedactPassword()));
+                    input -> new ConnectDisconnectEventListener(messageLogger, false));
         } else if (config.isClientConnect()) {
             Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
-                    input -> new ConnectInboundInterceptorImpl(config.isVerbose(),
-                            config.isPayload(),
-                            config.isRedactPassword()));
+                    input -> new ConnectInboundInterceptorImpl(messageLogger));
         }
     }
 
@@ -70,15 +65,13 @@ public class ClientInitializerImpl4_2 implements ClientInitializer {
             final @NotNull InitializerInput initializerInput,
             final @NotNull ClientContext clientContext) {
         if (config.isSubscribeReceived()) {
-            clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(messageLogger));
         }
         if (config.isPublishReceived()) {
-            clientContext.addPublishInboundInterceptor(new PublishInboundInterceptorImpl(config.isVerbose(),
-                    config.isPayload()));
+            clientContext.addPublishInboundInterceptor(new PublishInboundInterceptorImpl(messageLogger));
         }
         if (config.isPublishSend()) {
-            clientContext.addPublishOutboundInterceptor(new PublishOutboundInterceptorImpl(config.isVerbose(),
-                    config.isPayload()));
+            clientContext.addPublishOutboundInterceptor(new PublishOutboundInterceptorImpl(messageLogger));
         }
     }
 }

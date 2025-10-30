@@ -19,6 +19,7 @@ import com.hivemq.extension.sdk.api.client.ClientContext;
 import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import com.hivemq.extensions.log.mqtt.message.config.ExtensionConfig;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnackOutboundInterceptorImpl;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectInboundInterceptorImpl;
@@ -50,9 +51,11 @@ import org.jetbrains.annotations.NotNull;
 public class ClientInitializerImpl implements ClientInitializer {
 
     private final @NotNull ExtensionConfig config;
+    private final @NotNull MessageLogger messageLogger;
 
     public ClientInitializerImpl(final @NotNull ExtensionConfig config) {
         this.config = config;
+        this.messageLogger = new MessageLogger(config.isVerbose(), config.isPayload(), config.isRedactPassword());
         init();
     }
 
@@ -62,13 +65,11 @@ public class ClientInitializerImpl implements ClientInitializer {
     private void init() {
         if (config.isClientConnect()) {
             Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
-                    ignored -> new ConnectInboundInterceptorImpl(config.isVerbose(),
-                            config.isPayload(),
-                            config.isRedactPassword()));
+                    ignored -> new ConnectInboundInterceptorImpl(messageLogger));
         }
         if (config.isConnackSend()) {
             Services.interceptorRegistry().setConnackOutboundInterceptorProvider( //
-                    ignored -> new ConnackOutboundInterceptorImpl(config.isVerbose()));
+                    ignored -> new ConnackOutboundInterceptorImpl(messageLogger));
         }
     }
 
@@ -77,58 +78,56 @@ public class ClientInitializerImpl implements ClientInitializer {
             final @NotNull InitializerInput initializerInput,
             final @NotNull ClientContext clientContext) {
         if (config.isClientDisconnect()) {
-            clientContext.addDisconnectInboundInterceptor(new DisconnectInboundInterceptorImpl(config.isVerbose()));
-            clientContext.addDisconnectOutboundInterceptor(new DisconnectOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addDisconnectInboundInterceptor(new DisconnectInboundInterceptorImpl(messageLogger));
+            clientContext.addDisconnectOutboundInterceptor(new DisconnectOutboundInterceptorImpl(messageLogger));
         }
         if (config.isSubscribeReceived()) {
-            clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addSubscribeInboundInterceptor(new SubscribeInboundInterceptorImpl(messageLogger));
         }
         if (config.isSubackSend()) {
-            clientContext.addSubackOutboundInterceptor(new SubackOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addSubackOutboundInterceptor(new SubackOutboundInterceptorImpl(messageLogger));
         }
         if (config.isPingRequestReceived()) {
-            clientContext.addPingReqInboundInterceptor(new PingreqInboundInterceptorImpl());
+            clientContext.addPingReqInboundInterceptor(new PingreqInboundInterceptorImpl(messageLogger));
         }
         if (config.isPingResponseSend()) {
-            clientContext.addPingRespOutboundInterceptor(new PingrespOutboundInterceptorImpl());
+            clientContext.addPingRespOutboundInterceptor(new PingrespOutboundInterceptorImpl(messageLogger));
         }
         if (config.isUnsubscribeReceived()) {
-            clientContext.addUnsubscribeInboundInterceptor(new UnsubscribeInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addUnsubscribeInboundInterceptor(new UnsubscribeInboundInterceptorImpl(messageLogger));
         }
         if (config.isUnsubackSend()) {
-            clientContext.addUnsubackOutboundInterceptor(new UnsubackOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addUnsubackOutboundInterceptor(new UnsubackOutboundInterceptorImpl(messageLogger));
         }
         if (config.isPublishReceived()) {
-            clientContext.addPublishInboundInterceptor(new PublishInboundInterceptorImpl(config.isVerbose(),
-                    config.isPayload()));
+            clientContext.addPublishInboundInterceptor(new PublishInboundInterceptorImpl(messageLogger));
         }
         if (config.isPublishSend()) {
-            clientContext.addPublishOutboundInterceptor(new PublishOutboundInterceptorImpl(config.isVerbose(),
-                    config.isPayload()));
+            clientContext.addPublishOutboundInterceptor(new PublishOutboundInterceptorImpl(messageLogger));
         }
         if (config.isPubackReceived()) {
-            clientContext.addPubackInboundInterceptor(new PubackInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubackInboundInterceptor(new PubackInboundInterceptorImpl(messageLogger));
         }
         if (config.isPubackSend()) {
-            clientContext.addPubackOutboundInterceptor(new PubackOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubackOutboundInterceptor(new PubackOutboundInterceptorImpl(messageLogger));
         }
         if (config.isPubrecReceived()) {
-            clientContext.addPubrecInboundInterceptor(new PubrecInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubrecInboundInterceptor(new PubrecInboundInterceptorImpl(messageLogger));
         }
         if (config.isPubrecSend()) {
-            clientContext.addPubrecOutboundInterceptor(new PubrecOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubrecOutboundInterceptor(new PubrecOutboundInterceptorImpl(messageLogger));
         }
         if (config.isPubrelReceived()) {
-            clientContext.addPubrelInboundInterceptor(new PubrelInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubrelInboundInterceptor(new PubrelInboundInterceptorImpl(messageLogger));
         }
         if (config.isPubrelSend()) {
-            clientContext.addPubrelOutboundInterceptor(new PubrelOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubrelOutboundInterceptor(new PubrelOutboundInterceptorImpl(messageLogger));
         }
         if (config.isPubcompReceived()) {
-            clientContext.addPubcompInboundInterceptor(new PubcompInboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubcompInboundInterceptor(new PubcompInboundInterceptorImpl(messageLogger));
         }
         if (config.isPubcompSend()) {
-            clientContext.addPubcompOutboundInterceptor(new PubcompOutboundInterceptorImpl(config.isVerbose()));
+            clientContext.addPubcompOutboundInterceptor(new PubcompOutboundInterceptorImpl(messageLogger));
         }
     }
 }

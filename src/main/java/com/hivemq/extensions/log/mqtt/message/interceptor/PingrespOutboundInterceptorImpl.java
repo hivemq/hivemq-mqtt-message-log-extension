@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.pingresp.PingRespOutboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.pingresp.parameter.PingRespOutboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pingresp.parameter.PingRespOutboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +30,18 @@ public class PingrespOutboundInterceptorImpl implements PingRespOutboundIntercep
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PingrespOutboundInterceptorImpl.class);
 
+    private final @NotNull MessageLogger messageLogger;
+
+    public PingrespOutboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
+    }
+
     @Override
     public void onOutboundPingResp(
             final @NotNull PingRespOutboundInput pingRespOutboundInput,
             final @NotNull PingRespOutboundOutput pingRespOutboundOutput) {
         try {
-            MessageLogUtil.logPingresp(pingRespOutboundInput);
+            messageLogger.logPingresp(pingRespOutboundInput);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at outbound ping response logging: ", e);
         }

@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.pubcomp.PubcompInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.pubcomp.parameter.PubcompInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.pubcomp.parameter.PubcompInboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,10 @@ public class PubcompInboundInterceptorImpl implements PubcompInboundInterceptor 
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PubcompInboundInterceptorImpl.class);
 
-    private final boolean verbose;
+    private final @NotNull MessageLogger messageLogger;
 
-    public PubcompInboundInterceptorImpl(final boolean verbose) {
-        this.verbose = verbose;
+    public PubcompInboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class PubcompInboundInterceptorImpl implements PubcompInboundInterceptor 
             final @NotNull PubcompInboundOutput pubcompInboundOutput) {
         try {
             final var clientId = pubcompInboundInput.getClientInformation().getClientId();
-            MessageLogUtil.logPubcomp(pubcompInboundInput.getPubcompPacket(), clientId, true, verbose);
+            messageLogger.logPubcomp(pubcompInboundInput.getPubcompPacket(), clientId, true);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound pubcomp logging: ", e);
         }

@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.connect.ConnectInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.connect.parameter.ConnectInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.connect.parameter.ConnectInboundOutput;
-import com.hivemq.extensions.log.mqtt.message.util.MessageLogUtil;
+import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +29,11 @@ import org.slf4j.LoggerFactory;
 public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor {
 
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(ConnectInboundInterceptorImpl.class);
-    private final boolean verbose;
-    private final boolean payload;
-    private final boolean redactPassword;
 
-    public ConnectInboundInterceptorImpl(final boolean verbose, final boolean payload, final boolean redactPassword) {
-        this.verbose = verbose;
-        this.payload = payload;
-        this.redactPassword = redactPassword;
+    private final @NotNull MessageLogger messageLogger;
+
+    public ConnectInboundInterceptorImpl(final @NotNull MessageLogger messageLogger) {
+        this.messageLogger = messageLogger;
     }
 
     @Override
@@ -45,7 +42,7 @@ public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor 
             final @NotNull ConnectInboundOutput connectInboundOutput) {
         try {
             final var connectPacket = connectInboundInput.getConnectPacket();
-            MessageLogUtil.logConnect(connectPacket, verbose, payload, redactPassword);
+            messageLogger.logConnect(connectPacket);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound connect logging: ", e);
         }
