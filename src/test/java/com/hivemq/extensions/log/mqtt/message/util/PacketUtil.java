@@ -667,6 +667,92 @@ public class PacketUtil {
         };
     }
 
+    public static ConnectPacket createConnectWithBinaryPassword() {
+        return new ConnectPacket() {
+            @Override
+            public @NotNull MqttVersion getMqttVersion() {
+                return MqttVersion.V_5;
+            }
+
+            @Override
+            public @NotNull String getClientId() {
+                return "clientid";
+            }
+
+            @Override
+            public boolean getCleanStart() {
+                return false;
+            }
+
+            @Override
+            public @NotNull Optional<WillPublishPacket> getWillPublish() {
+                return Optional.empty();
+            }
+
+            @Override
+            public long getSessionExpiryInterval() {
+                return 10000;
+            }
+
+            @Override
+            public int getKeepAlive() {
+                return 0;
+            }
+
+            @Override
+            public long getMaximumPacketSize() {
+                return 0;
+            }
+
+            @Override
+            public int getReceiveMaximum() {
+                return 0;
+            }
+
+            @Override
+            public int getTopicAliasMaximum() {
+                return 0;
+            }
+
+            @Override
+            public boolean getRequestProblemInformation() {
+                return false;
+            }
+
+            @Override
+            public boolean getRequestResponseInformation() {
+                return false;
+            }
+
+            @Override
+            public @NotNull Optional<String> getAuthenticationMethod() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull Optional<ByteBuffer> getAuthenticationData() {
+                return Optional.empty();
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return mock(UserProperties.class);
+            }
+
+            @Override
+            public @NotNull Optional<String> getUserName() {
+                return Optional.of("testuser");
+            }
+
+            @Override
+            public @NotNull Optional<ByteBuffer> getPassword() {
+                // create a password with non-ASCII printable bytes (binary data)
+                final var binaryPassword = new byte[]{0x00, 0x01, 0x02, (byte) 0xFF, (byte) 0xFE, 0x7F};
+                return Optional.of(ByteBuffer.wrap(binaryPassword));
+            }
+        };
+    }
+
     public static ConnectPacket createFullConnect() {
         return new ConnectPacket() {
             @Override
