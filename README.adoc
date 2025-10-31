@@ -74,6 +74,7 @@ An example configuration file is available in `conf/examples/`, which removes th
 |verbose |Log detailed information about an MQTT event | false
 |payload |Log the payload of a message | true
 |redact-password |Redact the logged password | false
+|output-format |Output format for log messages (plain-text or json) | plain-text
 |===
 
 Normally, events only log important information.
@@ -85,6 +86,64 @@ CAUTION: use `verbose=true` very carefully as it will flood your log immediately
 Set the `payload` property to `false` if you want to suppress logging payloads (i.e. for publish-received, publish-send, and will messages).
 
 Set the `redact-password` property to `true` if you want to redact the logged password.
+
+=== Output Formats
+
+The extension supports two output formats for log messages:
+
+==== Plain Text (Default)
+
+The traditional human-readable format, ideal for viewing logs directly or during development.
+
+*Configuration:*
+
+[source,xml]
+----
+<output-format>plain-text</output-format>
+----
+
+*Example output:*
+
+[source,text]
+----
+Received CONNECT from client 'client-id': Protocol version: 'V_5', Clean Start: 'false', Session Expiry Interval: '10000'
+----
+
+NOTE: Binary data (such as passwords, authentication data, and payloads) is encoded as Hex in plain text format.
+
+==== JSON
+
+A structured JSON format, ideal for log aggregation tools, parsing, and integration with monitoring systems.
+
+*Configuration:*
+
+[source,xml]
+----
+<output-format>json</output-format>
+----
+
+*Example output:*
+
+[source,json]
+----
+{
+  "timestamp": 1640995200000,
+  "messageType": "CONNECT",
+  "direction": "INBOUND",
+  "clientId": "client-id",
+  "protocolVersion": "V_5",
+  "cleanStart": false,
+  "sessionExpiryInterval": 10000,
+  "keepAlive": 20000,
+  "maximumPacketSize": 40000,
+  "receiveMaximum": 30000,
+  "topicAliasMaximum": 50000,
+  "requestProblemInformation": true,
+  "requestResponseInformation": false
+}
+----
+
+NOTE: Binary data (such as passwords, authentication data, and payloads) is encoded as Base64 in JSON format.
 
 == First Steps
 

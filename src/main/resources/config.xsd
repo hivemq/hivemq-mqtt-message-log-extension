@@ -20,6 +20,7 @@
     <xs:element name="hivemq-mqtt-message-log-extension" type="PropertyEntity"/>
     <xs:complexType name="PropertyEntity">
         <xs:all>
+            <xs:element name="output-format" type="outputFormatType" minOccurs="0" default="plain-text"/>
             <xs:element name="verbose" type="xs:boolean" minOccurs="0"/>
             <xs:element name="payload" type="xs:boolean" minOccurs="0"/>
             <xs:element name="redact-password" type="xs:boolean" minOccurs="0"/>
@@ -44,5 +45,12 @@
             <xs:element name="pubcomp-send" type="xs:boolean" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
+
+    <xs:simpleType name="outputFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="plain-text"/>
+            <xs:enumeration value="json"/>
+        </xs:restriction>
+    </xs:simpleType>
 
 </xs:schema>

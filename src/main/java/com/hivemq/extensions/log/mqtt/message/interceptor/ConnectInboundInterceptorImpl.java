@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.connect.ConnectInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.connect.parameter.ConnectInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.connect.parameter.ConnectInboundOutput;
-import com.hivemq.extensions.log.mqtt.message.MessageLogger;
+import com.hivemq.extensions.log.mqtt.message.logger.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

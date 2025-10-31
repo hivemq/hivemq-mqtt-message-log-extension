@@ -15,6 +15,9 @@
  */
 package com.hivemq.extensions.log.mqtt.message.config;
 
+import com.hivemq.extensions.log.mqtt.message.logger.OutputFormat;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @since 1.2.0
  */
@@ -63,6 +66,8 @@ public interface ExtensionConfig {
     boolean isPayload();
 
     boolean isRedactPassword();
+
+    @NotNull OutputFormat getOutputFormat();
 
     default boolean allDisabled() {
         return !isClientConnect() &&

@@ -23,7 +23,7 @@ import com.hivemq.extension.sdk.api.events.client.parameters.ConnectionLostInput
 import com.hivemq.extension.sdk.api.events.client.parameters.ConnectionStartInput;
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
 import com.hivemq.extension.sdk.api.events.client.parameters.ServerInitiatedDisconnectInput;
-import com.hivemq.extensions.log.mqtt.message.MessageLogger;
+import com.hivemq.extensions.log.mqtt.message.logger.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +68,7 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
 
     @Override
     public void onAuthenticationFailedDisconnect(final @NotNull AuthenticationFailedInput authenticationFailedInput) {
-        messageLogger.logDisconnect(String.format("Sent DISCONNECT to client '%s' because authentication failed.",
+        messageLogger.logDisconnect(String.format("Sent DISCONNECT to client '%s' because authentication failed",
                 authenticationFailedInput.getClientInformation().getClientId()), authenticationFailedInput);
     }
 
@@ -79,13 +79,13 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
 
     @Override
     public void onClientInitiatedDisconnect(final @NotNull ClientInitiatedDisconnectInput clientInitiatedDisconnectInput) {
-        messageLogger.logDisconnect(String.format("Received DISCONNECT from client '%s':",
+        messageLogger.logDisconnect(String.format("Received DISCONNECT from client '%s'",
                 clientInitiatedDisconnectInput.getClientInformation().getClientId()), clientInitiatedDisconnectInput);
     }
 
     @Override
     public void onServerInitiatedDisconnect(final @NotNull ServerInitiatedDisconnectInput serverInitiatedDisconnectInput) {
-        messageLogger.logDisconnect(String.format("Sent DISCONNECT to client '%s':",
+        messageLogger.logDisconnect(String.format("Sent DISCONNECT to client '%s'",
                 serverInitiatedDisconnectInput.getClientInformation().getClientId()), serverInitiatedDisconnectInput);
     }
 }

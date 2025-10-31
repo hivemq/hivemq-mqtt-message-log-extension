@@ -18,7 +18,7 @@ package com.hivemq.extensions.log.mqtt.message.interceptor;
 import com.hivemq.extension.sdk.api.interceptor.puback.PubackInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.puback.parameter.PubackInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.puback.parameter.PubackInboundOutput;
-import com.hivemq.extensions.log.mqtt.message.MessageLogger;
+import com.hivemq.extensions.log.mqtt.message.logger.MessageLogger;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
