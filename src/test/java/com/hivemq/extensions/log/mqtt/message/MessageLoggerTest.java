@@ -42,6 +42,7 @@ import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullD
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPuback;
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPubcomp;
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPublish;
+import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPublishWithBinaryPayload;
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPubrec;
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullPubrel;
 import static com.hivemq.extensions.log.mqtt.message.util.PacketUtil.createFullSuback;
@@ -398,6 +399,26 @@ class MessageLoggerTest {
                         " Message Expiry Interval: 'null', Duplicate Delivery: 'false', Correlation Data: 'null'," +
                         " Response Topic: 'null', Content Type: 'null', Payload Format Indicator: 'null'," +
                         " Subscription Identifiers: '[]', User Properties: 'null'");
+    }
+
+    @Test
+    void test_log_publish_verbose_binary_payload_shows_hex() {
+        final var logger = new MessageLogger(true, true, false);
+        logger.logPublish("Sent PUBLISH to client 'test-client-id' on topic", createFullPublishWithBinaryPayload());
+        assertThat(logbackTestAppender.getEvents().get(0).getFormattedMessage()).isEqualTo(
+                "Sent PUBLISH to client 'test-client-id' on topic 'topic': Payload (Hex): '000102fffe7f48656c6c6f', QoS: '1', Retained: 'false'," +
+                        " Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'data'," +
+                        " Response Topic: 'response topic', Content Type: 'application/octet-stream', Payload Format Indicator: 'UNSPECIFIED'," +
+                        " Subscription Identifiers: '[1, 2, 3, 4]'," +
+                        " User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']");
+    }
+
+    @Test
+    void test_log_publish_not_verbose_binary_payload_shows_hex() {
+        final var logger = new MessageLogger(false, true, false);
+        logger.logPublish("Sent PUBLISH to client 'test-client-id' on topic", createFullPublishWithBinaryPayload());
+        assertThat(logbackTestAppender.getEvents().get(0).getFormattedMessage()).isEqualTo(
+                "Sent PUBLISH to client 'test-client-id' on topic 'topic': Payload (Hex): '000102fffe7f48656c6c6f', QoS: '1', Retained: 'false'");
     }
 
     @Test

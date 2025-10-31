@@ -475,16 +475,23 @@ public class MessageLogger {
     private @NotNull String getPublishAsString(final @NotNull PublishPacket publishPacket) {
         final var qos = publishPacket.getQos().getQosNumber();
         final var retained = publishPacket.getRetain();
-        final String payloadAsString;
+        final String payloadProperty;
         if (payload && publishPacket.getPayload().isPresent()) {
-            payloadAsString = getStringFromByteBuffer(publishPacket.getPayload().get());
+            final var payloadAsString = getStringFromByteBuffer(publishPacket.getPayload().get());
+            if (StringUtils.isAsciiPrintable(payloadAsString)) {
+                payloadProperty = "Payload: '" + payloadAsString + "'";
+            } else {
+                payloadProperty = "Payload (Hex): '" +
+                        getHexStringFromByteBuffer(publishPacket.getPayload().get()) +
+                        "'";
+            }
         } else {
-            payloadAsString = null;
+            payloadProperty = null;
         }
         if (!verbose && !payload) {
-            return String.format("QoS: '%s'," + " Retained: '%s'", qos, retained);
+            return String.format("QoS: '%s', Retained: '%s'", qos, retained);
         } else if (!verbose) {
-            return String.format("Payload: '%s'," + " QoS: '%s'," + " Retained: '%s'", payloadAsString, qos, retained);
+            return String.format("%s, QoS: '%s', Retained: '%s'", payloadProperty, qos, retained);
         }
         final var contentType = publishPacket.getContentType();
         final var correlationDataString = getStringFromByteBuffer(publishPacket.getCorrelationData().orElse(null));
@@ -516,7 +523,7 @@ public class MessageLogger {
                     subscriptionIdentifiers,
                     userPropertiesAsString);
         }
-        return String.format("Payload: '%s'," +
+        return String.format("%s," +
                         " QoS: '%s'," +
                         " Retained: '%s'," +
                         " Message Expiry Interval: '%s'," +
@@ -527,7 +534,7 @@ public class MessageLogger {
                         " Payload Format Indicator: '%s'," +
                         " Subscription Identifiers: '%s'," +
                         " %s",
-                payloadAsString,
+                payloadProperty,
                 qos,
                 retained,
                 messageExpiryInterval.orElse(null),

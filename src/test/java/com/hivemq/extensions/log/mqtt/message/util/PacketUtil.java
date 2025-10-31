@@ -583,6 +583,77 @@ public class PacketUtil {
         };
     }
 
+    public static PublishPacket createFullPublishWithBinaryPayload() {
+        return new PublishPacket() {
+            @Override
+            public boolean getDupFlag() {
+                return false;
+            }
+
+            @Override
+            public @NotNull Qos getQos() {
+                return Qos.AT_LEAST_ONCE;
+            }
+
+            @Override
+            public boolean getRetain() {
+                return false;
+            }
+
+            @Override
+            public @NotNull String getTopic() {
+                return "topic";
+            }
+
+            @Override
+            public int getPacketId() {
+                return 0;
+            }
+
+            @Override
+            public @NotNull Optional<PayloadFormatIndicator> getPayloadFormatIndicator() {
+                return Optional.of(PayloadFormatIndicator.UNSPECIFIED);
+            }
+
+            @Override
+            public @NotNull Optional<Long> getMessageExpiryInterval() {
+                return Optional.of(10000L);
+            }
+
+            @Override
+            public @NotNull Optional<String> getResponseTopic() {
+                return Optional.of("response topic");
+            }
+
+            @Override
+            public @NotNull Optional<ByteBuffer> getCorrelationData() {
+                return Optional.of(ByteBuffer.wrap("data".getBytes()));
+            }
+
+            @Override
+            public @NotNull List<Integer> getSubscriptionIdentifiers() {
+                return List.of(1, 2, 3, 4);
+            }
+
+            @Override
+            public @NotNull Optional<String> getContentType() {
+                return Optional.of("application/octet-stream");
+            }
+
+            @Override
+            public @NotNull Optional<ByteBuffer> getPayload() {
+                // create a binary payload with non-printable bytes
+                final var binaryPayload = new byte[]{0x00, 0x01, 0x02, (byte) 0xFF, (byte) 0xFE, 0x7F, 0x48, 0x65, 0x6C, 0x6C, 0x6F};
+                return Optional.of(ByteBuffer.wrap(binaryPayload));
+            }
+
+            @Override
+            public @NotNull UserProperties getUserProperties() {
+                return new PacketUtil.TestUserProperties(2);
+            }
+        };
+    }
+
     public static ConnectPacket createEmptyConnect() {
         return new ConnectPacket() {
             @Override
