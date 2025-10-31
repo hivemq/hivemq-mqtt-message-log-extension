@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hivemq.extensions.log.mqtt.message;
+package com.hivemq.extensions.log.mqtt.message.logger;
 
 import com.hivemq.extension.sdk.api.events.client.parameters.DisconnectEventInput;
 import com.hivemq.extension.sdk.api.interceptor.connack.parameter.ConnackOutboundInput;
@@ -36,47 +36,53 @@ import com.hivemq.extension.sdk.api.packets.subscribe.Subscription;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
 import java.util.Base64;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static com.hivemq.extensions.log.mqtt.message.util.StringUtil.getHexStringFromByteBuffer;
+import static com.hivemq.extensions.log.mqtt.message.util.StringUtil.getStringFromByteBuffer;
 
 /**
- * @since 1.0.0
+ * Plain text formatter for MQTT message logging.
+ * Produces human-readable log output in the traditional format.
+ *
+ * @since 1.3.0
  */
-public class MessageLogger {
+class PlainTextMessageLogger implements MessageLogger {
 
-    static final @NotNull Logger LOG = LoggerFactory.getLogger(MessageLogger.class);
+    protected final boolean verbose;
+    protected final boolean payload;
+    protected final boolean redactPassword;
 
-    private static final char @NotNull [] DIGITS =
-            {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-
-    private final boolean verbose;
-    private final boolean payload;
-    private final boolean redactPassword;
-
-    public MessageLogger(final boolean verbose, final boolean payload, final boolean redactPassword) {
+    /**
+     * Creates a PlainTextMessageLogger with the specified configuration.
+     *
+     * @param verbose        whether to include verbose details
+     * @param payload        whether to include message payloads
+     * @param redactPassword whether to redact passwords
+     */
+    protected PlainTextMessageLogger(final boolean verbose, final boolean payload, final boolean redactPassword) {
         this.verbose = verbose;
         this.payload = payload;
         this.redactPassword = redactPassword;
     }
 
+    @Override
     public void logDisconnect(final @NotNull String message, final @NotNull DisconnectEventInput disconnectEventInput) {
         if (!verbose) {
-            LOG.info(message + " Reason Code: '{}'", disconnectEventInput.getReasonCode().orElse(null));
+            LOG.info("{}: Reason Code: '{}'", message, disconnectEventInput.getReasonCode().orElse(null));
             return;
         }
         final var userPropertiesAsString =
                 getUserPropertiesAsString(disconnectEventInput.getUserProperties().orElse(null));
-        LOG.info(message + " Reason Code: '{}', Reason String: '{}', {}",
+        LOG.info("{}: Reason Code: '{}', Reason String: '{}', {}",
+                message,
                 disconnectEventInput.getReasonCode().orElse(null),
                 disconnectEventInput.getReasonString().orElse(null),
                 userPropertiesAsString);
     }
 
+    @Override
     public void logDisconnect(
             final @NotNull DisconnectPacket disconnectPacket,
             final @NotNull String clientId,
@@ -115,6 +121,7 @@ public class MessageLogger {
         }
     }
 
+    @Override
     public void logConnect(final @NotNull ConnectPacket connectPacket) {
         if (!verbose) {
             LOG.info(
@@ -176,6 +183,7 @@ public class MessageLogger {
                 willString);
     }
 
+    @Override
     public void logConnack(final @NotNull ConnackOutboundInput connackOutboundInput) {
         final var clientId = connackOutboundInput.getClientInformation().getClientId();
         final var connackPacket = connackOutboundInput.getConnackPacket();
@@ -222,19 +230,14 @@ public class MessageLogger {
                 userPropertiesAsString);
     }
 
-    private @NotNull String getWillAsString(final @NotNull WillPublishPacket willPublishPacket) {
-        final var topic = willPublishPacket.getTopic();
-        final var publishAsString = getPublishAsString(willPublishPacket);
-        final var willPublishAsString = publishAsString + ", Will Delay: '" + willPublishPacket.getWillDelay() + "'";
-        return String.format(", Will: { Topic: '%s', %s }", topic, willPublishAsString);
-    }
-
+    @Override
     public void logPublish(final @NotNull String prefix, final @NotNull PublishPacket publishPacket) {
         final var topic = publishPacket.getTopic();
         final var publishString = getPublishAsString(publishPacket);
         LOG.info("{} '{}': {}", prefix, topic, publishString);
     }
 
+    @Override
     public void logSubscribe(final @NotNull SubscribeInboundInput subscribeInboundInput) {
         final var topics = new StringBuilder();
         final var clientId = subscribeInboundInput.getClientInformation().getClientId();
@@ -248,7 +251,8 @@ public class MessageLogger {
                         .append(sub.getQos().getQosNumber())
                         .append("'],");
             }
-            topics.deleteCharAt(topics.length() - 1); //delete last comma
+            // delete last comma
+            topics.deleteCharAt(topics.length() - 1);
             topics.append(" }");
             LOG.info("Received SUBSCRIBE from client '{}': {}", clientId, topics);
             return;
@@ -267,7 +271,8 @@ public class MessageLogger {
                     .append(sub.getRetainHandling().name())
                     .append("'],");
         }
-        topics.deleteCharAt(topics.length() - 1); //delete last comma
+        // delete last comma
+        topics.deleteCharAt(topics.length() - 1);
         topics.append(" }");
         final var subscriptionIdentifier = subscribePacket.getSubscriptionIdentifier().orElse(null);
         final var userPropertiesAsString = getUserPropertiesAsString(subscribePacket.getUserProperties());
@@ -278,6 +283,27 @@ public class MessageLogger {
                 userPropertiesAsString);
     }
 
+    @Override
+    public void logUnsubscribe(final @NotNull UnsubscribeInboundInput unsubscribeInboundInput) {
+        final var topics = new StringBuilder();
+        final var clientId = unsubscribeInboundInput.getClientInformation().getClientId();
+        final var unsubscribePacket = unsubscribeInboundInput.getUnsubscribePacket();
+        topics.append("Topics: {");
+        for (final var unsub : unsubscribePacket.getTopicFilters()) {
+            topics.append(" [Topic: '").append(unsub).append("'],");
+        }
+        // delete last comma
+        topics.deleteCharAt(topics.length() - 1);
+        topics.append(" }");
+        if (!verbose) {
+            LOG.info("Received UNSUBSCRIBE from client '{}': {}", clientId, topics);
+            return;
+        }
+        final var userPropertiesAsString = getUserPropertiesAsString(unsubscribePacket.getUserProperties());
+        LOG.info("Received UNSUBSCRIBE from client '{}': {}, {}", clientId, topics, userPropertiesAsString);
+    }
+
+    @Override
     public void logSuback(final @NotNull SubackOutboundInput subackOutboundInput) {
         final var suback = new StringBuilder();
         final var clientId = subackOutboundInput.getClientInformation().getClientId();
@@ -286,7 +312,8 @@ public class MessageLogger {
         for (final var sub : subackPacket.getReasonCodes()) {
             suback.append(" [Reason Code: '").append(sub).append("'],");
         }
-        suback.deleteCharAt(suback.length() - 1); //delete last comma
+        // delete last comma
+        suback.deleteCharAt(suback.length() - 1);
         suback.append(" }");
         if (!verbose) {
             LOG.info("Sent SUBACK to client '{}': {}", clientId, suback);
@@ -301,24 +328,7 @@ public class MessageLogger {
                 userPropertiesAsString);
     }
 
-    public void logUnsubscribe(final @NotNull UnsubscribeInboundInput unsubscribeInboundInput) {
-        final var topics = new StringBuilder();
-        final var clientId = unsubscribeInboundInput.getClientInformation().getClientId();
-        final var unsubscribePacket = unsubscribeInboundInput.getUnsubscribePacket();
-        topics.append("Topics: {");
-        for (final var unsub : unsubscribePacket.getTopicFilters()) {
-            topics.append(" [Topic: '").append(unsub).append("'],");
-        }
-        topics.deleteCharAt(topics.length() - 1); //delete last comma
-        topics.append(" }");
-        if (!verbose) {
-            LOG.info("Received UNSUBSCRIBE from client '{}': {}", clientId, topics);
-            return;
-        }
-        final var userPropertiesAsString = getUserPropertiesAsString(unsubscribePacket.getUserProperties());
-        LOG.info("Received UNSUBSCRIBE from client '{}': {}, {}", clientId, topics, userPropertiesAsString);
-    }
-
+    @Override
     public void logUnsuback(final @NotNull UnsubackOutboundInput unsubackOutboundInput) {
         final var unsuback = new StringBuilder();
         final var clientId = unsubackOutboundInput.getClientInformation().getClientId();
@@ -327,7 +337,8 @@ public class MessageLogger {
         for (final var unsubackReasonCode : unsubackPacket.getReasonCodes()) {
             unsuback.append(" [Reason Code: '").append(unsubackReasonCode).append("'],");
         }
-        unsuback.deleteCharAt(unsuback.length() - 1); //delete last comma
+        // delete last comma
+        unsuback.deleteCharAt(unsuback.length() - 1);
         unsuback.append(" }");
         if (!verbose) {
             LOG.info("Sent UNSUBACK to client '{}': {}", clientId, unsuback);
@@ -342,16 +353,19 @@ public class MessageLogger {
                 userPropertiesAsString);
     }
 
+    @Override
     public void logPingreq(final @NotNull PingReqInboundInput pingReqInboundInput) {
         final var clientId = pingReqInboundInput.getClientInformation().getClientId();
         LOG.info("Received PING REQUEST from client '{}'", clientId);
     }
 
+    @Override
     public void logPingresp(final @NotNull PingRespOutboundInput pingRespOutboundInput) {
         final var clientId = pingRespOutboundInput.getClientInformation().getClientId();
         LOG.info("Sent PING RESPONSE to client '{}'", clientId);
     }
 
+    @Override
     public void logPuback(
             final @NotNull PubackPacket pubackPacket,
             final @NotNull String clientId,
@@ -382,6 +396,7 @@ public class MessageLogger {
         }
     }
 
+    @Override
     public void logPubrec(
             final @NotNull PubrecPacket pubrecPacket,
             final @NotNull String clientId,
@@ -412,6 +427,7 @@ public class MessageLogger {
         }
     }
 
+    @Override
     public void logPubrel(
             final @NotNull PubrelPacket pubrelPacket,
             final @NotNull String clientId,
@@ -442,6 +458,7 @@ public class MessageLogger {
         }
     }
 
+    @Override
     public void logPubcomp(
             final @NotNull PubcompPacket pubcompPacket,
             final @NotNull String clientId,
@@ -472,6 +489,13 @@ public class MessageLogger {
         }
     }
 
+    private @NotNull String getWillAsString(final @NotNull WillPublishPacket willPublishPacket) {
+        final var topic = willPublishPacket.getTopic();
+        final var publishAsString = getPublishAsString(willPublishPacket);
+        final var willPublishAsString = publishAsString + ", Will Delay: '" + willPublishPacket.getWillDelay() + "'";
+        return String.format(", Will: { Topic: '%s', %s }", topic, willPublishAsString);
+    }
+
     private @NotNull String getPublishAsString(final @NotNull PublishPacket publishPacket) {
         final var qos = publishPacket.getQos().getQosNumber();
         final var retained = publishPacket.getRetain();
@@ -481,9 +505,8 @@ public class MessageLogger {
             if (StringUtils.isAsciiPrintable(payloadAsString)) {
                 payloadProperty = "Payload: '" + payloadAsString + "'";
             } else {
-                payloadProperty = "Payload (Hex): '" +
-                        getHexStringFromByteBuffer(publishPacket.getPayload().get()) +
-                        "'";
+                payloadProperty =
+                        "Payload (Hex): '" + getHexStringFromByteBuffer(publishPacket.getPayload().get()) + "'";
             }
         } else {
             payloadProperty = null;
@@ -568,37 +591,4 @@ public class MessageLogger {
         }
         return stringBuilder.toString();
     }
-
-    private static @Nullable String getStringFromByteBuffer(final @Nullable ByteBuffer buffer) {
-        if (buffer == null) {
-            return null;
-        }
-        final var bytes = new byte[buffer.remaining()];
-        for (int i = 0; i < buffer.remaining(); i++) {
-            bytes[i] = buffer.get(i);
-        }
-        return new String(bytes, UTF_8);
-    }
-
-    private static @Nullable String getHexStringFromByteBuffer(final @Nullable ByteBuffer buffer) {
-        if (buffer == null) {
-            return null;
-        }
-        final var bytes = new byte[buffer.remaining()];
-        for (var i = 0; i < buffer.remaining(); i++) {
-            bytes[i] = buffer.get(i);
-        }
-        return asHexString(bytes);
-    }
-
-    private static @NotNull String asHexString(final byte @NotNull [] data) {
-        final var length = data.length;
-        final var out = new char[length << 1];
-        for (int i = 0, j = 0; i < length; i++) {
-            out[j++] = DIGITS[(0xF0 & data[i]) >>> 4];
-            out[j++] = DIGITS[0x0F & data[i]];
-        }
-        return new String(out);
-    }
 }
-

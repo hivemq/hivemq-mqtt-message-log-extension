@@ -15,15 +15,21 @@
  */
 package com.hivemq.extensions.log.mqtt.message.config;
 
+import com.hivemq.extensions.log.mqtt.message.logger.OutputFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
 public class ExtensionConfigProperties implements ExtensionConfig {
 
+    private static final @NotNull Logger LOG = LoggerFactory.getLogger(ExtensionConfigProperties.class);
+
     static final @NotNull String TRUE = "true";
     static final @NotNull String FALSE = "false";
+    static final @NotNull String OUTPUT_FORMAT = "output-format";
     static final @NotNull String VERBOSE = "verbose";
     static final @NotNull String PAYLOAD = "payload";
     static final @NotNull String REDACT_PASSWORD = "redact-password";
@@ -139,6 +145,17 @@ public class ExtensionConfigProperties implements ExtensionConfig {
 
     public boolean isRedactPassword() {
         return getForKey(REDACT_PASSWORD);
+    }
+
+    @Override
+    public @NotNull OutputFormat getOutputFormat() {
+        final var format = properties.getProperty(OUTPUT_FORMAT, "plain-text");
+        try {
+            return OutputFormat.valueOf(format.toUpperCase().replace('-', '_'));
+        } catch (final IllegalArgumentException e) {
+            LOG.warn("Invalid output format '{}', defaulting to PLAIN_TEXT", format);
+            return OutputFormat.PLAIN_TEXT;
+        }
     }
 
     private boolean getForKey(final @NotNull String key) {

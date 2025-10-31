@@ -19,7 +19,6 @@ import com.hivemq.extension.sdk.api.client.ClientContext;
 import com.hivemq.extension.sdk.api.client.parameter.InitializerInput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extension.sdk.api.services.intializer.ClientInitializer;
-import com.hivemq.extensions.log.mqtt.message.MessageLogger;
 import com.hivemq.extensions.log.mqtt.message.config.ExtensionConfig;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnackOutboundInterceptorImpl;
 import com.hivemq.extensions.log.mqtt.message.interceptor.ConnectInboundInterceptorImpl;
@@ -41,6 +40,8 @@ import com.hivemq.extensions.log.mqtt.message.interceptor.SubackOutboundIntercep
 import com.hivemq.extensions.log.mqtt.message.interceptor.SubscribeInboundInterceptorImpl;
 import com.hivemq.extensions.log.mqtt.message.interceptor.UnsubackOutboundInterceptorImpl;
 import com.hivemq.extensions.log.mqtt.message.interceptor.UnsubscribeInboundInterceptorImpl;
+import com.hivemq.extensions.log.mqtt.message.logger.MessageLogger;
+import com.hivemq.extensions.log.mqtt.message.logger.MessageLoggerFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -55,7 +56,10 @@ public class ClientInitializerImpl implements ClientInitializer {
 
     public ClientInitializerImpl(final @NotNull ExtensionConfig config) {
         this.config = config;
-        this.messageLogger = new MessageLogger(config.isVerbose(), config.isPayload(), config.isRedactPassword());
+        this.messageLogger = MessageLoggerFactory.createLogger(config.isVerbose(),
+                config.isPayload(),
+                config.isRedactPassword(),
+                config.getOutputFormat());
         init();
     }
 

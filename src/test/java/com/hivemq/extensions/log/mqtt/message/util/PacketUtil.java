@@ -68,6 +68,8 @@ import static org.mockito.Mockito.mock;
  */
 public class PacketUtil {
 
+    private static final @NotNull String TEST_CLIENT_ID = "test-client-id";
+
     public static SubscribeInboundInput createEmptySubscribe() {
         return new SubscribeInboundInput() {
             @Override
@@ -127,7 +129,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -216,7 +218,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -255,7 +257,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -294,7 +296,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -328,7 +330,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -362,7 +364,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -401,7 +403,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -440,7 +442,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -643,7 +645,8 @@ public class PacketUtil {
             @Override
             public @NotNull Optional<ByteBuffer> getPayload() {
                 // create a binary payload with non-printable bytes
-                final var binaryPayload = new byte[]{0x00, 0x01, 0x02, (byte) 0xFF, (byte) 0xFE, 0x7F, 0x48, 0x65, 0x6C, 0x6C, 0x6F};
+                final var binaryPayload =
+                        new byte[]{0x00, 0x01, 0x02, (byte) 0xFF, (byte) 0xFE, 0x7F, 0x48, 0x65, 0x6C, 0x6C, 0x6F};
                 return Optional.of(ByteBuffer.wrap(binaryPayload));
             }
 
@@ -663,7 +666,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull String getClientId() {
-                return "clientid";
+                return TEST_CLIENT_ID;
             }
 
             @Override
@@ -747,7 +750,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull String getClientId() {
-                return "clientid";
+                return TEST_CLIENT_ID;
             }
 
             @Override
@@ -833,7 +836,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull String getClientId() {
-                return "clientid";
+                return TEST_CLIENT_ID;
             }
 
             @Override
@@ -1174,7 +1177,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -1288,7 +1291,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -1302,7 +1305,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }
@@ -1316,7 +1319,7 @@ public class PacketUtil {
 
             @Override
             public @NotNull ClientInformation getClientInformation() {
-                return () -> "clientid";
+                return () -> TEST_CLIENT_ID;
             }
         };
     }

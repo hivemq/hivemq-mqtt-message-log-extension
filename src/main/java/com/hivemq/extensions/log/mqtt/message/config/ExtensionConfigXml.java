@@ -16,12 +16,15 @@
 package com.hivemq.extensions.log.mqtt.message.config;
 
 
+import com.hivemq.extensions.log.mqtt.message.logger.OutputFormat;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @since 1.2.0
@@ -32,7 +35,12 @@ import org.jetbrains.annotations.NotNull;
 @XmlAccessorType(XmlAccessType.NONE)
 public class ExtensionConfigXml implements ExtensionConfig {
 
+    private static final @NotNull Logger LOG = LoggerFactory.getLogger(ExtensionConfigXml.class);
+
     // these defaults must be kept in sync with those in ExtensionConfigReader
+    @XmlElement(name = "output-format", defaultValue = "plain-text")
+    private String outputFormat = "plain-text";
+
     @XmlElement(name = "verbose", defaultValue = "false")
     private boolean verbose = false;
 
@@ -188,13 +196,26 @@ public class ExtensionConfigXml implements ExtensionConfig {
     }
 
     @Override
+    public @NotNull OutputFormat getOutputFormat() {
+        try {
+            return OutputFormat.valueOf(outputFormat.toUpperCase().replace('-', '_'));
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Invalid output format '{}', defaulting to PLAIN_TEXT", outputFormat);
+            return OutputFormat.PLAIN_TEXT;
+        }
+    }
+
+    @Override
     public @NotNull String toString() {
         return "{" +
-                "verbose=" +
+                "outputFormat=" +
+                outputFormat +
+                ", verbose=" +
                 verbose +
                 ", payload=" +
                 payload +
-                ", passwordInVerbose=" + redactPassword +
+                ", passwordInVerbose=" +
+                redactPassword +
                 ", publishReceived=" +
                 publishReceived +
                 ", publishSend=" +
