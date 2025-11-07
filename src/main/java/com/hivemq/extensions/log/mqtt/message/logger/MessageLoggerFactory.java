@@ -24,6 +24,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MessageLoggerFactory {
 
+    private MessageLoggerFactory() {
+    }
+
     /**
      * Creates an MessageLogger instance for the specified format.
      *

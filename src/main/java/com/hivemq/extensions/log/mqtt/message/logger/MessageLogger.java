@@ -35,10 +35,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract base class for MQTT message logging.
+ * Interface for MQTT message logging.
  * Provides common configuration and logging methods.
  *
- * @since 1.0.0
+ * @since 1.3.0
  */
 public interface MessageLogger {
 

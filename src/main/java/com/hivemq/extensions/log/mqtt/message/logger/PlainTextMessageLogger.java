@@ -46,13 +46,13 @@ import static com.hivemq.extensions.log.mqtt.message.util.StringUtil.getStringFr
  * Plain text formatter for MQTT message logging.
  * Produces human-readable log output in the traditional format.
  *
- * @since 1.3.0
+ * @since 1.0.0
  */
 class PlainTextMessageLogger implements MessageLogger {
 
-    protected final boolean verbose;
-    protected final boolean payload;
-    protected final boolean redactPassword;
+    final boolean verbose;
+    final boolean payload;
+    final boolean redactPassword;
 
     /**
      * Creates a PlainTextMessageLogger with the specified configuration.
@@ -61,7 +61,7 @@ class PlainTextMessageLogger implements MessageLogger {
      * @param payload        whether to include message payloads
      * @param redactPassword whether to redact passwords
      */
-    protected PlainTextMessageLogger(final boolean verbose, final boolean payload, final boolean redactPassword) {
+    PlainTextMessageLogger(final boolean verbose, final boolean payload, final boolean redactPassword) {
         this.verbose = verbose;
         this.payload = payload;
         this.redactPassword = redactPassword;
