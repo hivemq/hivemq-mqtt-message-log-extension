@@ -1170,56 +1170,56 @@ class JsonMessageLoggerTest {
     }
 
     @Test
-    void appendJsonEscaped_doubleQuote() {
+    void test_append_json_escaped_double_quote() {
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foo\"bar", testDisconnect);
         assertThat(getJsonMessage()).contains("\"message\":\"foo\\\"bar\"");
     }
 
     @Test
-    void appendJsonEscaped_backslash() {
+    void test_append_json_escaped_backslash() {
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foo\\bar", testDisconnect);
         assertThat(getJsonMessage()).contains("\"message\":\"foo\\\\bar\"");
     }
 
     @Test
-    void appendJsonEscaped_newline() {
+    void test_append_json_escaped_newline() {
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foo\nbar", testDisconnect);
         assertThat(getJsonMessage()).contains("\"message\":\"foo\\nbar\"");
     }
 
     @Test
-    void appendJsonEscaped_carriageReturn() {
+    void test_append_json_escaped_carriage_return() {
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foo\rbar", testDisconnect);
         assertThat(getJsonMessage()).contains("\"message\":\"foo\\rbar\"");
     }
 
     @Test
-    void appendJsonEscaped_tab() {
+    void test_append_json_escaped_tab() {
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foo\tbar", testDisconnect);
         assertThat(getJsonMessage()).contains("\"message\":\"foo\\tbar\"");
     }
 
     @Test
-    void appendJsonEscaped_backspace() {
+    void test_append_json_escaped_backspace() {
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foo\bbar", testDisconnect);
         assertThat(getJsonMessage()).contains("\"message\":\"foo\\bbar\"");
     }
 
     @Test
-    void appendJsonEscaped_formFeed() {
+    void test_append_json_escaped_form_feed() {
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foo\fbar", testDisconnect);
         assertThat(getJsonMessage()).contains("\"message\":\"foo\\fbar\"");
     }
 
     @Test
-    void appendJsonEscaped_controlCharacter() {
+    void test_append_json_escaped_control_character() {
         // SOH (Start of Heading) control character
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foo\u0001bar", testDisconnect);
@@ -1227,14 +1227,14 @@ class JsonMessageLoggerTest {
     }
 
     @Test
-    void appendJsonEscaped_multipleSpecialCharacters() {
+    void test_append_json_escaped_multiple_special_characters() {
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foo\"bar\\baz\nqux", testDisconnect);
         assertThat(getJsonMessage()).contains("\"message\":\"foo\\\"bar\\\\baz\\nqux\"");
     }
 
     @Test
-    void appendJsonEscaped_regularText() {
+    void test_append_json_escaped_regular_text() {
         final var logger = new JsonMessageLogger(true, true, false);
         logger.logDisconnect("foobar", testDisconnect);
         assertThat(getJsonMessage()).contains("\"message\":\"foobar\"");

@@ -48,7 +48,7 @@ public class FullConfigJsonIT {
                     .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()));
 
     @Test
-    void test_json_format_with_verbose_payload_and_password() {
+    void test() {
         final var client = Mqtt5Client.builder()
                 .identifier("json-test-client")
                 .serverHost(hivemq.getHost())

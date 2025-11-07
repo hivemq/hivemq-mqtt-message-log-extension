@@ -51,9 +51,9 @@ import static com.hivemq.extensions.log.mqtt.message.util.StringUtil.getStringFr
  */
 class JsonMessageLogger implements MessageLogger {
 
-    protected final boolean verbose;
-    protected final boolean payload;
-    protected final boolean redactPassword;
+    final boolean verbose;
+    final boolean payload;
+    final boolean redactPassword;
 
     /**
      * Creates a JsonMessageLogger with the specified configuration.
@@ -62,7 +62,7 @@ class JsonMessageLogger implements MessageLogger {
      * @param payload        whether to include message payloads
      * @param redactPassword whether to redact passwords
      */
-    protected JsonMessageLogger(final boolean verbose, final boolean payload, final boolean redactPassword) {
+    JsonMessageLogger(final boolean verbose, final boolean payload, final boolean redactPassword) {
         this.verbose = verbose;
         this.payload = payload;
         this.redactPassword = redactPassword;
@@ -72,8 +72,8 @@ class JsonMessageLogger implements MessageLogger {
     public void logDisconnect(final @NotNull String message, final @NotNull DisconnectEventInput disconnectEventInput) {
         final var sb = new StringBuilder(512);
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"DISCONNECT\"");
-        sb.append(",\"direction\":\"EVENT\"");
+        appendJsonField(sb, "messageType", "DISCONNECT");
+        appendJsonField(sb, "direction", "EVENT");
         appendJsonField(sb, "message", message);
         if (disconnectEventInput.getReasonCode().isPresent()) {
             appendJsonField(sb, "reasonCode", disconnectEventInput.getReasonCode().get().name());
@@ -97,8 +97,8 @@ class JsonMessageLogger implements MessageLogger {
             final boolean inbound) {
         final var sb = new StringBuilder(512);
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"DISCONNECT\"");
-        sb.append(",\"direction\":\"").append(inbound ? "INBOUND" : "OUTBOUND").append("\"");
+        appendJsonField(sb, "messageType", "DISCONNECT");
+        appendJsonField(sb, "direction", inbound ? "INBOUND" : "OUTBOUND");
         appendJsonField(sb, "clientId", clientId);
         appendJsonField(sb, "reasonCode", disconnectPacket.getReasonCode().name());
         if (verbose) {
@@ -121,8 +121,8 @@ class JsonMessageLogger implements MessageLogger {
     public void logConnect(final @NotNull ConnectPacket connectPacket) {
         final var sb = new StringBuilder(1024);
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"CONNECT\"");
-        sb.append(",\"direction\":\"INBOUND\"");
+        appendJsonField(sb, "messageType", "CONNECT");
+        appendJsonField(sb, "direction", "INBOUND");
         appendJsonField(sb, "clientId", connectPacket.getClientId());
         appendJsonField(sb, "protocolVersion", connectPacket.getMqttVersion().name());
         appendJsonField(sb, "cleanStart", connectPacket.getCleanStart());
@@ -168,8 +168,8 @@ class JsonMessageLogger implements MessageLogger {
         final var clientId = connackOutboundInput.getClientInformation().getClientId();
         final var connackPacket = connackOutboundInput.getConnackPacket();
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"CONNACK\"");
-        sb.append(",\"direction\":\"OUTBOUND\"");
+        appendJsonField(sb, "messageType", "CONNACK");
+        appendJsonField(sb, "direction", "OUTBOUND");
         appendJsonField(sb, "clientId", clientId);
         appendJsonField(sb, "reasonCode", connackPacket.getReasonCode().name());
         appendJsonField(sb, "sessionPresent", connackPacket.getSessionPresent());
@@ -222,10 +222,10 @@ class JsonMessageLogger implements MessageLogger {
     public void logPublish(final @NotNull String prefix, final @NotNull PublishPacket publishPacket) {
         final var sb = new StringBuilder(1024);
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"PUBLISH\"");
+        appendJsonField(sb, "messageType", "PUBLISH");
         // extract direction from prefix
         final var direction = prefix.contains("Received") ? "INBOUND" : "OUTBOUND";
-        sb.append(",\"direction\":\"").append(direction).append("\"");
+        appendJsonField(sb, "direction", direction);
         appendJsonField(sb, "topic", publishPacket.getTopic());
         if (payload && publishPacket.getPayload().isPresent()) {
             final var payloadBuffer = publishPacket.getPayload().get();
@@ -267,8 +267,8 @@ class JsonMessageLogger implements MessageLogger {
         final var clientId = subscribeInboundInput.getClientInformation().getClientId();
         final var subscribePacket = subscribeInboundInput.getSubscribePacket();
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"SUBSCRIBE\"");
-        sb.append(",\"direction\":\"INBOUND\"");
+        appendJsonField(sb, "messageType", "SUBSCRIBE");
+        appendJsonField(sb, "direction", "INBOUND");
         appendJsonField(sb, "clientId", clientId);
         // subscriptions array
         sb.append(",\"subscriptions\":[");
@@ -306,8 +306,8 @@ class JsonMessageLogger implements MessageLogger {
         final var clientId = unsubscribeInboundInput.getClientInformation().getClientId();
         final var unsubscribePacket = unsubscribeInboundInput.getUnsubscribePacket();
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"UNSUBSCRIBE\"");
-        sb.append(",\"direction\":\"INBOUND\"");
+        appendJsonField(sb, "messageType", "UNSUBSCRIBE");
+        appendJsonField(sb, "direction", "INBOUND");
         appendJsonField(sb, "clientId", clientId);
         // topic filters array
         sb.append(",\"topicFilters\":[");
@@ -356,8 +356,8 @@ class JsonMessageLogger implements MessageLogger {
             final @NotNull UserProperties userProperties) {
         final var sb = new StringBuilder(512);
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"").append(messageType).append("\"");
-        sb.append(",\"direction\":\"OUTBOUND\"");
+        appendJsonField(sb, "messageType", messageType);
+        appendJsonField(sb, "direction", "OUTBOUND");
         appendJsonField(sb, "clientId", clientId);
         // reason codes array
         sb.append(",\"reasonCodes\":[");
@@ -383,8 +383,8 @@ class JsonMessageLogger implements MessageLogger {
         final var sb = new StringBuilder(256);
         final var clientId = pingReqInboundInput.getClientInformation().getClientId();
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"PINGREQ\"");
-        sb.append(",\"direction\":\"INBOUND\"");
+        appendJsonField(sb, "messageType", "PINGREQ");
+        appendJsonField(sb, "direction", "INBOUND");
         appendJsonField(sb, "clientId", clientId);
         sb.append("}");
         LOG.info(sb.toString());
@@ -395,8 +395,8 @@ class JsonMessageLogger implements MessageLogger {
         final var sb = new StringBuilder(256);
         final var clientId = pingRespOutboundInput.getClientInformation().getClientId();
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"PINGRESP\"");
-        sb.append(",\"direction\":\"OUTBOUND\"");
+        appendJsonField(sb, "messageType", "PINGRESP");
+        appendJsonField(sb, "direction", "OUTBOUND");
         appendJsonField(sb, "clientId", clientId);
         sb.append("}");
         LOG.info(sb.toString());
@@ -463,8 +463,8 @@ class JsonMessageLogger implements MessageLogger {
             final @NotNull UserProperties userProperties) {
         final var sb = new StringBuilder(512);
         sb.append("{\"timestamp\":").append(System.currentTimeMillis());
-        sb.append(",\"messageType\":\"").append(messageType).append("\"");
-        sb.append(",\"direction\":\"").append(inbound ? "INBOUND" : "OUTBOUND").append("\"");
+        appendJsonField(sb, "messageType", messageType);
+        appendJsonField(sb, "direction", inbound ? "INBOUND" : "OUTBOUND");
         appendJsonField(sb, "clientId", clientId);
         appendJsonField(sb, "reasonCode", reasonCode);
         if (verbose) {
@@ -566,7 +566,7 @@ class JsonMessageLogger implements MessageLogger {
     private static void appendJsonArray(
             final @NotNull StringBuilder sb,
             final @NotNull String key,
-            final @NotNull java.util.List<Integer> values) {
+            final @NotNull List<Integer> values) {
         if (values.isEmpty()) {
             return;
         }
