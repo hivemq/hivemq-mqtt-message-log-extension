@@ -43,7 +43,8 @@ public class FullConfigXmlNoVerboseIT {
                     .asCompatibleSubstituteFor("hivemq/hivemq4")) //
                     .withCopyToContainer(MountableFile.forClasspathResource("fullConfigNoVerbose.xml"),
                             "/opt/hivemq/extensions/hivemq-mqtt-message-log-extension/conf/config.xml")
-                    .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()));
+                    .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()))
+                    .withEnv("HIVEMQ_DISABLE_STATISTICS", "true");
 
     @Test
     void test() {
