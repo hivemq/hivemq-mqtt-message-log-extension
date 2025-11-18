@@ -11,7 +11,7 @@ jetbrains-annotations = "26.0.2-1"
 junit-jupiter = "5.10.3"
 logback = "1.5.21"
 mockito = "5.20.0"
-testcontainers = "1.21.3"
+testcontainers = "2.0.2"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
@@ -24,8 +24,9 @@ jaxb-impl = { module = "org.glassfish.jaxb:jaxb-runtime", version.ref = "jaxb-im
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-testcontainers-hivemq = { module = "org.testcontainers:hivemq", version.ref = "testcontainers" }
-testcontainers-junitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-hivemq = { module = "org.testcontainers:testcontainers-hivemq", version.ref = "testcontainers" }
+testcontainers-junitJupiter = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers" }
 
 [plugins]
 defaults = { id = "io.github.sgtsilvio.gradle.defaults", version = "0.2.0" }
