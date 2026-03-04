@@ -243,11 +243,12 @@ class JsonMessageLoggerTest {
                                         entry("responseTopic", "response topic"),
                                         entry("contentType", "content type"),
                                         entry("payloadFormatIndicator", "UTF_8"),
-                                        entry("userProperties", new ArrayType( //
-                                                List.of(List.of(entry("name", "name0"), entry("value", "value0")),
+                                        entry("userProperties",
+                                                new ArrayType(List.of(
+                                                        List.of(entry("name", "name0"), entry("value", "value0")),
                                                         List.of(entry("name", "name1"), entry("value", "value1")),
-                                                        List.of(entry("name", "name2"), entry("value", "value2")))) //
-                                        )))))));
+                                                        List.of(entry("name", "name2"),
+                                                                entry("value", "value2")))))))))));
     }
 
     @Test
@@ -283,11 +284,12 @@ class JsonMessageLoggerTest {
                                         entry("responseTopic", "response topic"),
                                         entry("contentType", "content type"),
                                         entry("payloadFormatIndicator", "UTF_8"),
-                                        entry("userProperties", new ArrayType( //
-                                                List.of(List.of(entry("name", "name0"), entry("value", "value0")),
+                                        entry("userProperties",
+                                                new ArrayType(List.of(
+                                                        List.of(entry("name", "name0"), entry("value", "value0")),
                                                         List.of(entry("name", "name1"), entry("value", "value1")),
-                                                        List.of(entry("name", "name2"), entry("value", "value2")))) //
-                                        )))))));
+                                                        List.of(entry("name", "name2"),
+                                                                entry("value", "value2")))))))))));
     }
 
     @Test
@@ -354,11 +356,12 @@ class JsonMessageLoggerTest {
                                         entry("responseTopic", "response topic"),
                                         entry("contentType", "content type"),
                                         entry("payloadFormatIndicator", "UTF_8"),
-                                        entry("userProperties", new ArrayType( //
-                                                List.of(List.of(entry("name", "name0"), entry("value", "value0")),
+                                        entry("userProperties",
+                                                new ArrayType(List.of(
+                                                        List.of(entry("name", "name0"), entry("value", "value0")),
                                                         List.of(entry("name", "name1"), entry("value", "value1")),
-                                                        List.of(entry("name", "name2"), entry("value", "value2")))) //
-                                        )))))));
+                                                        List.of(entry("name", "name2"),
+                                                                entry("value", "value2")))))))))));
     }
 
     @Test
@@ -394,11 +397,12 @@ class JsonMessageLoggerTest {
                                         entry("responseTopic", "response topic"),
                                         entry("contentType", "content type"),
                                         entry("payloadFormatIndicator", "UTF_8"),
-                                        entry("userProperties", new ArrayType( //
-                                                List.of(List.of(entry("name", "name0"), entry("value", "value0")),
+                                        entry("userProperties",
+                                                new ArrayType(List.of(
+                                                        List.of(entry("name", "name0"), entry("value", "value0")),
                                                         List.of(entry("name", "name1"), entry("value", "value1")),
-                                                        List.of(entry("name", "name2"), entry("value", "value2")))) //
-                                        )))))));
+                                                        List.of(entry("name", "name2"),
+                                                                entry("value", "value2")))))))))));
     }
 
     @Test
@@ -641,7 +645,8 @@ class JsonMessageLoggerTest {
                 Direction.INBOUND,
                 List.of(entry("clientId", "test-client-id"),
                         entry("subscriptions",
-                                new ArrayType(List.of(List.of(entry("topicFilter", "topic1"),
+                                new ArrayType(List.of(
+                                        List.of(entry("topicFilter", "topic1"),
                                                 entry("qos", 2),
                                                 entry("retainAsPublished", false),
                                                 entry("noLocal", false),
@@ -834,18 +839,16 @@ class JsonMessageLoggerTest {
     void test_log_pingreq() {
         final var logger = new JsonMessageLogger(false, false, false);
         logger.logPingreq(createPingreq());
-        assertThat(getJsonMessage()).isEqualTo(expectedJson(MessageType.PINGREQ,
-                Direction.INBOUND,
-                List.of(entry("clientId", "test-client-id"))));
+        assertThat(getJsonMessage()).isEqualTo(
+                expectedJson(MessageType.PINGREQ, Direction.INBOUND, List.of(entry("clientId", "test-client-id"))));
     }
 
     @Test
     void test_log_pingresp() {
         final var logger = new JsonMessageLogger(false, false, false);
         logger.logPingresp(createPingresp());
-        assertThat(getJsonMessage()).isEqualTo(expectedJson(MessageType.PINGRESP,
-                Direction.OUTBOUND,
-                List.of(entry("clientId", "test-client-id"))));
+        assertThat(getJsonMessage()).isEqualTo(
+                expectedJson(MessageType.PINGRESP, Direction.OUTBOUND, List.of(entry("clientId", "test-client-id"))));
     }
 
     @Test

@@ -65,8 +65,8 @@ public class ExtensionConfigReader {
      * Reads config.xml from /conf directory if present, otherwise reads mqttMessageLog.properties from extension home
      * directory. Uses the defaults if neither is present/readable.
      *
-     * @param extensionHomeFolder home folder of the extension
-     * @return user defined extension configuration or default configuration
+     * @param  extensionHomeFolder home folder of the extension
+     * @return                     user defined extension configuration or default configuration
      */
     public static @NotNull ExtensionConfig read(final @NotNull File extensionHomeFolder) {
         final var configXmlFile = extensionHomeFolder.toPath().resolve(EXTENSION_CONFIG_XML_LOCATION).toFile();
@@ -87,7 +87,8 @@ public class ExtensionConfigReader {
             final Path extensionLegacyConfigPropertiesPath =
                     extensionHomePath.resolve(EXTENSION_CONFIG_PROPERTIES_LOCATION);
             final Path extensionConfigXmlPath = extensionHomePath.resolve(EXTENSION_CONFIG_XML_LOCATION);
-            LOG.warn("{}: The configuration file is using the legacy location and format '{}'. " +
+            LOG.warn(
+                    "{}: The configuration file is using the legacy location and format '{}'. " +
                             "Please update the configuration file to the new location and format '{}'. " +
                             "Support for the legacy location and format will be removed in a future release.",
                     EXTENSION_NAME,

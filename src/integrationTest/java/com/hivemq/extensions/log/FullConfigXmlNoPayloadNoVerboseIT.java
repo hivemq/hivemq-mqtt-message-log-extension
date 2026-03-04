@@ -41,7 +41,7 @@ public class FullConfigXmlNoPayloadNoVerboseIT {
     @Container
     final @NotNull HiveMQContainer hivemq =
             new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-mqtt-message-log-extension")
-                    .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                    .asCompatibleSubstituteFor("hivemq/hivemq4"))
                     .withCopyToContainer(MountableFile.forClasspathResource("fullConfigNoPayloadNoVerbose.xml"),
                             "/opt/hivemq/extensions/hivemq-mqtt-message-log-extension/conf/config.xml")
                     .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()))
@@ -82,7 +82,8 @@ public class FullConfigXmlNoPayloadNoVerboseIT {
         await().until(() -> hivemq.getLogs()
                 .contains("Received SUBSCRIBE from client 'test-client': Topics: { [Topic: '#', QoS: '2'] }"));
         await().until(() -> hivemq.getLogs()
-                .contains("Sent SUBACK to client 'test-client': Suback Reason Codes: { [Reason Code: 'GRANTED_QOS_2'] }"));
+                .contains(
+                        "Sent SUBACK to client 'test-client': Suback Reason Codes: { [Reason Code: 'GRANTED_QOS_2'] }"));
 
         client.publishWith()
                 .topic("publish")
@@ -99,19 +100,20 @@ public class FullConfigXmlNoPayloadNoVerboseIT {
                 .applyUserProperties()
                 .send();
         await().until(() -> hivemq.getLogs()
-                .contains("Received PUBLISH from client 'test-client' for topic 'publish': QoS: '2', Retained: 'false'"));
+                .contains(
+                        "Received PUBLISH from client 'test-client' for topic 'publish': QoS: '2', Retained: 'false'"));
         await().until(() -> hivemq.getLogs().contains("Sent PUBREC to client 'test-client': Reason Code: 'SUCCESS'"));
-        await().until(() -> hivemq.getLogs()
-                .contains("Received PUBREL from client 'test-client': Reason Code: 'SUCCESS'"));
+        await().until(
+                () -> hivemq.getLogs().contains("Received PUBREL from client 'test-client': Reason Code: 'SUCCESS'"));
         await().until(() -> hivemq.getLogs().contains("Sent PUBCOMP to client 'test-client': Reason Code: 'SUCCESS'"));
 
         await().until(() -> hivemq.getLogs()
                 .contains("Sent PUBLISH to client 'test-client' on topic 'publish': QoS: '2', Retained: 'false'"));
-        await().until(() -> hivemq.getLogs()
-                .contains("Received PUBREC from client 'test-client': Reason Code: 'SUCCESS'"));
+        await().until(
+                () -> hivemq.getLogs().contains("Received PUBREC from client 'test-client': Reason Code: 'SUCCESS'"));
         await().until(() -> hivemq.getLogs().contains("Sent PUBREL to client 'test-client': Reason Code: 'SUCCESS'"));
-        await().until(() -> hivemq.getLogs()
-                .contains("Received PUBCOMP from client 'test-client': Reason Code: 'SUCCESS'"));
+        await().until(
+                () -> hivemq.getLogs().contains("Received PUBCOMP from client 'test-client': Reason Code: 'SUCCESS'"));
 
         client.publishWith()
                 .topic("publish")
@@ -128,18 +130,20 @@ public class FullConfigXmlNoPayloadNoVerboseIT {
                 .applyUserProperties()
                 .send();
         await().until(() -> hivemq.getLogs()
-                .contains("Received PUBLISH from client 'test-client' for topic 'publish': QoS: '1', Retained: 'false'"));
+                .contains(
+                        "Received PUBLISH from client 'test-client' for topic 'publish': QoS: '1', Retained: 'false'"));
         await().until(() -> hivemq.getLogs().contains("Sent PUBACK to client 'test-client': Reason Code: 'SUCCESS'"));
         await().until(() -> hivemq.getLogs()
                 .contains("Sent PUBLISH to client 'test-client' on topic 'publish': QoS: '1', Retained: 'false'"));
-        await().until(() -> hivemq.getLogs()
-                .contains("Received PUBACK from client 'test-client': Reason Code: 'SUCCESS'"));
+        await().until(
+                () -> hivemq.getLogs().contains("Received PUBACK from client 'test-client': Reason Code: 'SUCCESS'"));
 
         client.unsubscribeWith().topicFilter("#").send();
         await().until(() -> hivemq.getLogs()
                 .contains("Received UNSUBSCRIBE from client 'test-client': Topics: { [Topic: '#'] }"));
         await().until(() -> hivemq.getLogs()
-                .contains("Sent UNSUBACK to client 'test-client': Unsuback Reason Codes: { [Reason Code: 'SUCCESS'] }"));
+                .contains(
+                        "Sent UNSUBACK to client 'test-client': Unsuback Reason Codes: { [Reason Code: 'SUCCESS'] }"));
 
         client.disconnect();
         await().until(() -> hivemq.getLogs()

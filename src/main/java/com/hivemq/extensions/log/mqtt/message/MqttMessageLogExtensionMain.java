@@ -66,8 +66,8 @@ public class MqttMessageLogExtensionMain implements ExtensionMain {
                             config);
             Services.initializerRegistry().setClientInitializer(initializer);
         } catch (final Exception e) {
-            extensionStartOutput.preventExtensionStartup(extensionStartInput.getExtensionInformation().getName() +
-                    " cannot be started");
+            extensionStartOutput.preventExtensionStartup(
+                    extensionStartInput.getExtensionInformation().getName() + " cannot be started");
             LOG.error("{} could not be started. An exception was thrown!",
                     extensionStartInput.getExtensionInformation().getName(),
                     e);

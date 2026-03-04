@@ -40,7 +40,7 @@ public class FullConfigXmlIT {
     @Container
     final @NotNull HiveMQContainer hivemq =
             new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-mqtt-message-log-extension")
-                    .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                    .asCompatibleSubstituteFor("hivemq/hivemq4"))
                     .withCopyToContainer(MountableFile.forClasspathResource("fullConfig.xml"),
                             "/opt/hivemq/extensions/hivemq-mqtt-message-log-extension/conf/config.xml")
                     .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()))

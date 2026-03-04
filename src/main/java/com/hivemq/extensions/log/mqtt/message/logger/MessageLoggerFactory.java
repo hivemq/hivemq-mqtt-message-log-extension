@@ -31,8 +31,8 @@ public class MessageLoggerFactory {
     /**
      * Creates an MessageLogger instance for the specified format.
      *
-     * @param format the desired output format
-     * @return a MessageLogger implementation
+     * @param  format the desired output format
+     * @return        a MessageLogger implementation
      */
     public static @NotNull MessageLogger createLogger(
             final boolean verbose,

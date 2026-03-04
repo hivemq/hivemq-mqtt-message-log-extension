@@ -59,12 +59,12 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
 
     @Override
     public void onAuthenticationSuccessful(final @NotNull AuthenticationSuccessfulInput authenticationSuccessfulInput) {
-        //NOOP
+        // NOOP
     }
 
     @Override
     public void onDisconnect(final @NotNull DisconnectEventInput disconnectEventInput) {
-        //NOOP
+        // NOOP
     }
 
     @Override
@@ -75,18 +75,24 @@ public class ConnectDisconnectEventListener implements ClientLifecycleEventListe
 
     @Override
     public void onConnectionLost(final @NotNull ConnectionLostInput connectionLostInput) {
-        //NOOP since no mqtt message is sent.
+        // NOOP since no mqtt message is sent.
     }
 
     @Override
-    public void onClientInitiatedDisconnect(final @NotNull ClientInitiatedDisconnectInput clientInitiatedDisconnectInput) {
-        messageLogger.logDisconnect(String.format("Received DISCONNECT from client '%s'",
-                clientInitiatedDisconnectInput.getClientInformation().getClientId()), clientInitiatedDisconnectInput);
+    public void onClientInitiatedDisconnect(
+            final @NotNull ClientInitiatedDisconnectInput clientInitiatedDisconnectInput) {
+        messageLogger.logDisconnect(
+                String.format("Received DISCONNECT from client '%s'",
+                        clientInitiatedDisconnectInput.getClientInformation().getClientId()),
+                clientInitiatedDisconnectInput);
     }
 
     @Override
-    public void onServerInitiatedDisconnect(final @NotNull ServerInitiatedDisconnectInput serverInitiatedDisconnectInput) {
-        messageLogger.logDisconnect(String.format("Sent DISCONNECT to client '%s'",
-                serverInitiatedDisconnectInput.getClientInformation().getClientId()), serverInitiatedDisconnectInput);
+    public void onServerInitiatedDisconnect(
+            final @NotNull ServerInitiatedDisconnectInput serverInitiatedDisconnectInput) {
+        messageLogger.logDisconnect(
+                String.format("Sent DISCONNECT to client '%s'",
+                        serverInitiatedDisconnectInput.getClientInformation().getClientId()),
+                serverInitiatedDisconnectInput);
     }
 }

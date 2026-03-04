@@ -73,12 +73,15 @@ public class PacketUtil {
 
     public static SubscribeInboundInput createEmptySubscribe() {
         return new SubscribeInboundInput() {
+
             @Override
             public @NotNull SubscribePacket getSubscribePacket() {
                 return new SubscribePacket() {
+
                     @Override
                     public @NotNull List<Subscription> getSubscriptions() {
                         return List.of(new Subscription() {
+
                             @Override
                             public @NotNull String getTopicFilter() {
                                 return "topic";
@@ -137,12 +140,15 @@ public class PacketUtil {
 
     public static SubscribeInboundInput createFullSubsribe() {
         return new SubscribeInboundInput() {
+
             @Override
             public @NotNull SubscribePacket getSubscribePacket() {
                 return new SubscribePacket() {
+
                     @Override
                     public @NotNull List<Subscription> getSubscriptions() {
                         return List.of(new Subscription() {
+
                             @Override
                             public @NotNull String getTopicFilter() {
                                 return "topic1";
@@ -168,6 +174,7 @@ public class PacketUtil {
                                 return false;
                             }
                         }, new Subscription() {
+
                             @Override
                             public @NotNull String getTopicFilter() {
                                 return "topic2";
@@ -226,9 +233,11 @@ public class PacketUtil {
 
     public static SubackOutboundInput createEmptySuback() {
         return new SubackOutboundInput() {
+
             @Override
             public @NotNull SubackPacket getSubackPacket() {
                 return new SubackPacket() {
+
                     @Override
                     public int getPacketIdentifier() {
                         return 1;
@@ -265,9 +274,11 @@ public class PacketUtil {
 
     public static SubackOutboundInput createFullSuback() {
         return new SubackOutboundInput() {
+
             @Override
             public @NotNull SubackPacket getSubackPacket() {
                 return new SubackPacket() {
+
                     @Override
                     public int getPacketIdentifier() {
                         return 1;
@@ -304,9 +315,11 @@ public class PacketUtil {
 
     public static UnsubscribeInboundInput createEmptyUnsubscribe() {
         return new UnsubscribeInboundInput() {
+
             @Override
             public @NotNull UnsubscribePacket getUnsubscribePacket() {
                 return new UnsubscribePacket() {
+
                     @Override
                     public int getPacketIdentifier() {
                         return 1;
@@ -338,9 +351,11 @@ public class PacketUtil {
 
     public static UnsubscribeInboundInput createFullUnsubsribe() {
         return new UnsubscribeInboundInput() {
+
             @Override
             public @NotNull UnsubscribePacket getUnsubscribePacket() {
                 return new UnsubscribePacket() {
+
                     @Override
                     public int getPacketIdentifier() {
                         return 1;
@@ -372,9 +387,11 @@ public class PacketUtil {
 
     public static UnsubackOutboundInput createEmptyUnsuback() {
         return new UnsubackOutboundInput() {
+
             @Override
             public @NotNull UnsubackPacket getUnsubackPacket() {
                 return new UnsubackPacket() {
+
                     @Override
                     public int getPacketIdentifier() {
                         return 1;
@@ -411,9 +428,11 @@ public class PacketUtil {
 
     public static UnsubackOutboundInput createFullUnsuback() {
         return new UnsubackOutboundInput() {
+
             @Override
             public @NotNull UnsubackPacket getUnsubackPacket() {
                 return new UnsubackPacket() {
+
                     @Override
                     public int getPacketIdentifier() {
                         return 1;
@@ -450,6 +469,7 @@ public class PacketUtil {
 
     public static PublishPacket createEmptyPublish() {
         return new PublishPacket() {
+
             @Override
             public boolean getDupFlag() {
                 return false;
@@ -519,6 +539,7 @@ public class PacketUtil {
 
     public static PublishPacket createFullPublish() {
         return new PublishPacket() {
+
             @Override
             public boolean getDupFlag() {
                 return false;
@@ -588,6 +609,7 @@ public class PacketUtil {
 
     public static PublishPacket createFullPublishWithBinaryPayload() {
         return new PublishPacket() {
+
             @Override
             public boolean getDupFlag() {
                 return false;
@@ -660,6 +682,7 @@ public class PacketUtil {
 
     public static ConnectPacket createEmptyConnect() {
         return new ConnectPacket() {
+
             @Override
             public @NotNull MqttVersion getMqttVersion() {
                 return MqttVersion.V_5;
@@ -744,6 +767,7 @@ public class PacketUtil {
 
     public static ConnectPacket createConnectWithBinaryPassword() {
         return new ConnectPacket() {
+
             @Override
             public @NotNull MqttVersion getMqttVersion() {
                 return MqttVersion.V_5;
@@ -830,6 +854,7 @@ public class PacketUtil {
 
     public static ConnectPacket createFullConnect() {
         return new ConnectPacket() {
+
             @Override
             public @NotNull MqttVersion getMqttVersion() {
                 return MqttVersion.V_5;
@@ -848,6 +873,7 @@ public class PacketUtil {
             @Override
             public @NotNull Optional<WillPublishPacket> getWillPublish() {
                 return Optional.of(new WillPublishPacket() {
+
                     @Override
                     public long getWillDelay() {
                         return 100;
@@ -984,6 +1010,7 @@ public class PacketUtil {
 
     public static DisconnectPacket createEmptyDisconnect() {
         return new DisconnectPacket() {
+
             @Override
             public @NotNull DisconnectReasonCode getReasonCode() {
                 return DisconnectReasonCode.NOT_AUTHORIZED;
@@ -1013,6 +1040,7 @@ public class PacketUtil {
 
     public static DisconnectPacket createFullDisconnect() {
         return new DisconnectPacket() {
+
             @Override
             public @NotNull DisconnectReasonCode getReasonCode() {
                 return DisconnectReasonCode.NOT_AUTHORIZED;
@@ -1042,6 +1070,7 @@ public class PacketUtil {
 
     public static DisconnectPacket createLifeCycleCompareDisconnect() {
         return new DisconnectPacket() {
+
             @Override
             public @NotNull DisconnectReasonCode getReasonCode() {
                 return DisconnectReasonCode.BAD_AUTHENTICATION_METHOD;
@@ -1071,9 +1100,11 @@ public class PacketUtil {
 
     public static ConnackOutboundInput createEmptyConnack() {
         return new ConnackOutboundInput() {
+
             @Override
             public @NotNull ConnackPacket getConnackPacket() {
                 return new ConnackPacket() {
+
                     @Override
                     public @NotNull Optional<Long> getSessionExpiryInterval() {
                         return Optional.empty();
@@ -1185,9 +1216,11 @@ public class PacketUtil {
 
     public static ConnackOutboundInput createFullConnack() {
         return new ConnackOutboundInput() {
+
             @Override
             public @NotNull ConnackPacket getConnackPacket() {
                 return new ConnackPacket() {
+
                     @Override
                     public @NotNull Optional<Long> getSessionExpiryInterval() {
                         return Optional.of(100L);
@@ -1299,6 +1332,7 @@ public class PacketUtil {
 
     public static PingReqInboundInput createPingreq() {
         return new PingReqInboundInput() {
+
             @Override
             public @NotNull ConnectionInformation getConnectionInformation() {
                 return mock(ConnectionInformation.class);
@@ -1313,6 +1347,7 @@ public class PacketUtil {
 
     public static PingRespOutboundInput createPingresp() {
         return new PingRespOutboundInput() {
+
             @Override
             public @NotNull ConnectionInformation getConnectionInformation() {
                 return mock(ConnectionInformation.class);
@@ -1327,6 +1362,7 @@ public class PacketUtil {
 
     public static PubackPacket createEmptyPuback() {
         return new PubackPacket() {
+
             @Override
             public int getPacketIdentifier() {
                 return 10;
@@ -1351,6 +1387,7 @@ public class PacketUtil {
 
     public static PubackPacket createFullPuback() {
         return new PubackPacket() {
+
             @Override
             public int getPacketIdentifier() {
                 return 10;
@@ -1375,6 +1412,7 @@ public class PacketUtil {
 
     public static PubrecPacket createEmptyPubrec() {
         return new PubrecPacket() {
+
             @Override
             public int getPacketIdentifier() {
                 return 10;
@@ -1399,6 +1437,7 @@ public class PacketUtil {
 
     public static PubrecPacket createFullPubrec() {
         return new PubrecPacket() {
+
             @Override
             public int getPacketIdentifier() {
                 return 10;
@@ -1423,6 +1462,7 @@ public class PacketUtil {
 
     public static PubrelPacket createEmptyPubrel() {
         return new PubrelPacket() {
+
             @Override
             public int getPacketIdentifier() {
                 return 10;
@@ -1447,6 +1487,7 @@ public class PacketUtil {
 
     public static PubrelPacket createFullPubrel() {
         return new PubrelPacket() {
+
             @Override
             public int getPacketIdentifier() {
                 return 10;
@@ -1471,6 +1512,7 @@ public class PacketUtil {
 
     public static PubcompPacket createEmptyPubcomp() {
         return new PubcompPacket() {
+
             @Override
             public int getPacketIdentifier() {
                 return 10;
@@ -1495,6 +1537,7 @@ public class PacketUtil {
 
     public static PubcompPacket createFullPubcomp() {
         return new PubcompPacket() {
+
             @Override
             public int getPacketIdentifier() {
                 return 10;
@@ -1518,7 +1561,7 @@ public class PacketUtil {
     }
 
     public record TestDisconnect(@Nullable DisconnectedReasonCode reasonCode, @Nullable String reasonString,
-                                 @Nullable UserProperties userProperties) implements DisconnectEventInput {
+            @Nullable UserProperties userProperties) implements DisconnectEventInput {
 
         @Override
         public @NotNull Optional<DisconnectedReasonCode> getReasonCode() {
