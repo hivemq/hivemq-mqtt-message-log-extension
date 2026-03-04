@@ -54,14 +54,14 @@ public class ClientInitializerImpl4_2 implements ClientInitializer {
      */
     private void init() {
         if (config.isClientConnect() && config.isClientDisconnect()) {
-            Services.eventRegistry().setClientLifecycleEventListener( //
-                    input -> new ConnectDisconnectEventListener(messageLogger, true));
+            Services.eventRegistry()
+                    .setClientLifecycleEventListener(input -> new ConnectDisconnectEventListener(messageLogger, true));
         } else if (config.isClientDisconnect()) {
-            Services.eventRegistry().setClientLifecycleEventListener( //
-                    input -> new ConnectDisconnectEventListener(messageLogger, false));
+            Services.eventRegistry()
+                    .setClientLifecycleEventListener(input -> new ConnectDisconnectEventListener(messageLogger, false));
         } else if (config.isClientConnect()) {
-            Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
-                    input -> new ConnectInboundInterceptorImpl(messageLogger));
+            Services.interceptorRegistry()
+                    .setConnectInboundInterceptorProvider(input -> new ConnectInboundInterceptorImpl(messageLogger));
         }
     }
 

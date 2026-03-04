@@ -69,12 +69,13 @@ public class ClientInitializerImpl implements ClientInitializer {
      */
     private void init() {
         if (config.isClientConnect()) {
-            Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
-                    ignored -> new ConnectInboundInterceptorImpl(messageLogger));
+            Services.interceptorRegistry()
+                    .setConnectInboundInterceptorProvider(ignored -> new ConnectInboundInterceptorImpl(messageLogger));
         }
         if (config.isConnackSend()) {
-            Services.interceptorRegistry().setConnackOutboundInterceptorProvider( //
-                    ignored -> new ConnackOutboundInterceptorImpl(messageLogger));
+            Services.interceptorRegistry()
+                    .setConnackOutboundInterceptorProvider(
+                            ignored -> new ConnackOutboundInterceptorImpl(messageLogger));
         }
     }
 

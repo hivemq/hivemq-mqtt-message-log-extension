@@ -43,7 +43,7 @@ public class FullConfigJsonIT {
     @Container
     final @NotNull HiveMQContainer hivemq =
             new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-mqtt-message-log-extension")
-                    .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                    .asCompatibleSubstituteFor("hivemq/hivemq4"))
                     .withCopyToContainer(MountableFile.forClasspathResource("fullConfigJson.xml"),
                             "/opt/hivemq/extensions/hivemq-mqtt-message-log-extension/conf/config.xml")
                     .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()))
@@ -213,9 +213,8 @@ public class FullConfigJsonIT {
     }
 
     /**
-     * Helper method to assert that the HiveMQ logs contain the expected JSON message.
-     * This method waits until the message appears in the logs.
-     * The timestamp is normalized to a fixed value (12345) to allow for exact matching.
+     * Helper method to assert that the HiveMQ logs contain the expected JSON message. This method waits until the
+     * message appears in the logs. The timestamp is normalized to a fixed value (12345) to allow for exact matching.
      *
      * @param expectedJsonMessage the expected JSON messages to find in the logs
      */

@@ -44,8 +44,7 @@ import static com.hivemq.extensions.log.mqtt.message.util.StringUtil.getHexStrin
 import static com.hivemq.extensions.log.mqtt.message.util.StringUtil.getStringFromByteBuffer;
 
 /**
- * Plain text formatter for MQTT message logging.
- * Produces human-readable log output in the traditional format.
+ * Plain text formatter for MQTT message logging. Produces human-readable log output in the traditional format.
  *
  * @since 1.0.0
  */
@@ -144,8 +143,7 @@ class PlainTextMessageLogger implements MessageLogger {
                 passwordProperty = "Password: '" + passwordAsString + "'";
             } else {
                 passwordProperty = "Password (Hex): '" +
-                        getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) +
-                        "'";
+                        getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
             }
         }
         final String authDataAsString;
@@ -203,7 +201,8 @@ class PlainTextMessageLogger implements MessageLogger {
         } else {
             authDataAsString = null;
         }
-        LOG.info("Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}', Session Expiry Interval: '{}'," +
+        LOG.info(
+                "Sent CONNACK to client '{}': Reason Code: '{}', Session Present: '{}', Session Expiry Interval: '{}'," +
                         " Assigned ClientId '{}', Maximum QoS: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}'," +
                         " Topic Alias Maximum: '{}', Reason String: '{}', Response Information: '{}', Server Keep Alive: '{}'," +
                         " Server Reference: '{}', Shared Subscription Available: '{}', Wildcards Available: '{}'," +
@@ -526,16 +525,11 @@ class PlainTextMessageLogger implements MessageLogger {
         final var subscriptionIdentifiers = publishPacket.getSubscriptionIdentifiers();
         final var userPropertiesAsString = getUserPropertiesAsString(publishPacket.getUserProperties());
         if (!payload) {
-            return String.format("QoS: '%s'," +
-                            " Retained: '%s'," +
-                            " Message Expiry Interval: '%s'," +
-                            " Duplicate Delivery: '%s'," +
-                            " Correlation Data: '%s'," +
-                            " Response Topic: '%s'," +
-                            " Content Type: '%s'," +
-                            " Payload Format Indicator: '%s'," +
-                            " Subscription Identifiers: '%s'," +
-                            " %s",
+            return String.format(
+                    "QoS: '%s'," + " Retained: '%s'," + " Message Expiry Interval: '%s'," +
+                            " Duplicate Delivery: '%s'," + " Correlation Data: '%s'," + " Response Topic: '%s'," +
+                            " Content Type: '%s'," + " Payload Format Indicator: '%s'," +
+                            " Subscription Identifiers: '%s'," + " %s",
                     qos,
                     retained,
                     messageExpiryInterval.orElse(null),
@@ -547,17 +541,11 @@ class PlainTextMessageLogger implements MessageLogger {
                     subscriptionIdentifiers,
                     userPropertiesAsString);
         }
-        return String.format("%s," +
-                        " QoS: '%s'," +
-                        " Retained: '%s'," +
-                        " Message Expiry Interval: '%s'," +
-                        " Duplicate Delivery: '%s'," +
-                        " Correlation Data: '%s'," +
-                        " Response Topic: '%s'," +
-                        " Content Type: '%s'," +
-                        " Payload Format Indicator: '%s'," +
-                        " Subscription Identifiers: '%s'," +
-                        " %s",
+        return String.format(
+                "%s," + " QoS: '%s'," + " Retained: '%s'," + " Message Expiry Interval: '%s'," +
+                        " Duplicate Delivery: '%s'," + " Correlation Data: '%s'," + " Response Topic: '%s'," +
+                        " Content Type: '%s'," + " Payload Format Indicator: '%s'," +
+                        " Subscription Identifiers: '%s'," + " %s",
                 payloadProperty,
                 qos,
                 retained,

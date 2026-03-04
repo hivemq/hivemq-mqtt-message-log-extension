@@ -39,8 +39,8 @@ public class StringUtil {
     /**
      * Converts a ByteBuffer to a UTF-8 string.
      *
-     * @param buffer the ByteBuffer to convert (may be null)
-     * @return the string representation, or null if buffer is null
+     * @param  buffer the ByteBuffer to convert (may be null)
+     * @return        the string representation, or null if buffer is null
      */
     public static @Nullable String getStringFromByteBuffer(final @Nullable ByteBuffer buffer) {
         if (buffer == null) {
@@ -53,8 +53,8 @@ public class StringUtil {
     /**
      * Converts a ByteBuffer to a hexadecimal string.
      *
-     * @param buffer the ByteBuffer to convert (may be null)
-     * @return the hex string representation, or null if buffer is null
+     * @param  buffer the ByteBuffer to convert (may be null)
+     * @return        the hex string representation, or null if buffer is null
      */
     public static @Nullable String getHexStringFromByteBuffer(final @Nullable ByteBuffer buffer) {
         if (buffer == null) {
@@ -67,8 +67,8 @@ public class StringUtil {
     /**
      * Converts a byte array to a hexadecimal string.
      *
-     * @param data the byte array to convert
-     * @return the hex string representation
+     * @param  data the byte array to convert
+     * @return      the hex string representation
      */
     public static @NotNull String asHexString(final byte @NotNull [] data) {
         final var length = data.length;
@@ -83,8 +83,8 @@ public class StringUtil {
     /**
      * Extracts bytes from a ByteBuffer without modifying its position.
      *
-     * @param buffer the ByteBuffer to extract from
-     * @return the byte array
+     * @param  buffer the ByteBuffer to extract from
+     * @return        the byte array
      */
     public static byte @NotNull [] getBytes(final @NotNull ByteBuffer buffer) {
         final var bytes = new byte[buffer.remaining()];

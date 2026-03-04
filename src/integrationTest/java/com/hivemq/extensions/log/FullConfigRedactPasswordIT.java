@@ -41,7 +41,7 @@ public class FullConfigRedactPasswordIT {
     @Container
     final @NotNull HiveMQContainer hivemq =
             new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-mqtt-message-log-extension")
-                    .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                    .asCompatibleSubstituteFor("hivemq/hivemq4"))
                     .withCopyToContainer(MountableFile.forClasspathResource("fullConfigRedactPassword.properties"),
                             "/opt/hivemq/extensions/hivemq-mqtt-message-log-extension/mqttMessageLog.properties")
                     .withLogConsumer(outputFrame -> System.out.print("HiveMQ: " + outputFrame.getUtf8String()))

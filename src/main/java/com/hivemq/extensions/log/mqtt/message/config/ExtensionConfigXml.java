@@ -16,7 +16,6 @@
 
 package com.hivemq.extensions.log.mqtt.message.config;
 
-
 import com.hivemq.extensions.log.mqtt.message.logger.OutputFormat;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -208,53 +207,15 @@ public class ExtensionConfigXml implements ExtensionConfig {
 
     @Override
     public @NotNull String toString() {
-        return "{" +
-                "outputFormat=" +
-                outputFormat +
-                ", verbose=" +
-                verbose +
-                ", payload=" +
-                payload +
-                ", passwordInVerbose=" +
-                redactPassword +
-                ", publishReceived=" +
-                publishReceived +
-                ", publishSend=" +
-                publishSend +
-                ", clientConnect=" +
-                clientConnect +
-                ", connackSend=" +
-                connackSend +
-                ", clientDisconnect=" +
-                clientDisconnect +
-                ", subscribeReceived=" +
-                subscribeReceived +
-                ", subackSend=" +
-                subackSend +
-                ", unsubscribeReceived=" +
-                unsubscribeReceived +
-                ", unsubackSend=" +
-                unsubackSend +
-                ", pingRequestReceived=" +
-                pingRequestReceived +
-                ", pingResponseSend=" +
-                pingResponseSend +
-                ", pubackReceived=" +
-                pubackReceived +
-                ", pubackSend=" +
-                pubackSend +
-                ", pubrecReceived=" +
-                pubrecReceived +
-                ", pubrecSend=" +
-                pubrecSend +
-                ", pubrelReceived=" +
-                pubrelReceived +
-                ", pubrelSend=" +
-                pubrelSend +
-                ", pubcompReceived=" +
-                pubcompReceived +
-                ", pubcompSend=" +
-                pubcompSend +
-                '}';
+        return "{" + "outputFormat=" + outputFormat + ", verbose=" + verbose + ", payload=" + payload +
+                ", passwordInVerbose=" + redactPassword + ", publishReceived=" + publishReceived + ", publishSend=" +
+                publishSend + ", clientConnect=" + clientConnect + ", connackSend=" + connackSend +
+                ", clientDisconnect=" + clientDisconnect + ", subscribeReceived=" + subscribeReceived +
+                ", subackSend=" + subackSend + ", unsubscribeReceived=" + unsubscribeReceived + ", unsubackSend=" +
+                unsubackSend + ", pingRequestReceived=" + pingRequestReceived + ", pingResponseSend=" +
+                pingResponseSend + ", pubackReceived=" + pubackReceived + ", pubackSend=" + pubackSend +
+                ", pubrecReceived=" + pubrecReceived + ", pubrecSend=" + pubrecSend + ", pubrelReceived=" +
+                pubrelReceived + ", pubrelSend=" + pubrelSend + ", pubcompReceived=" + pubcompReceived +
+                ", pubcompSend=" + pubcompSend + '}';
     }
 }

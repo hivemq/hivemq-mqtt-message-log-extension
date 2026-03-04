@@ -71,24 +71,10 @@ public interface ExtensionConfig {
     @NotNull OutputFormat getOutputFormat();
 
     default boolean allDisabled() {
-        return !isClientConnect() &&
-                !isClientDisconnect() &&
-                !isConnackSend() &&
-                !isPublishSend() &&
-                !isPublishReceived() &&
-                !isSubscribeReceived() &&
-                !isSubackSend() &&
-                !isUnsubscribeReceived() &&
-                !isUnsubackSend() &&
-                !isPingRequestReceived() &&
-                !isPingResponseSend() &&
-                !isPubackReceived() &&
-                !isPubackSend() &&
-                !isPubrecReceived() &&
-                !isPubrecSend() &&
-                !isPubrelReceived() &&
-                !isPubrelSend() &&
-                !isPubcompReceived() &&
-                !isPubcompSend();
+        return !isClientConnect() && !isClientDisconnect() && !isConnackSend() && !isPublishSend() &&
+                !isPublishReceived() && !isSubscribeReceived() && !isSubackSend() && !isUnsubscribeReceived() &&
+                !isUnsubackSend() && !isPingRequestReceived() && !isPingResponseSend() && !isPubackReceived() &&
+                !isPubackSend() && !isPubrecReceived() && !isPubrecSend() && !isPubrelReceived() && !isPubrelSend() &&
+                !isPubcompReceived() && !isPubcompSend();
     }
 }

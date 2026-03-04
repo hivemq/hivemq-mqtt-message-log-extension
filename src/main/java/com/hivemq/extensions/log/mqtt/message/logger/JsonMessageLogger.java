@@ -45,8 +45,8 @@ import static com.hivemq.extensions.log.mqtt.message.util.StringUtil.getBytes;
 import static com.hivemq.extensions.log.mqtt.message.util.StringUtil.getStringFromByteBuffer;
 
 /**
- * JSON formatter for MQTT message logging.
- * Produces structured JSON output suitable for machine parsing and log aggregation.
+ * JSON formatter for MQTT message logging. Produces structured JSON output suitable for machine parsing and log
+ * aggregation.
  *
  * @since 1.3.0
  */
@@ -509,28 +509,28 @@ class JsonMessageLogger implements MessageLogger {
         for (int i = 0; i < str.length(); i++) {
             final var c = str.charAt(i);
             switch (c) {
-                case '"':
+                case '"' :
                     sb.append("\\\"");
                     break;
-                case '\\':
+                case '\\' :
                     sb.append("\\\\");
                     break;
-                case '\n':
+                case '\n' :
                     sb.append("\\n");
                     break;
-                case '\r':
+                case '\r' :
                     sb.append("\\r");
                     break;
-                case '\t':
+                case '\t' :
                     sb.append("\\t");
                     break;
-                case '\b':
+                case '\b' :
                     sb.append("\\b");
                     break;
-                case '\f':
+                case '\f' :
                     sb.append("\\f");
                     break;
-                default:
+                default :
                     if (c < 32) {
                         // control character - Unicode escape
                         sb.append(String.format("\\u%04x", (int) c));

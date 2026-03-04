@@ -86,9 +86,10 @@ class PlainTestMessageLoggerTest {
                 new TestDisconnect(DisconnectedReasonCode.BAD_AUTHENTICATION_METHOD,
                         "ReasonString",
                         new TestUserProperties(5)));
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Received DISCONNECT from client 'test-client-id': Reason Code: 'BAD_AUTHENTICATION_METHOD', Reason String: 'ReasonString', \
-                User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2'], [Name: 'name3', Value: 'value3'], [Name: 'name4', Value: 'value4']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Received DISCONNECT from client 'test-client-id': Reason Code: 'BAD_AUTHENTICATION_METHOD', Reason String: 'ReasonString', \
+                        User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2'], [Name: 'name3', Value: 'value3'], [Name: 'name4', Value: 'value4']""");
     }
 
     @Test
@@ -114,8 +115,8 @@ class PlainTestMessageLoggerTest {
     void test_log_lifecycle_disconnect_not_verbose() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logDisconnect("Received DISCONNECT from client 'test-client-id'", new TestDisconnect(null, null, null));
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received DISCONNECT from client 'test-client-id': Reason Code: 'null'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received DISCONNECT from client 'test-client-id': Reason Code: 'null'");
     }
 
     @Test
@@ -141,16 +142,16 @@ class PlainTestMessageLoggerTest {
     void test_log_inbound_disconnect_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logDisconnect(createFullDisconnect(), "clientId", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED'");
     }
 
     @Test
     void test_log_inbound_disconnect_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logDisconnect(createFullDisconnect(), "clientId", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received DISCONNECT from client 'clientId': Reason Code: 'NOT_AUTHORIZED'");
     }
 
     @Test
@@ -176,16 +177,16 @@ class PlainTestMessageLoggerTest {
     void test_log_outbound_disconnect_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logDisconnect(createFullDisconnect(), "clientId", false);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED'");
     }
 
     @Test
     void test_log_outbound_disconnect_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logDisconnect(createEmptyDisconnect(), "clientId", false);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent DISCONNECT to client 'clientId': Reason Code: 'NOT_AUTHORIZED'");
     }
 
     @Test
@@ -328,8 +329,8 @@ class PlainTestMessageLoggerTest {
     void test_log_connack_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logConnack(createFullConnack());
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent CONNACK to client 'test-client-id': Reason Code: 'SUCCESS', Session Present: 'false'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent CONNACK to client 'test-client-id': Reason Code: 'SUCCESS', Session Present: 'false'");
     }
 
     @Test
@@ -350,20 +351,21 @@ class PlainTestMessageLoggerTest {
     void test_log_connack_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logConnack(createEmptyConnack());
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent CONNACK to client 'test-client-id': Reason Code: 'SUCCESS', Session Present: 'false'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent CONNACK to client 'test-client-id': Reason Code: 'SUCCESS', Session Present: 'false'");
     }
 
     @Test
     void test_log_publish_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(true, true, false);
         logger.logPublish("Sent PUBLISH to client 'test-client-id' on topic", createFullPublish());
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Sent PUBLISH to client 'test-client-id' on topic 'topic': Payload: 'message', QoS: '1', Retained: 'false', \
-                Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'data', \
-                Response Topic: 'response topic', Content Type: 'content type', Payload Format Indicator: 'UTF_8', \
-                Subscription Identifiers: '[1, 2, 3, 4]', \
-                User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Sent PUBLISH to client 'test-client-id' on topic 'topic': Payload: 'message', QoS: '1', Retained: 'false', \
+                        Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'data', \
+                        Response Topic: 'response topic', Content Type: 'content type', Payload Format Indicator: 'UTF_8', \
+                        Subscription Identifiers: '[1, 2, 3, 4]', \
+                        User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']""");
     }
 
     @Test
@@ -390,19 +392,20 @@ class PlainTestMessageLoggerTest {
     void test_log_publish_not_verbose_no_payload_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPublish("Sent PUBLISH to client 'test-client-id' on topic", createFullPublish());
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent PUBLISH to client 'test-client-id' on topic 'topic': QoS: '1', Retained: 'false'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent PUBLISH to client 'test-client-id' on topic 'topic': QoS: '1', Retained: 'false'");
     }
 
     @Test
     void test_log_publish_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(true, true, false);
         logger.logPublish("Sent PUBLISH to client 'test-client-id' on topic", createEmptyPublish());
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Sent PUBLISH to client 'test-client-id' on topic 'topic': Payload: 'message', QoS: '1', Retained: 'false',\
-                 Message Expiry Interval: 'null', Duplicate Delivery: 'false', Correlation Data: 'null',\
-                 Response Topic: 'null', Content Type: 'null', Payload Format Indicator: 'null',\
-                 Subscription Identifiers: '[]', User Properties: 'null'""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Sent PUBLISH to client 'test-client-id' on topic 'topic': Payload: 'message', QoS: '1', Retained: 'false',\
+                         Message Expiry Interval: 'null', Duplicate Delivery: 'false', Correlation Data: 'null',\
+                         Response Topic: 'null', Content Type: 'null', Payload Format Indicator: 'null',\
+                         Subscription Identifiers: '[]', User Properties: 'null'""");
     }
 
     @Test
@@ -420,12 +423,13 @@ class PlainTestMessageLoggerTest {
     void test_log_publish_verbose_binary_payload_shows_hex() {
         final var logger = new PlainTextMessageLogger(true, true, false);
         logger.logPublish("Sent PUBLISH to client 'test-client-id' on topic", createFullPublishWithBinaryPayload());
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Sent PUBLISH to client 'test-client-id' on topic 'topic': Payload (Hex): '000102fffe7f48656c6c6f', QoS: '1', Retained: 'false', \
-                Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'data', \
-                Response Topic: 'response topic', Content Type: 'application/octet-stream', Payload Format Indicator: 'UNSPECIFIED', \
-                Subscription Identifiers: '[1, 2, 3, 4]', \
-                User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Sent PUBLISH to client 'test-client-id' on topic 'topic': Payload (Hex): '000102fffe7f48656c6c6f', QoS: '1', Retained: 'false', \
+                        Message Expiry Interval: '10000', Duplicate Delivery: 'false', Correlation Data: 'data', \
+                        Response Topic: 'response topic', Content Type: 'application/octet-stream', Payload Format Indicator: 'UNSPECIFIED', \
+                        Subscription Identifiers: '[1, 2, 3, 4]', \
+                        User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']""");
     }
 
     @Test
@@ -440,11 +444,12 @@ class PlainTestMessageLoggerTest {
     void test_log_subscribe_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logSubscribe(createFullSubsribe());
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Received SUBSCRIBE from client 'test-client-id': Topics: { \
-                [Topic: 'topic1', QoS: '2', Retain As Published: 'false', No Local: 'false', Retain Handling: 'DO_NOT_SEND'], \
-                [Topic: 'topic2', QoS: '0', Retain As Published: 'true', No Local: 'true', Retain Handling: 'SEND_IF_NEW_SUBSCRIPTION'] }, \
-                Subscription Identifier: '10', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Received SUBSCRIBE from client 'test-client-id': Topics: { \
+                        [Topic: 'topic1', QoS: '2', Retain As Published: 'false', No Local: 'false', Retain Handling: 'DO_NOT_SEND'], \
+                        [Topic: 'topic2', QoS: '0', Retain As Published: 'true', No Local: 'true', Retain Handling: 'SEND_IF_NEW_SUBSCRIPTION'] }, \
+                        Subscription Identifier: '10', User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']""");
     }
 
     @Test
@@ -460,18 +465,19 @@ class PlainTestMessageLoggerTest {
     void test_log_subscribe_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logSubscribe(createEmptySubscribe());
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Received SUBSCRIBE from client 'test-client-id': Topics: { \
-                [Topic: 'topic', QoS: '0', Retain As Published: 'false', No Local: 'false', Retain Handling: 'SEND'] }, \
-                Subscription Identifier: 'null', User Properties: 'null'""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Received SUBSCRIBE from client 'test-client-id': Topics: { \
+                        [Topic: 'topic', QoS: '0', Retain As Published: 'false', No Local: 'false', Retain Handling: 'SEND'] }, \
+                        Subscription Identifier: 'null', User Properties: 'null'""");
     }
 
     @Test
     void test_log_subscribe_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logSubscribe(createEmptySubscribe());
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received SUBSCRIBE from client 'test-client-id': Topics: { [Topic: 'topic', QoS: '0'] }");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received SUBSCRIBE from client 'test-client-id': Topics: { [Topic: 'topic', QoS: '0'] }");
     }
 
     @Test
@@ -514,10 +520,11 @@ class PlainTestMessageLoggerTest {
     void test_log_unsuback_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logUnsuback(createFullUnsuback());
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Sent UNSUBACK to client 'test-client-id': Unsuback Reason Codes: { \
-                [Reason Code: 'NOT_AUTHORIZED'], [Reason Code: 'SUCCESS'] }, Reason String: 'Okay', \
-                User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Sent UNSUBACK to client 'test-client-id': Unsuback Reason Codes: { \
+                        [Reason Code: 'NOT_AUTHORIZED'], [Reason Code: 'SUCCESS'] }, Reason String: 'Okay', \
+                        User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1'], [Name: 'name2', Value: 'value2']""");
     }
 
     @Test
@@ -559,8 +566,8 @@ class PlainTestMessageLoggerTest {
     void test_log_unsubscribe_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logUnsubscribe(createFullUnsubsribe());
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received UNSUBSCRIBE from client 'test-client-id': Topics: { [Topic: 'topic1'] }");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received UNSUBSCRIBE from client 'test-client-id': Topics: { [Topic: 'topic1'] }");
     }
 
     @Test
@@ -598,34 +605,36 @@ class PlainTestMessageLoggerTest {
     void test_log_puback_inbound_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logPuback(createFullPuback(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Received PUBACK from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'Okay', \
-                User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Received PUBACK from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'Okay', \
+                        User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value1']""");
     }
 
     @Test
     void test_log_puback_inbound_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPuback(createFullPuback(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received PUBACK from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received PUBACK from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
     }
 
     @Test
     void test_log_puback_inbound_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logPuback(createEmptyPuback(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Received PUBACK from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', \
-                User Properties: 'null'""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Received PUBACK from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', \
+                        User Properties: 'null'""");
     }
 
     @Test
     void test_log_puback_inbound_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPuback(createEmptyPuback(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received PUBACK from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received PUBACK from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
     }
 
     @Test
@@ -641,8 +650,8 @@ class PlainTestMessageLoggerTest {
     void test_log_puback_outbound_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPuback(createFullPuback(), "test-client-id", false);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent PUBACK to client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent PUBACK to client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
     }
 
     @Test
@@ -658,8 +667,8 @@ class PlainTestMessageLoggerTest {
     void test_log_puback_outbound_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPuback(createEmptyPuback(), "test-client-id", false);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent PUBACK to client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent PUBACK to client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
     }
 
     @Test
@@ -675,25 +684,26 @@ class PlainTestMessageLoggerTest {
     void test_log_pubrec_inbound_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPubrec(createFullPubrec(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received PUBREC from client 'test-client-id': Reason Code: 'SUCCESS'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received PUBREC from client 'test-client-id': Reason Code: 'SUCCESS'");
     }
 
     @Test
     void test_log_pubrec_inbound_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logPubrec(createEmptyPubrec(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Received PUBREC from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', \
-                User Properties: 'null'""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Received PUBREC from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS', Reason String: 'null', \
+                        User Properties: 'null'""");
     }
 
     @Test
     void test_log_pubrec_inbound_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPubrec(createEmptyPubrec(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received PUBREC from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received PUBREC from client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
     }
 
     @Test
@@ -725,25 +735,26 @@ class PlainTestMessageLoggerTest {
     void test_log_pubrec_outbound_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPubrec(createEmptyPubrec(), "test-client-id", false);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent PUBREC to client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent PUBREC to client 'test-client-id': Reason Code: 'NO_MATCHING_SUBSCRIBERS'");
     }
 
     @Test
     void test_log_pubrel_inbound_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logPubrel(createFullPubrel(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Received PUBREL from client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', \
-                User Properties: [Name: 'name0', Value: 'value0']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Received PUBREL from client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', \
+                        User Properties: [Name: 'name0', Value: 'value0']""");
     }
 
     @Test
     void test_log_pubrel_inbound_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPubrel(createFullPubrel(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received PUBREL from client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received PUBREL from client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'");
     }
 
     @Test
@@ -759,25 +770,26 @@ class PlainTestMessageLoggerTest {
     void test_log_pubrel_inbound_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPubrel(createEmptyPubrel(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received PUBREL from client 'test-client-id': Reason Code: 'SUCCESS'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received PUBREL from client 'test-client-id': Reason Code: 'SUCCESS'");
     }
 
     @Test
     void test_log_pubrel_outbound_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logPubrel(createFullPubrel(), "test-client-id", false);
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Sent PUBREL to client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', \
-                User Properties: [Name: 'name0', Value: 'value0']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Sent PUBREL to client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', \
+                        User Properties: [Name: 'name0', Value: 'value0']""");
     }
 
     @Test
     void test_log_pubrel_outbound_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPubrel(createFullPubrel(), "test-client-id", false);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent PUBREL to client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent PUBREL to client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'");
     }
 
     @Test
@@ -800,17 +812,18 @@ class PlainTestMessageLoggerTest {
     void test_log_pubcomp_inbound_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logPubcomp(createFullPubcomp(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Received PUBCOMP from client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', \
-                User Properties: [Name: 'name0', Value: 'value0']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Received PUBCOMP from client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', \
+                        User Properties: [Name: 'name0', Value: 'value0']""");
     }
 
     @Test
     void test_log_pubcomp_inbound_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPubcomp(createFullPubcomp(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received PUBCOMP from client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received PUBCOMP from client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'");
     }
 
     @Test
@@ -826,25 +839,26 @@ class PlainTestMessageLoggerTest {
     void test_log_pubcomp_inbound_not_verbose_none_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPubcomp(createEmptyPubcomp(), "test-client-id", true);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Received PUBCOMP from client 'test-client-id': Reason Code: 'SUCCESS'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Received PUBCOMP from client 'test-client-id': Reason Code: 'SUCCESS'");
     }
 
     @Test
     void test_log_pubcomp_outbound_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(true, false, false);
         logger.logPubcomp(createFullPubcomp(), "test-client-id", false);
-        assertThat(getPlaintextMessage()).isEqualTo("""
-                Sent PUBCOMP to client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', \
-                User Properties: [Name: 'name0', Value: 'value0']""");
+        assertThat(getPlaintextMessage()).isEqualTo(
+                """
+                        Sent PUBCOMP to client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND', Reason String: 'Okay', \
+                        User Properties: [Name: 'name0', Value: 'value0']""");
     }
 
     @Test
     void test_log_pubcomp_outbound_not_verbose_all_set() {
         final var logger = new PlainTextMessageLogger(false, false, false);
         logger.logPubcomp(createFullPubcomp(), "test-client-id", false);
-        assertThat(getPlaintextMessage()).isEqualTo(
-                "Sent PUBCOMP to client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'");
+        assertThat(getPlaintextMessage())
+                .isEqualTo("Sent PUBCOMP to client 'test-client-id': Reason Code: 'PACKET_IDENTIFIER_NOT_FOUND'");
     }
 
     @Test
